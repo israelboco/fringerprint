@@ -1,5 +1,10 @@
 package com.presence.testpresence.model.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "device")
 public class Device {
     private Integer id;
 
