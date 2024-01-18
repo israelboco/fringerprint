@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
-    Employee findOneById(Employee employees);
+    Employee findOneById(Integer id);
     List<Employee> findByCompanie(Companie companie);
 
 }

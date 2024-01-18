@@ -19,6 +19,9 @@ public class Employee implements Serializable {
     private String telephone;
     @Column(name = "email")
     private String email;
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
+    @ManyToOne
+    private Companie companie;
     @Column(name = "pin")
     private String pin;
     @Column(name = "salt")
@@ -78,5 +81,13 @@ public class Employee implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Companie getCompanie() {
+        return companie;
+    }
+
+    public void setCompanie(Companie companie) {
+        this.companie = companie;
     }
 }
