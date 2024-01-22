@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Component
 public class CompanieTypeService {
 
-    private static Logger logger = LogManager.getLogger(RoleService.class);
+    private static Logger logger = LogManager.getLogger(CompanieTypeService.class);
 
 
     @Autowired

@@ -8,7 +8,6 @@ public class CompanieWs {
     private Integer id;
     private String nom;
     private String logo;
-    private CompanieTypeWs type;
-
+    private Integer idType;
 
 }
