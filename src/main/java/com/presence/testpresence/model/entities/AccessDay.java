@@ -1,30 +1,37 @@
 package com.presence.testpresence.model.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "access_day")
 public class AccessDay {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-
+    @Column(name = "serial")
     private String serial;
-
+    @Column(name = "name")
     private String name;
-
+    @Column(name = "startTime1")
     private String startTime1;
-
+    @Column(name = "endTime1")
     private String endTime1;
-
+    @Column(name = "startTime2")
     private String startTime2;
-
+    @Column(name = "endTime2")
     private String endTime2;
-
+    @Column(name = "startTime3")
     private String startTime3;
-
+    @Column(name = "endTime3")
     private String endTime3;
-
+    @Column(name = "startTime4")
     private String startTime4;
-
+    @Column(name = "endTime4")
     private String endTime4;
-
+    @Column(name = "startTime5")
     private String startTime5;
-
+    @Column(name = "endTime5")
     private String endTime5;
 
     public Integer getId() {

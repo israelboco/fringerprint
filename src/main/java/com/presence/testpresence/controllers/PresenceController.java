@@ -1,6 +1,6 @@
 package com.presence.testpresence.controllers;
 
-import com.presence.testpresence.services.PresenceEmployeeService;
+import com.presence.testpresence.services.PresenceService;
 import com.presence.testpresence.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class PresenceController {
 
     @Autowired
-    PresenceEmployeeService presenceService;
+    PresenceService presenceService;
 
     @PostMapping("/create")
     public ReponseWs create(@RequestParam String token){

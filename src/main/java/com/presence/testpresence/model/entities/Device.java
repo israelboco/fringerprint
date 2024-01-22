@@ -1,15 +1,17 @@
 package com.presence.testpresence.model.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "device")
 public class Device {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-
+    @Column(name = "serial_num")
     private String serialNum;
-
+    @Column(name = "status")
     private Integer status;
 
     public Integer getId() {

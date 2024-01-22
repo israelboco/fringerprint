@@ -1,27 +1,32 @@
 package com.presence.testpresence.model.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "access_week")
 public class AccessWeek {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-
+    @Column(name = "serial")
     private String serial;
-
+    @Column(name = "name")
     private String name;
-    
+    @Column(name = "sunday")
     private Integer sunday;
-
+    @Column(name = "monday")
     private Integer monday;
-
+    @Column(name = "tuesday")
     private Integer tuesday;
-
+    @Column(name = "wednesday")
     private Integer wednesday;
-
+    @Column(name = "thursday")
     private Integer thursday;
-
+    @Column(name = "friday")
     private Integer friday;
-
+    @Column(name = "saturday")
     private Integer saturday;
-
-   
 
     public Integer getId() {
         return id;

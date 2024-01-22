@@ -29,20 +29,21 @@ public class PresenceEmployeeService {
     @Autowired
     CompanieRepository companieRepository;
 
-    public ReponseWs savePresence(Integer idEmployee){
-        Employee employee = employeeRepository.findOneById(idEmployee);
+    public ReponseWs savePresence(PresenceEmployeeWs ws){
+        Employee employee = employeeRepository.findOneById(ws.getEmployeeId());
         if (employee == null) return new ReponseWs("failed", "employee not found", 404, null);
         Gson gson = new Gson();
-        PresenceEmployee presenceEmployee = this.create(employee);
+        PresenceEmployee presenceEmployee = this.create(ws, employee);
         presenceEmployeeRepository.save(presenceEmployee);
         PresenceEmployeeWs presenceEmployeeWs = gson.fromJson(gson.toJson(presenceEmployee), PresenceEmployeeWs.class);
         presenceEmployeeWs.setEmployeeId(employee.getId());
         return new ReponseWs("success", "save presence", 200, presenceEmployeeWs);
     }
 
-    private PresenceEmployee create(Employee employee){
+    private PresenceEmployee create(PresenceEmployeeWs ws, Employee employee){
+        Gson gson = new Gson();
         Date created = new Date();
-        PresenceEmployee presenceEmployee = new PresenceEmployee();
+        PresenceEmployee presenceEmployee = gson.fromJson(gson.toJson(ws), PresenceEmployee.class);
         presenceEmployee.setEmployee(employee);
         presenceEmployee.setCreated(created);
         return presenceEmployee;

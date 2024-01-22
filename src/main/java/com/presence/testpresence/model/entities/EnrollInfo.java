@@ -1,13 +1,21 @@
 package com.presence.testpresence.model.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "enroll_info")
 public class EnrollInfo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-
+    @Column(name = "enrollId")
     private Integer enrollId;
-
+    @Column(name = "backupnum")
     private Integer backupnum;
+    @Column(name = "imagePath")
     private String imagePath;
-
+    @Column(name = "signatures")
     private String signatures;
 
     public Integer getId() {
