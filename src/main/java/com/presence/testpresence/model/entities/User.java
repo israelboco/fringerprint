@@ -22,8 +22,10 @@ public class User implements Serializable {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
-    private Set<Role> role;
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass=Role.class)
+    @JoinColumn(name = "roles")
+    private Set<Role> roles;
     @Column(name = "salt")
     private String salt;
     @Column(name = "pin")
@@ -86,11 +88,11 @@ public class User implements Serializable {
         this.pin = pin;
     }
 
-    public Set<Role> getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
