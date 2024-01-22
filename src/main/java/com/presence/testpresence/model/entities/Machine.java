@@ -20,14 +20,14 @@ public class Machine implements Serializable {
     @Column(name = "name")
     private String name;
     @Column(name = "adresse_mac")
-    private String AdressMac;
+    private String adressMac;
     @Column(name = "adresse_ip")
-    private String AdresseIp;
-    @JoinColumn(name = "companies_type_id", referencedColumnName = "id")
+    private String adresseIp;
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne
-    private Companie Companie;
+    private Companie companie;
     @Column(name = "active")
-    private String active;
+    private Boolean active;
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
@@ -41,27 +41,27 @@ public class Machine implements Serializable {
     }
 
     public String getAdressMac() {
-        return AdressMac;
+        return adressMac;
     }
 
     public void setAdressMac(String adressMac) {
-        AdressMac = adressMac;
-    }
-
-    public com.presence.testpresence.model.entities.Companie getCompanie() {
-        return Companie;
-    }
-
-    public void setCompanie(com.presence.testpresence.model.entities.Companie companie) {
-        Companie = companie;
+        this.adressMac = adressMac;
     }
 
     public String getAdresseIp() {
-        return AdresseIp;
+        return adresseIp;
     }
 
     public void setAdresseIp(String adresseIp) {
-        AdresseIp = adresseIp;
+        this.adresseIp = adresseIp;
+    }
+
+    public Companie getCompanie() {
+        return companie;
+    }
+
+    public void setCompanie(Companie companie) {
+        this.companie = companie;
     }
 
     public Date getCreated() {
@@ -72,11 +72,11 @@ public class Machine implements Serializable {
         this.created = created;
     }
 
-    public String getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(String active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

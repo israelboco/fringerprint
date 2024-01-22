@@ -16,23 +16,25 @@ import java.util.Collections;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .paths(PathSelectors.ant("/api/**"))
-                .apis(RequestHandlerSelectors.basePackage("com.springtutorial"))
-                .build();
-//                .securitySchemes(Arrays.asList(securityScheme()))
-//                .securityContexts(Arrays.asList(securityContext()));
+                .apis(RequestHandlerSelectors.basePackage("com.presence.testpresence.controllers"))
+                //.paths(PathSelectors.ant("/foos/*"))
+                .build()
+                .apiInfo(apiInfo());
     }
+
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "My REST API", //title
-                "Some custom description of API.", //description
-                "Version 1.0", //version
-                "Terms of service", //terms of service URL
-                new Contact("Bhanuka Dissanayake", "www.example.com", "myeaddress@company.com"),
-                "License of API", "API license URL", Collections.emptyList()); // contact info
+                "My Fringer Print REST API",
+                "Some custom description of API.",
+                "API v1",
+                "Terms of service",
+                new Contact("BOCO Israel", "#", "isboco@gmail.com"),
+                "License of API", "API license URL", Collections.emptyList());
     }
+
 }
