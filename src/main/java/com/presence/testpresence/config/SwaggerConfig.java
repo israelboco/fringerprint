@@ -29,11 +29,11 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "My Fringer Print REST API",
+                "Fringer Print REST API",
                 "Some custom description of API.",
                 "API v1",
                 "Terms of service",
-                new Contact("BOCO Israel", "#", "isboco@gmail.com"),
+                new Contact("#", "#", "#"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 

@@ -82,6 +82,16 @@ public class MachineService {
         return new ReponseWs("success", "list", 200, machinesWs);
     }
 
+    public ReponseWs connect(Integer idMachine, Integer idCompanie){
+        Gson gson = new Gson();
+        Companie companie = companieRepository.findOneById(idCompanie);
+        if(companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
+        Machine machine = machineRepository.findOneById(idMachine);
+        if(machine == null) return new ReponseWs("failed", "machine not found", 404, null);
+        machine.setCompanie(companie);
+        return new ReponseWs("success", "connect", 200, machine.getId());
+    }
+
     public ReponseWs listActiveOfCompanie(Integer idCompanie, Boolean active){
         Gson gson = new Gson();
         Companie companie = companieRepository.findOneById(idCompanie);
