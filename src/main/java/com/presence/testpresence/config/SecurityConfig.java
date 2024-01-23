@@ -27,6 +27,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     @Bean
     public JwtDecoder jwtDecoder() {
         String jwkSetUri = "http://localhost:8090/.well-known/jwks.json"; // Replace with your auth server's JWKS endpoint
