@@ -22,9 +22,11 @@ public class User implements Serializable {
     private String email;
     @Column(name = "password")
     private String password;
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @ElementCollection(targetClass=Role.class)
-    @JoinColumn(name = "roles")
+    @ManyToMany(cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = {
+            @JoinColumn(name = "USERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+            @JoinColumn(name = "ROLES_ID", referencedColumnName = "ID")
+    })
     private Set<Role> roles;
     @Column(name = "salt")
     private String salt;
