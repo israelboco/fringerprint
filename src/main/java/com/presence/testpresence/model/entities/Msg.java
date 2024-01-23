@@ -9,33 +9,16 @@ import java.util.Map;
  * @author szw
  *
  */
-@Entity
-@Table(name = "msg")
 public class Msg {
 
 	//状态码 100-成功  200-失败
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "code")
 	private int code;
 
 	//提示信息
-    @Column(name = "msg")
 	private String msg;
 
 	//用户要返回给浏览器的数据
-    @Column(name = "extend")
 	private Map<String, Object> extend = new HashMap<String, Object>();
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public int getCode() {
 		return code;

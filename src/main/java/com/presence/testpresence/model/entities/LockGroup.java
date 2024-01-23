@@ -2,32 +2,13 @@ package com.presence.testpresence.model.entities;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "lock_group")
 public class LockGroup {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "group1")
 	private int group1;
-    @Column(name = "group2")
 	private int group2;
-    @Column(name = "group3")
 	private int group3;
-    @Column(name = "group4")
 	private int group4;
-    @Column(name = "group5")
 	private int group5;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public int getGroup1() {
 		return group1;

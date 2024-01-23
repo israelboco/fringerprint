@@ -1,27 +1,34 @@
 package com.presence.testpresence.model.entities;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "machine_command")
 public class MachineCommand {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-    
+    @Column(name = "serial")
     private String serial;
-
+    @Column(name = "name")
     private String name;
-
+    @Column(name = "content")
     private String content;
-
+    @Column(name = "status")
     private Integer status;
-    
+    @Column(name = "sendStatus")
     private Integer sendStatus;
-    
+    @Column(name = "errCount")
     private Integer errCount;
-
+    @Column(name = "runTime")
     private Date runTime;
-
+    @Column(name = "gmtCrate")
     private Date gmtCrate;
-
+    @Column(name = "gmtModified")
     private Date gmtModified;
+
 
     public Integer getId() {
         return id;

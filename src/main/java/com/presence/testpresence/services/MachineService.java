@@ -69,7 +69,7 @@ public class MachineService {
     public ReponseWs listActive(Boolean active){
         Gson gson = new Gson();
         List<Machine> machines = machineRepository.findByActive(active);
-        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).toList();
+        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, machinesWs);
     }
 
@@ -78,7 +78,7 @@ public class MachineService {
         Companie companie = companieRepository.findOneById(idCompanie);
         if(companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
         List<Machine> machines = machineRepository.findAllByCompanie(companie);
-        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).toList();
+        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, machinesWs);
     }
 
@@ -97,7 +97,7 @@ public class MachineService {
         Companie companie = companieRepository.findOneById(idCompanie);
         if(companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
         List<Machine> machines = machineRepository.findByCompanieAndActive(companie, active);
-        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).toList();
+        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, machinesWs);
     }
 

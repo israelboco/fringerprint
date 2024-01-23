@@ -16,15 +16,15 @@ public class Records {
     private String recordsTime;
     @Column(name = "mode")
     private int mode;
-    @Column(name = "enrollId")
+    @Column(name = "intout")
     private int intout;
-    @Column(name = "enrollId")
+    @Column(name = "event")
     private int event;
-    @Column(name = "enrollId")
+    @Column(name = "deviceSerialNum")
     private String deviceSerialNum;
-    @Column(name = "enrollId")
+    @Column(name = "temperature")
     private double temperature;
-    @Column(name = "enrollId")
+    @Column(name = "image")
     private String image;
 
 

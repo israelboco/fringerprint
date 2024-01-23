@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PresenceService {
@@ -42,7 +43,7 @@ public class PresenceService {
         Connexion connexion = this.connexionRepository.findByTokenAndActive(token, true);
         if(connexion == null) return new ReponseWs("failed", "user not found", 404, null);
         List<Presence> list = this.presenceRepository.findByUser(connexion.getUser());
-        List<PresenceWs> listWs = list.stream().map(p -> gson.fromJson(gson.toJson(p), PresenceWs.class)).sorted(Comparator.comparingInt(PresenceWs::getId)).toList();
+        List<PresenceWs> listWs = list.stream().map(p -> gson.fromJson(gson.toJson(p), PresenceWs.class)).sorted(Comparator.comparingInt(PresenceWs::getId)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, listWs);
     }
 
