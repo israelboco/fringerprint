@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		"com.presence.testpresence"
 })
 @Configuration
-@EnableAsync
+//@EnableAsync
 @EnableScheduling
 @EntityScan(basePackages = {"com.presence.testpresence.model.entities"})
 @EnableJpaRepositories(basePackages = {"com.presence.testpresence.model.repositories"})

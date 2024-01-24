@@ -37,46 +37,46 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 @RestController
 public class AllController extends ControllerBase {
-	
+
 	/*@Autowired
 	EnrollInfoService enrollInfoService;
 	*/
-	
-	
-	
+
+
+
 	@RequestMapping("/hello1")
 	public String hello() {
 		return "hello";
 	}
-    
-	
-	
+
+
+
 	/*获取所有考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/device",method=RequestMethod.GET)
-	public Msg getAllDevice() {				
+	public Msg getAllDevice() {
 		List<Device>deviceList=deviceService.findAllDevice();
 		return Msg.success().add("device", deviceList);
 	}
-	
+
 	/*获取所有考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/enrollInfo",method=RequestMethod.GET)
-	public Msg getAllEnrollInfo() {				
+	public Msg getAllEnrollInfo() {
 		List<Person>enrollInfo=personService.selectAll();
-	
+
 		return Msg.success().add("enrollInfo", enrollInfo);
 	}
-	
-	
+
+
 	/*采集所有的用户*/
 	@ResponseBody
     @RequestMapping(value="/sendWs",method = RequestMethod.GET)
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
-       
+
 		System.out.println("sss"+deviceSn);
-	
+
 		//WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
 		for (int i = 0; i < deviceList.size(); i++) {
@@ -95,8 +95,8 @@ public class AllController extends ControllerBase {
 
         return  Msg.success();
     }
-	
-	
+
+
 	@ResponseBody
 	@RequestMapping(value="addPerson",method=RequestMethod.POST)
 	public Msg addPerson(PersonTemp personTemp, MultipartFile pic, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -108,16 +108,16 @@ public class AllController extends ControllerBase {
 	 //   EnrollInfo enrollInfo=new EnrollInfo();
 	    if(pic!=null){
 	    	if (pic.getOriginalFilename()!=null&&!("").equals(pic.getOriginalFilename())) {
-	    		 photoName=pic.getOriginalFilename();	
+	    		 photoName=pic.getOriginalFilename();
 	    		 newName=UUID.randomUUID().toString()+photoName.substring(photoName.lastIndexOf("."));
 	    		 File photoFile=new File(path, newName);
 	    			if (!photoFile.exists()) {
 	    				photoFile.mkdirs();
 	    			}
 	    			pic.transferTo(photoFile);
-			
+
 			}
-			
+
 		}
 	    Person person=new Person();
 	    person.setId(personTemp.getUserId());
@@ -141,8 +141,8 @@ public class AllController extends ControllerBase {
 	    	enrollInfoTemp3.setSignatures(personTemp.getCardNum());
 	    	enrollInfoService.insertSelective(enrollInfoTemp3);
 	    }
-	    
-	
+
+
 	    if(newName!=null&&!newName.equals("")) {
 	    	EnrollInfo enrollInfoTemp=new EnrollInfo();
 	    	enrollInfoTemp.setBackupnum(50);
@@ -153,13 +153,13 @@ public class AllController extends ControllerBase {
 	    	System.out.println("图片数据长度"+base64Str.length());
 	    	enrollInfoService.insertSelective(enrollInfoTemp);
 	    }
-	
+
 		return  Msg.success();
-		
+
 	}
-	
-	
-	
+
+
+
 	@ResponseBody
 	@RequestMapping(value="getUserInfo",method=RequestMethod.GET)
 	public Msg getUserInfo(@RequestParam("deviceSn")String deviceSn) {
@@ -168,7 +168,7 @@ public class AllController extends ControllerBase {
 		List<EnrollInfo>enrollsPrepared=new ArrayList<EnrollInfo>();
         for (int i = 0; i < person.size(); i++) {
 			int enrollId2=person.get(i).getId();
-			List<EnrollInfo>enrollInfos=enrollInfoService.selectByEnrollId(enrollId2);		
+			List<EnrollInfo>enrollInfos=enrollInfoService.selectByEnrollId(enrollId2);
 			for (int j = 0; j < enrollInfos.size(); j++) {
 				if(enrollInfos.get(j).getEnrollId()!=null&&enrollInfos.get(j).getBackupnum()!=null){
 				enrollsPrepared.add(enrollInfos.get(j));
@@ -177,53 +177,53 @@ public class AllController extends ControllerBase {
 		}
         System.out.println("采集用户数据"+enrollInfoService);
         personService.getSignature2(enrollsPrepared, deviceSn);
-        
+
 		return  Msg.success();
 	}
-	
-	
+
+
 	/*获取单个用户*/
 	@ResponseBody
     @RequestMapping("sendGetUserInfo")
     public Msg sendGetUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("backupNum")int backupNum,@RequestParam("deviceSn")String deviceSn) {
-		
-		
-		
+
+
+
 		List<Device>deviceList=deviceService.findAllDevice();
 		System.out.println("设备信息"+deviceList);
-		
+
 		String message="{\"cmd\":\"getuserinfo\",\"enrollid\":"+enrollId+",\"backupnum\":"+ backupNum+"}";
-		
-	
+
+
 		machineComandService.addGetOneUserCommand(enrollId, backupNum, deviceSn);
-		
+
 		return Msg.success();
     }
-	
+
 /*	下发所有用户，面向选中考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/setPersonToDevice",method = RequestMethod.GET)
 	public Msg sendSetUserInfo(@RequestParam("deviceSn")String deviceSn){
-	    
+
 		personService.setUserToDevice2(deviceSn);
 		return Msg.success();
-		
+
 	}
-	
-	
+
+
 	@ResponseBody
 	@RequestMapping(value="setUsernameToDevice",method=RequestMethod.GET)
 	public Msg setUsernameToDevice(@RequestParam("deviceSn")String deviceSn) {
 		personService.setUsernameToDevice(deviceSn);
 		return Msg.success();
 	}
-	
-	
+
+
 	@ResponseBody
 	@RequestMapping(value="/getDeviceInfo",method=RequestMethod.GET)
-	public Msg getDeviceInfo(@RequestParam("deviceSn") String deviceSn){		
-		    String message="{\"cmd\":\"disabledevice\"}";	
-		 
+	public Msg getDeviceInfo(@RequestParam("deviceSn") String deviceSn){
+		    String message="{\"cmd\":\"disabledevice\"}";
+
 			MachineCommand machineCommand=new MachineCommand();
 			machineCommand.setContent(message);
 			machineCommand.setName("disabledevice");
@@ -233,14 +233,14 @@ public class AllController extends ControllerBase {
 			machineCommand.setSerial(deviceSn);
 			machineCommand.setGmtCrate(new Date());
 			machineCommand.setGmtModified(new Date());
-			
+
 			machineComandService.addMachineCommand(machineCommand);
-	     return Msg.success();	
+	     return Msg.success();
 	}
-	
-	
-	
-	
+
+
+
+
 	/*下发单个用户到机器，对选中考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/setOneUser",method = RequestMethod.GET)
@@ -256,21 +256,21 @@ public class AllController extends ControllerBase {
 		}else{
 			return Msg.fail();
 		}
-		
+
 	}
-	
+
 	/*从考勤机删除用户*/
 	@ResponseBody
 	@RequestMapping(value="/deletePersonFromDevice",method = RequestMethod.GET)
-	public Msg deleteDeviceUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("deviceSn")String deviceSn){	
-		
+	public Msg deleteDeviceUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("deviceSn")String deviceSn){
+
 		System.out.println("删除用户devicesn==================="+deviceSn);
 		personService.deleteUserInfoFromDevice(enrollId, deviceSn);
 	//	personService.deleteByPrimaryKey(enrollId);
 		return Msg.success();
 	}
-	
-	
+
+
 	/*初始化考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/initSystem",method = RequestMethod.GET)
@@ -280,16 +280,16 @@ public class AllController extends ControllerBase {
 		String  message2="{\"cmd\":\"settime\",\"cloudtime\":\"2020-12-23 13:49:30\"}";
 		String s4="{\"cmd\":\"settime\",\"cloudtime\":\"2016-03-25 13:49:30\"}";
 		String s2="{\"cmd\":\"setdevinfo\",\"deviceid\":1,\"language\":0,\"volume\":0,\"screensaver\":0,\"verifymode\":0,\"sleep\":0,\"userfpnum\":3,\"loghint\":1000,\"reverifytime\":0}";
-		String s3="{\"cmd\":\"setdevlock\",\"opendelay\":5,\"doorsensor\":0,\"alarmdelay\":0,\"threat\":0,\"InputAlarm\":0,\"antpass\":0,\"interlock\":0,\"mutiopen\":0,\"tryalarm\":0,\"tamper\":0,\"wgformat\":0,\"wgoutput\":0,\"cardoutput\":0,\"dayzone\":[{\"day\":[{\"section\":\"01:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"02:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"03:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"04:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"05:00~00:0\n" + 
-				"0\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"06:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"07:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"08:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]}],\"weekzone\":[{\"week\":[{\"day\":0},{\"day\":1},{\"day\":2},{\"day\":3},{\"day\":4},{\"day\":5},{\"day\":6}]},{\"week\":[{\"day\":10},{\"day\":11},{\"day\":12},{\"day\":13},{\"day\":14},{\"day\":15},{\"day\":16}]},{\"week\":[{\"day\":20},{\"day\":21},{\"day\":22},{\"day\":23},{\"day\":24},{\"day\":25},{\"day\":26}]},\n" + 
-				"{\"week\":[{\"day\":30},{\"day\":31},{\"day\":32},{\"day\":33},{\"day\":34},{\"day\":35},{\"day\":36}]},{\"week\":[{\"day\":40},{\"day\":41},{\"day\":42},{\"day\":43},{\"day\":44},{\"day\":45},{\"day\":46}]},{\"week\":[{\"day\":50},{\"day\":51},{\"day\":52},{\"day\":53},{\"day\":54},{\"day\":55},{\"day\":56}]},{\"week\":[{\"day\":60},{\"day\":61},{\"day\":62},{\"day\":63},{\"day\":64},{\"day\":65},{\"day\":66}]},{\"week\":[{\"day\":70},{\"day\":71},{\"day\":72},{\"day\":73},{\"day\":74},{\"day\":75},{\"day\":76}]}],\"lockgroup\":[{\"group\":0},{\"group\":1},{\"group\":2},{\"group\":3},{\"group\":4}],\"nopentime\":[{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0}]}\n" + 
+		String s3="{\"cmd\":\"setdevlock\",\"opendelay\":5,\"doorsensor\":0,\"alarmdelay\":0,\"threat\":0,\"InputAlarm\":0,\"antpass\":0,\"interlock\":0,\"mutiopen\":0,\"tryalarm\":0,\"tamper\":0,\"wgformat\":0,\"wgoutput\":0,\"cardoutput\":0,\"dayzone\":[{\"day\":[{\"section\":\"01:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"02:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"03:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"04:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"05:00~00:0\n" +
+				"0\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"06:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"07:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]},{\"day\":[{\"section\":\"08:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"},{\"section\":\"00:00~00:00\"}]}],\"weekzone\":[{\"week\":[{\"day\":0},{\"day\":1},{\"day\":2},{\"day\":3},{\"day\":4},{\"day\":5},{\"day\":6}]},{\"week\":[{\"day\":10},{\"day\":11},{\"day\":12},{\"day\":13},{\"day\":14},{\"day\":15},{\"day\":16}]},{\"week\":[{\"day\":20},{\"day\":21},{\"day\":22},{\"day\":23},{\"day\":24},{\"day\":25},{\"day\":26}]},\n" +
+				"{\"week\":[{\"day\":30},{\"day\":31},{\"day\":32},{\"day\":33},{\"day\":34},{\"day\":35},{\"day\":36}]},{\"week\":[{\"day\":40},{\"day\":41},{\"day\":42},{\"day\":43},{\"day\":44},{\"day\":45},{\"day\":46}]},{\"week\":[{\"day\":50},{\"day\":51},{\"day\":52},{\"day\":53},{\"day\":54},{\"day\":55},{\"day\":56}]},{\"week\":[{\"day\":60},{\"day\":61},{\"day\":62},{\"day\":63},{\"day\":64},{\"day\":65},{\"day\":66}]},{\"week\":[{\"day\":70},{\"day\":71},{\"day\":72},{\"day\":73},{\"day\":74},{\"day\":75},{\"day\":76}]}],\"lockgroup\":[{\"group\":0},{\"group\":1},{\"group\":2},{\"group\":3},{\"group\":4}],\"nopentime\":[{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0},{\"day\":0}]}\n" +
 				"";
-		
+
 		String messageTemp="{\"cmd\":\"setuserlock\",\"count\":1,\"record\":[{\"enrollid\":1,\"weekzone\":1,\"weekzone2\":3,\"group\":1,\"starttime\":\"2010-11-11 00:00:00\",\"endtime\":\"2030-11-11 00:00:00\"}]}";
 		String s5="{\"cmd\":\"enableuser\",\"enrollid\":1,\"enflag\":0}";
 		String s6="{\"cmd\":\"getusername\",\"enrollid\":1}";
-		
-		
+
+
 		MachineCommand machineCommand=new MachineCommand();
 		machineCommand.setContent(message);
 		machineCommand.setName("enabledevice");
@@ -299,18 +299,18 @@ public class AllController extends ControllerBase {
 		machineCommand.setSerial(deviceSn);
 		machineCommand.setGmtCrate(new Date());
 		machineCommand.setGmtModified(new Date());
-		
+
 		machineComandService.addMachineCommand(machineCommand);
-		 
-		
+
+
 		return Msg.success();
 	}
-	
-	
+
+
 	/*采集所有的考勤记录，面向所有机器*/
 	@ResponseBody
 	@RequestMapping(value="/getAllLog",method = RequestMethod.GET)
-	public Msg getAllLog(@RequestParam("deviceSn")String deviceSn) {	
+	public Msg getAllLog(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getalllog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
 		MachineCommand machineCommand=new MachineCommand();
@@ -322,17 +322,17 @@ public class AllController extends ControllerBase {
 		machineCommand.setSerial(deviceSn);
 		machineCommand.setGmtCrate(new Date());
 		machineCommand.setGmtModified(new Date());
-		
+
 		machineComandService.addMachineCommand(machineCommand);
 		return Msg.success();
-		
-		
+
+
 	}
-	
+
 	/*采集所有的考勤记录，面向所有机器*/
 	@ResponseBody
 	@RequestMapping(value="/getNewLog",method = RequestMethod.GET)
-	public Msg getNewLog(@RequestParam("deviceSn")String deviceSn) {	
+	public Msg getNewLog(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getnewlog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
 		System.out.println(message);
@@ -345,13 +345,13 @@ public class AllController extends ControllerBase {
 		machineCommand.setSerial(deviceSn);
 		machineCommand.setGmtCrate(new Date());
 		machineCommand.setGmtModified(new Date());
-		
+
 		machineComandService.addMachineCommand(machineCommand);
 		return Msg.success();
-		
-		
+
+
 	}
-	
+
 	/*添加天时段,面向全部考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/setAccessDay",method = RequestMethod.POST)
@@ -360,45 +360,45 @@ public class AllController extends ControllerBase {
 			return Msg.fail();
 		}
 		accessaDayService.insert(accessDay);
-		
+
 		accessaDayService.setAccessDay();
 		return Msg.success();
 	}
-	
-	
+
+
 	/*添加周时段，面向全部考勤机*/
 	@ResponseBody
 	@RequestMapping(value="/setAccessWeek",method = RequestMethod.POST)
-	public Msg setAccessWeek(@ModelAttribute AccessWeek accessWeek) {	
+	public Msg setAccessWeek(@ModelAttribute AccessWeek accessWeek) {
 	//	accessWeek.set
 		if(accessWeekService.selectByPrimaryKey(accessWeek.getId())!=null){
 			return Msg.fail();
 		}
 		accessWeekService.insert(accessWeek);
-		accessWeekService.setAccessWeek();	
+		accessWeekService.setAccessWeek();
 		return Msg.success();
-		
+
 	}
-	
-	
+
+
 	/*设置锁组合*/
 	@ResponseBody
 	@RequestMapping(value="/setLocckGroup",method = RequestMethod.POST)
-	public Msg setLockGroup(@ModelAttribute LockGroup lockGroup) {		
-		lockGroupService.setLockGroup(lockGroup);	
+	public Msg setLockGroup(@ModelAttribute LockGroup lockGroup) {
+		lockGroupService.setLockGroup(lockGroup);
 		return Msg.success();
 	}
-	
+
 	/*设置用户锁权限*/
 	@ResponseBody
 	@RequestMapping(value="/setUserLock",method=RequestMethod.POST)
 	public Msg setUserLock(@ModelAttribute UserLock userLock) {
-		
+
 		userLockService.setUserLock(userLock, "2019-06-06 00:00:00", "2099-03-25 00:00:00");
 		return Msg.success();
 	}
-	
-	
+
+
 	/*显示员工列表*/
 	@RequestMapping(value="/emps")
 	@ResponseBody
@@ -418,7 +418,7 @@ public class AllController extends ControllerBase {
 			userInfo.setName(personList.get(i).getName());
 			for (int j = 0; j < enrollList.size(); j++) {
 				if(personList.get(i).getId()==enrollList.get(j).getEnrollId()) {
-				
+
 					if (enrollList.get(j).getBackupnum()==50) {
 						userInfo.setImagePath(enrollList.get(j).getImagePath());
 					}
@@ -429,55 +429,55 @@ public class AllController extends ControllerBase {
 		PageHelper.startPage(pn, emps.size());
 		System.out.println("用户数量"+personList.size());
 		PageInfo page= new PageInfo(emps,5);
-		
-		return Msg.success().add("pageInfo", page);
-		
-	}
-	
-	
-	
 
-	
-	
+		return Msg.success().add("pageInfo", page);
+
+	}
+
+
+
+
+
+
 	/*显示所有的打卡记录*/
 	@RequestMapping(value="/records")
 	@ResponseBody
 	public Msg getAllLogFromDB(@RequestParam(value="pn",defaultValue="1") Integer pn){
 		PageHelper.startPage(pn, 8);
-		
+
 		List<Records>records=recordService.selectAllRecords();
-		
+
 		PageInfo page=new PageInfo(records, 5);
 
 		return Msg.success().add("pageInfo", page);
-		
+
 	}
-	
-	
-	
+
+
+
 	/*设置周时间段*/
 	@RequestMapping(value="/accessDays",method = RequestMethod.GET)
 	@ResponseBody
 	public Msg getAccessDayFromDB() {
 		List<AccessDay>accessDays=accessaDayService.selectAll();
 		return Msg.success().add("accessdays", accessDays);
-		
+
 	}
-	
-	
-	
+
+
+
 	public Msg uploadUserToDevice(@RequestParam("enrollId")int enrollId) {
-		
+
 		Person person=personService.selectByPrimaryKey(enrollId);
-		
+
 		return Msg.success();
 	}
-	
+
 	@RequestMapping(value="/openDoor",method = RequestMethod.GET)
 	@ResponseBody
 	public Msg openDoor(@RequestParam("doorNum")int doorNum,@RequestParam("deviceSn")String deviceSn) {
 		 String message="{\"cmd\":\"opendoor\""+",\"doornum\":"+doorNum+"}";
-		   
+
 		 MachineCommand machineCommand=new MachineCommand();
 			machineCommand.setContent(message);
 			machineCommand.setName("opendoor");
@@ -487,10 +487,10 @@ public class AllController extends ControllerBase {
 			machineCommand.setSerial(deviceSn);
 			machineCommand.setGmtCrate(new Date());
 			machineCommand.setGmtModified(new Date());
-			
+
 			machineComandService.addMachineCommand(machineCommand);
 		return Msg.success();
 	}
-	
-	
+
+
 }
