@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import springfox.documentation.builders.PathSelectors;
@@ -29,7 +30,7 @@ public class SwaggerConfig {
 //                .apis(RequestHandlerSelectors.basePackage("com.presence.testpresence.controllers"))
                 //.paths(PathSelectors.ant("/foos/*"))
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
                 .build()
                 ;//.apiInfo(apiInfo());

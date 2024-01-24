@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.util.ControllerBase;
 import com.presence.testpresence.util.ImageProcess;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,7 +36,6 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 
 @RestController
-@Tag(name = "ABONNE API", description = "Abonne API")
 @RequestMapping("v1.0/device")
 public class AllController extends ControllerBase {
 
