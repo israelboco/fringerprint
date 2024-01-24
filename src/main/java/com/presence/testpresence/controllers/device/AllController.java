@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.util.ControllerBase;
 import com.presence.testpresence.util.ImageProcess;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,6 +37,8 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 
 @RestController
+@Tag(name = "ABONNE API", description = "Abonne API")
+@RequestMapping("v1.0/device")
 public class AllController extends ControllerBase {
 
 	/*@Autowired
@@ -44,7 +47,7 @@ public class AllController extends ControllerBase {
 
 
 
-	@RequestMapping("/hello1")
+	@GetMapping("/hello1")
 	public String hello() {
 		return "hello";
 	}
@@ -52,16 +55,14 @@ public class AllController extends ControllerBase {
 
 
 	/*获取所有考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/device",method=RequestMethod.GET)
+	@GetMapping("/device")
 	public Msg getAllDevice() {
 		List<Device>deviceList=deviceService.findAllDevice();
 		return Msg.success().add("device", deviceList);
 	}
 
 	/*获取所有考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/enrollInfo",method=RequestMethod.GET)
+	@GetMapping("/enrollInfo")
 	public Msg getAllEnrollInfo() {
 		List<Person>enrollInfo=personService.selectAll();
 
@@ -70,8 +71,7 @@ public class AllController extends ControllerBase {
 
 
 	/*采集所有的用户*/
-	@ResponseBody
-    @RequestMapping(value="/sendWs",method = RequestMethod.GET)
+    @GetMapping("/sendWs")
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
@@ -97,8 +97,7 @@ public class AllController extends ControllerBase {
     }
 
 
-	@ResponseBody
-	@RequestMapping(value="addPerson",method=RequestMethod.POST)
+	@PostMapping("addPerson")
 	public Msg addPerson(PersonTemp personTemp, MultipartFile pic, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 		String path="C:/dynamicface/picture/";
 	    System.out.println("图片真实路径"+path);
@@ -160,8 +159,7 @@ public class AllController extends ControllerBase {
 
 
 
-	@ResponseBody
-	@RequestMapping(value="getUserInfo",method=RequestMethod.GET)
+	@GetMapping("getUserInfo")
 	public Msg getUserInfo(@RequestParam("deviceSn")String deviceSn) {
 		System.out.println("进入controller");
 		List<Person>person=personService.selectAll();
@@ -183,8 +181,7 @@ public class AllController extends ControllerBase {
 
 
 	/*获取单个用户*/
-	@ResponseBody
-    @RequestMapping("sendGetUserInfo")
+    @GetMapping("sendGetUserInfo")
     public Msg sendGetUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("backupNum")int backupNum,@RequestParam("deviceSn")String deviceSn) {
 
 
@@ -201,8 +198,7 @@ public class AllController extends ControllerBase {
     }
 
 /*	下发所有用户，面向选中考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/setPersonToDevice",method = RequestMethod.GET)
+	@GetMapping("/setPersonToDevice")
 	public Msg sendSetUserInfo(@RequestParam("deviceSn")String deviceSn){
 
 		personService.setUserToDevice2(deviceSn);
@@ -211,16 +207,14 @@ public class AllController extends ControllerBase {
 	}
 
 
-	@ResponseBody
-	@RequestMapping(value="setUsernameToDevice",method=RequestMethod.GET)
+	@GetMapping("setUsernameToDevice")
 	public Msg setUsernameToDevice(@RequestParam("deviceSn")String deviceSn) {
 		personService.setUsernameToDevice(deviceSn);
 		return Msg.success();
 	}
 
 
-	@ResponseBody
-	@RequestMapping(value="/getDeviceInfo",method=RequestMethod.GET)
+	@GetMapping("/getDeviceInfo")
 	public Msg getDeviceInfo(@RequestParam("deviceSn") String deviceSn){
 		    String message="{\"cmd\":\"disabledevice\"}";
 
@@ -242,8 +236,7 @@ public class AllController extends ControllerBase {
 
 
 	/*下发单个用户到机器，对选中考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/setOneUser",method = RequestMethod.GET)
+	@GetMapping("/setOneUser")
 	public Msg setOneUserTo(@RequestParam("enrollId")int enrollId,@RequestParam("backupNum")int backupNum,@RequestParam("deviceSn")String deviceSn) {
 		Person person=new Person();
 		person=personService.selectByPrimaryKey(enrollId);
@@ -260,8 +253,7 @@ public class AllController extends ControllerBase {
 	}
 
 	/*从考勤机删除用户*/
-	@ResponseBody
-	@RequestMapping(value="/deletePersonFromDevice",method = RequestMethod.GET)
+	@GetMapping(value="/deletePersonFromDevice")
 	public Msg deleteDeviceUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("deviceSn")String deviceSn){
 
 		System.out.println("删除用户devicesn==================="+deviceSn);
@@ -272,8 +264,7 @@ public class AllController extends ControllerBase {
 
 
 	/*初始化考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/initSystem",method = RequestMethod.GET)
+	@GetMapping(value="/initSystem")
 	public Msg initSystem(@RequestParam("deviceSn")String deviceSn) {
 		System.out.println("初始化请求");
 		String  message="{\"cmd\":\"enabledevice\"}";
@@ -308,8 +299,7 @@ public class AllController extends ControllerBase {
 
 
 	/*采集所有的考勤记录，面向所有机器*/
-	@ResponseBody
-	@RequestMapping(value="/getAllLog",method = RequestMethod.GET)
+	@GetMapping("/getAllLog")
 	public Msg getAllLog(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getalllog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
@@ -330,8 +320,7 @@ public class AllController extends ControllerBase {
 	}
 
 	/*采集所有的考勤记录，面向所有机器*/
-	@ResponseBody
-	@RequestMapping(value="/getNewLog",method = RequestMethod.GET)
+	@GetMapping("/getNewLog")
 	public Msg getNewLog(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getnewlog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
@@ -353,8 +342,7 @@ public class AllController extends ControllerBase {
 	}
 
 	/*添加天时段,面向全部考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/setAccessDay",method = RequestMethod.POST)
+	@PostMapping(value="/setAccessDay")
 	public Msg setAccessDay(@ModelAttribute AccessDay accessDay) {
 		if(accessaDayService.selectByPrimaryKey(accessDay.getId())!=null){
 			return Msg.fail();
@@ -367,8 +355,7 @@ public class AllController extends ControllerBase {
 
 
 	/*添加周时段，面向全部考勤机*/
-	@ResponseBody
-	@RequestMapping(value="/setAccessWeek",method = RequestMethod.POST)
+	@PostMapping("/setAccessWeek")
 	public Msg setAccessWeek(@ModelAttribute AccessWeek accessWeek) {
 	//	accessWeek.set
 		if(accessWeekService.selectByPrimaryKey(accessWeek.getId())!=null){
@@ -382,8 +369,7 @@ public class AllController extends ControllerBase {
 
 
 	/*设置锁组合*/
-	@ResponseBody
-	@RequestMapping(value="/setLocckGroup",method = RequestMethod.POST)
+	@PostMapping(value="/setLocckGroup")
 	public Msg setLockGroup(@ModelAttribute LockGroup lockGroup) {
 		lockGroupService.setLockGroup(lockGroup);
 		return Msg.success();
@@ -401,7 +387,6 @@ public class AllController extends ControllerBase {
 
 	/*显示员工列表*/
 	@RequestMapping(value="/emps")
-	@ResponseBody
 	public Msg getAllPersonFromDB(@RequestParam(value="pn",defaultValue="1") Integer pn) {
 		// 引入 PageHelper 分页插件
 				/**
@@ -441,7 +426,6 @@ public class AllController extends ControllerBase {
 
 	/*显示所有的打卡记录*/
 	@RequestMapping(value="/records")
-	@ResponseBody
 	public Msg getAllLogFromDB(@RequestParam(value="pn",defaultValue="1") Integer pn){
 		PageHelper.startPage(pn, 8);
 
@@ -456,8 +440,7 @@ public class AllController extends ControllerBase {
 
 
 	/*设置周时间段*/
-	@RequestMapping(value="/accessDays",method = RequestMethod.GET)
-	@ResponseBody
+	@GetMapping(value="/accessDays")
 	public Msg getAccessDayFromDB() {
 		List<AccessDay>accessDays=accessaDayService.selectAll();
 		return Msg.success().add("accessdays", accessDays);
@@ -473,8 +456,7 @@ public class AllController extends ControllerBase {
 		return Msg.success();
 	}
 
-	@RequestMapping(value="/openDoor",method = RequestMethod.GET)
-	@ResponseBody
+	@GetMapping(value="/openDoor")
 	public Msg openDoor(@RequestParam("doorNum")int doorNum,@RequestParam("deviceSn")String deviceSn) {
 		 String message="{\"cmd\":\"opendoor\""+",\"doornum\":"+doorNum+"}";
 
