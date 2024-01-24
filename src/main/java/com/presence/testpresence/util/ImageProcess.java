@@ -90,7 +90,7 @@ public class  ImageProcess {
 		/*
 		 * String s=encoder.encode(data); String s2=s.replaceAll("[+]", "%2B");
 		 */
-	   return  data.toString();//org.apache.commons.codec.binary.Base64.encodeBase64String(data);
+	   return org.apache.commons.codec.binary.Base64.encodeBase64String(data);
 	  }
 	  
 	  
