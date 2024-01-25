@@ -32,6 +32,14 @@ public class User implements Serializable {
     private String salt;
     @Column(name = "pin")
     private String pin;
+    @Column(name = "account_expired")
+    private Boolean accountExpired;
+    @Column(name = "account_locked")
+    private Boolean accountLocked;
+    @Column(name = "credentials_expired")
+    private Boolean credentialsExpired;
+    @Column(name = "enabled")
+    private Boolean enabled;
 
 
     public Integer getId() {
@@ -96,5 +104,37 @@ public class User implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Boolean getAccountExpired() {
+        return accountExpired;
+    }
+
+    public void setAccountExpired(Boolean accountExpired) {
+        this.accountExpired = accountExpired;
+    }
+
+    public Boolean getAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(Boolean accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public Boolean getCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public void setCredentialsExpired(Boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

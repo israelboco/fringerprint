@@ -23,19 +23,19 @@ public class RoleService {
 
     public ReponseWs create(String label, String description){
         Role role = new Role();
-        role.setLabel(label);
+        role.setName(label);
         role.setDescription(description);
         roleRepository.save(role);
-        return new ReponseWs("success", "create", 200, role.getLabel());
+        return new ReponseWs("success", "create", 200, role.getName());
     }
 
     public ReponseWs update(Integer id, String label, String description){
         Role role = roleRepository.findOneById(id);
         if(role == null) return new ReponseWs("failed", "role not found", 404, null);
-        role.setLabel(label);
+        role.setName(label);
         role.setDescription(description);
         roleRepository.save(role);
-        return new ReponseWs("success", "update", 200, role.getLabel());
+        return new ReponseWs("success", "update", 200, role.getName());
     }
 
     public ReponseWs delete(Integer id){

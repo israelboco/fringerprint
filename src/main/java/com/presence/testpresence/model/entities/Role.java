@@ -11,8 +11,8 @@ public class Role implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "label", unique = true)
-    private String label;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @Column(name = "description")
     private String description;
@@ -25,12 +25,12 @@ public class Role implements Serializable {
         this.id = id;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
