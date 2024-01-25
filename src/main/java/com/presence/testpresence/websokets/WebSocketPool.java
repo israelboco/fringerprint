@@ -1,21 +1,15 @@
 package com.presence.testpresence.websokets;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import com.presence.testpresence.model.entities.DeviceStatus;
-import com.presence.testpresence.services.device.EnrollInfoService;
+import com.presence.testpresence.ws.DeviceStatus;
 import org.java_websocket.WebSocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class WebSocketPool {
 

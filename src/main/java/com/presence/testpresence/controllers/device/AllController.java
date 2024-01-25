@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.services.device.*;
 import com.presence.testpresence.util.ControllerBase;
 import com.presence.testpresence.util.ImageProcess;
+import com.presence.testpresence.ws.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,12 +39,38 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 @RestController
 @RequestMapping("v1.0/device")
-public class AllController extends ControllerBase {
+public class AllController {
 
 	/*@Autowired
 	EnrollInfoService enrollInfoService;
 	*/
 
+	@Autowired
+	private AccessDayService accessaDayService;
+
+	@Autowired
+	private AccessWeekService accessWeekService;
+
+	@Autowired
+	private LockGroupService lockGroupService;
+
+	@Autowired
+	private UserLockService userLockService;
+
+	@Autowired
+	private EnrollInfoService enrollInfoService;
+
+	@Autowired
+	private PersonService personService;
+
+	@Autowired
+	private RecordsService recordService;
+
+	@Autowired
+	private  DeviceService deviceService;
+
+	@Autowired
+	private MachineCommandService machineComandService;
 
 
 	@GetMapping("/hello1")
@@ -78,7 +106,7 @@ public class AllController extends ControllerBase {
 		//WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
 		for (int i = 0; i < deviceList.size(); i++) {
-			MachineCommand machineCommand=new MachineCommand();
+			MachineCommandWs machineCommand = new MachineCommandWs();
 			machineCommand.setContent(message);
 			machineCommand.setName("getuserlist");
 			machineCommand.setStatus(0);
@@ -216,7 +244,7 @@ public class AllController extends ControllerBase {
 	public Msg getDeviceInfo(@RequestParam("deviceSn") String deviceSn){
 		    String message="{\"cmd\":\"disabledevice\"}";
 
-			MachineCommand machineCommand=new MachineCommand();
+			MachineCommandWs machineCommand=new MachineCommandWs();
 			machineCommand.setContent(message);
 			machineCommand.setName("disabledevice");
 			machineCommand.setStatus(0);
@@ -279,7 +307,7 @@ public class AllController extends ControllerBase {
 		String s6="{\"cmd\":\"getusername\",\"enrollid\":1}";
 
 
-		MachineCommand machineCommand=new MachineCommand();
+		MachineCommandWs machineCommand=new MachineCommandWs();
 		machineCommand.setContent(message);
 		machineCommand.setName("enabledevice");
 		machineCommand.setStatus(0);
@@ -301,7 +329,7 @@ public class AllController extends ControllerBase {
 	public Msg getAllLog(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getalllog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
-		MachineCommand machineCommand=new MachineCommand();
+		MachineCommandWs machineCommand=new MachineCommandWs();
 		machineCommand.setContent(message);
 		machineCommand.setName("getalllog");
 		machineCommand.setStatus(0);
@@ -323,7 +351,7 @@ public class AllController extends ControllerBase {
 		String  message="{\"cmd\":\"getnewlog\",\"stn\":true}";
 	//	String messageTemp="{\"cmd\":\"getalllog\",\"stn\":true,\"from\":\"2020-12-03\",\"to\":\"2020-12-30\"}";
 		System.out.println(message);
-		MachineCommand machineCommand=new MachineCommand();
+		MachineCommandWs machineCommand=new MachineCommandWs();
 		machineCommand.setContent(message);
 		machineCommand.setName("getnewlog");
 		machineCommand.setStatus(0);
@@ -367,11 +395,11 @@ public class AllController extends ControllerBase {
 
 
 	/*设置锁组合*/
-	@PostMapping(value="/setLocckGroup")
-	public Msg setLockGroup(@ModelAttribute LockGroup lockGroup) {
-		lockGroupService.setLockGroup(lockGroup);
-		return Msg.success();
-	}
+//	@PostMapping(value="/setLocckGroup")
+//	public Msg setLockGroup(@ModelAttribute LockGroup lockGroup) {
+//		lockGroupService.setLockGroup(lockGroup);
+//		return Msg.success();
+//	}
 
 	/*设置用户锁权限*/
 	@ResponseBody
@@ -393,22 +421,7 @@ public class AllController extends ControllerBase {
 	//	PageHelper.startPage(pn, 8);
 		List<Person>personList=personService.selectAll();
 		List<EnrollInfo>enrollList=enrollInfoService.selectAll();
-		List<UserInfo>emps=new ArrayList<UserInfo>();
-		for (int i = 0; i < personList.size(); i++) {
-			UserInfo userInfo=new UserInfo();
-			userInfo.setEnrollId(personList.get(i).getId());
-			userInfo.setAdmin(personList.get(i).getRollId());
-			userInfo.setName(personList.get(i).getName());
-			for (int j = 0; j < enrollList.size(); j++) {
-				if(personList.get(i).getId()==enrollList.get(j).getEnrollId()) {
-
-					if (enrollList.get(j).getBackupnum()==50) {
-						userInfo.setImagePath(enrollList.get(j).getImagePath());
-					}
-				}
-			}
-			emps.add(userInfo);
-		}
+		List<UserInfo> emps = getUserInfos(personList, enrollList);
 		PageHelper.startPage(pn, emps.size());
 		System.out.println("用户数量"+personList.size());
 		PageInfo page= new PageInfo(emps,5);
@@ -417,9 +430,25 @@ public class AllController extends ControllerBase {
 
 	}
 
+	private List<UserInfo> getUserInfos(List<Person> personList, List<EnrollInfo> enrollList) {
+		List<UserInfo>emps=new ArrayList<UserInfo>();
+		for (int i = 0; i < personList.size(); i++) {
+			UserInfo userInfo=new UserInfo();
+			userInfo.setEnrollId(personList.get(i).getId());
+			userInfo.setAdmin(personList.get(i).getRollId());
+			userInfo.setName(personList.get(i).getName());
+			for (int j = 0; j < enrollList.size(); j++) {
+				if(personList.get(i).getId()== enrollList.get(j).getEnrollId()) {
 
-
-
+					if (enrollList.get(j).getBackupnum()==50) {
+						userInfo.setImagePath(enrollList.get(j).getImagePath());
+					}
+				}
+			}
+			emps.add(userInfo);
+		}
+		return emps;
+	}
 
 
 	/*显示所有的打卡记录*/
@@ -458,7 +487,7 @@ public class AllController extends ControllerBase {
 	public Msg openDoor(@RequestParam("doorNum")int doorNum,@RequestParam("deviceSn")String deviceSn) {
 		 String message="{\"cmd\":\"opendoor\""+",\"doornum\":"+doorNum+"}";
 
-		 MachineCommand machineCommand=new MachineCommand();
+		 MachineCommandWs machineCommand=new MachineCommandWs();
 			machineCommand.setContent(message);
 			machineCommand.setName("opendoor");
 			machineCommand.setStatus(0);

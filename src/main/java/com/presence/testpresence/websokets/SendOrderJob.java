@@ -1,6 +1,5 @@
 package com.presence.testpresence.websokets;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.Map.Entry;
 import com.presence.testpresence.mapper.DeviceMapper;
 import com.presence.testpresence.mapper.MachineCommandMapper;
 import com.presence.testpresence.model.entities.Device;
-import com.presence.testpresence.model.entities.DeviceStatus;
+import com.presence.testpresence.ws.DeviceStatus;
 import com.presence.testpresence.model.entities.MachineCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 

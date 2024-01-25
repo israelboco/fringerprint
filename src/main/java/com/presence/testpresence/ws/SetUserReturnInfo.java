@@ -1,4 +1,4 @@
-package com.presence.testpresence.model.entities;
+package com.presence.testpresence.ws;
 
 import javax.persistence.*;
 

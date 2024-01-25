@@ -1,39 +1,27 @@
 package com.presence.testpresence.websokets;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
-
-import javax.websocket.OnError;
 
 import com.presence.testpresence.mapper.MachineCommandMapper;
 import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.services.device.*;
 import com.presence.testpresence.util.ImageProcess;
+import com.presence.testpresence.ws.DeviceStatus;
+import com.presence.testpresence.ws.UserTemp;
 import org.java_websocket.WebSocket;
-import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.web.context.ContextLoader;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

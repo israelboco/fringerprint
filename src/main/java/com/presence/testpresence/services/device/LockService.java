@@ -1,27 +1,25 @@
-package com.presence.testpresence.services.device.impl;
+package com.presence.testpresence.services.device;
 
 import java.util.Date;
 import java.util.List;
 
-import com.presence.testpresence.mapper.DeviceMapper;
-import com.presence.testpresence.mapper.MachineCommandMapper;
 import com.presence.testpresence.model.entities.Device;
-import com.presence.testpresence.model.entities.LockGroup;
+import com.presence.testpresence.model.repositories.DeviceRepository;
+import com.presence.testpresence.model.repositories.MachineCommandRepository;
+import com.presence.testpresence.ws.LockGroup;
 import com.presence.testpresence.model.entities.MachineCommand;
-import com.presence.testpresence.services.device.LockGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class LockServiceImpl implements LockGroupService {
+@Component
+public class LockService {
 	
 	@Autowired
-	MachineCommandMapper machineCommandMapper;
+	MachineCommandRepository machineCommandRepository;
 	
 	@Autowired
-	DeviceMapper deviceMapper;
+	DeviceRepository deviceRepository;
 
-	@Override
 	public void setLockGroup(LockGroup lockGroup) {
 		// TODO Auto-generated method stub
 		StringBuilder sb=new StringBuilder();
@@ -35,7 +33,7 @@ public class LockServiceImpl implements LockGroupService {
          sb.append("{\"group\":" + lockGroup.getGroup5()+ "}]}");
          
          String message=sb.toString();
-         List<Device>deviceList=deviceMapper.findAllDevice();
+         List<Device> deviceList = deviceRepository.findAll();
  		for (int i = 0; i < deviceList.size(); i++) {
  			
  			MachineCommand machineCommand=new MachineCommand();
@@ -49,7 +47,7 @@ public class LockServiceImpl implements LockGroupService {
  			machineCommand.setGmtModified(new Date());
  			
  		//	machineComandService.addMachineCommand(machineCommand);
- 			machineCommandMapper.insert(machineCommand);
+ 			machineCommandRepository.save(machineCommand);
  		}
 		
 	}

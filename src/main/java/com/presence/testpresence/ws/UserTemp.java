@@ -1,29 +1,12 @@
-package com.presence.testpresence.model.entities;
+package com.presence.testpresence.ws;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "user_temp")
 public class UserTemp {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "enrollId")
 	int enrollId;
-    @Column(name = "admin")
 	int admin;
-    @Column(name = "backupnum")
 	int backupnum;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public int getEnrollId() {
 		return enrollId;

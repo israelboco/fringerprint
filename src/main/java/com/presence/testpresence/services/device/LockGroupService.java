@@ -1,9 +1,12 @@
 package com.presence.testpresence.services.device;
 
-import com.presence.testpresence.model.entities.LockGroup;
 
-public interface LockGroupService {
+import com.presence.testpresence.ws.LockGroup;
+import org.springframework.stereotype.Component;
+
+@Component
+public class LockGroupService {
 	
-	void setLockGroup(LockGroup lockGroup);
+	//void setLockGroup(LockGroup lockGroup);
 
 }

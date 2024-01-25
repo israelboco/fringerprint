@@ -1,28 +1,12 @@
-package com.presence.testpresence.model.entities;
+package com.presence.testpresence.ws;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "user_lock")
 public class UserLock {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "enrollId")
+
 	private int enrollId;
-    @Column(name = "weekZone")
 	private int weekZone;
-    @Column(name = "group")
 	private int group;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public int getEnrollId() {
 		return enrollId;
