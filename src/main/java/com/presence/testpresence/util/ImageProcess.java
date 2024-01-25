@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 
-import com.presence.testpresence.mapper.EnrollInfoMapper;
+import com.presence.testpresence.model.repositories.EnrollInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class  ImageProcess {
 
 	@Autowired
-	EnrollInfoMapper enrollInfoMapper;
+	EnrollInfoRepository enrollInfoRepository;
+
 	 public static boolean base64toImage(String base64String, String picName) {
 	     //   String savePath = InitializationCfg.getCfg("attachment.path");
 	        Date now = new Date();

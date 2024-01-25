@@ -9,12 +9,8 @@ import java.util.Map.Entry;
 import com.presence.testpresence.ws.DeviceStatus;
 import org.java_websocket.WebSocket;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebSocketPool {
-
-	@Autowired
-	EnrollInfoService enrollInfoService;
 	
 	
 	public static  final Map<String, DeviceStatus>wsDevice=new HashMap<String, DeviceStatus>();

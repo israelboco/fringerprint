@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import com.presence.testpresence.mapper.MachineCommandMapper;
 import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.model.repositories.MachineCommandRepository;
 import com.presence.testpresence.services.device.*;
 import com.presence.testpresence.util.ImageProcess;
 import com.presence.testpresence.ws.DeviceStatus;
@@ -46,7 +46,7 @@ public class WSServer extends WebSocketServer{
 	UserLockService userLockService;
 	
 	@Autowired
-	MachineCommandMapper machineCommandMapper;
+	MachineCommandRepository machineCommandRepository;
 	
 	int j=0;
     int h=0;
@@ -310,11 +310,15 @@ public class WSServer extends WebSocketServer{
 	 
 	
 	public void updateCommandStatus(String serial,String commandType) {
-		List<MachineCommand>machineCommand=machineCommandMapper.findPendingCommand(1, serial);
-		if(machineCommand.size()>0&&machineCommand.get(0).getName().equals(commandType)) {
-			
-			machineCommandMapper.updateCommandStatus(1, 0,new Date(), machineCommand.get(0).getId());
-			
+		List<MachineCommand> machineCommand=machineCommandRepository.findBySendStatusAndSerial(1, serial);
+		if(!machineCommand.isEmpty() && machineCommand.get(0).getName().equals(commandType)) {
+			MachineCommand machineCmd = new MachineCommand();
+			machineCmd.setStatus(0);
+			machineCmd.setSendStatus(1);
+			machineCmd.setRunTime(new Date());
+			machineCmd.setId(machineCommand.get(0).getId());
+			machineCommandRepository.save(machineCmd);
+
 		}
 	}
 	

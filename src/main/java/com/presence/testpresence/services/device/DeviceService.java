@@ -61,7 +61,7 @@ public class DeviceService {
 
 	public Device selectDeviceBySerialNum(String serialNum) {
 		// TODO Auto-generated method stub
-        return deviceRepository.findByBySerialNum(serialNum);
+        return deviceRepository.findBySerialNum(serialNum);
 	}
 
 	public int updateStatusByPrimaryKey(int id, int status) {

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.presence.testpresence.mapper.DeviceMapper;
-import com.presence.testpresence.mapper.MachineCommandMapper;
 import com.presence.testpresence.model.entities.Device;
+import com.presence.testpresence.model.repositories.DeviceRepository;
+import com.presence.testpresence.model.repositories.MachineCommandRepository;
 import com.presence.testpresence.ws.DeviceStatus;
 import com.presence.testpresence.model.entities.MachineCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SendOrderJob extends Thread{
 	
     @Autowired
-	MachineCommandMapper machineCommandMapper;
+	MachineCommandRepository machineCommandRepository;
     
     @Autowired
-	DeviceMapper deviceMapper;
+	DeviceRepository deviceRepository;
 	
 	//List<Device>deviceList=deviceService.
 	Map<String, DeviceStatus>wdList=WebSocketPool.wsDevice;
@@ -46,14 +46,19 @@ public class SendOrderJob extends Thread{
 			while(entries.hasNext()){		
 				Entry<String,DeviceStatus>entry=entries.next();
 			//	System.out.println("数据"+entry);
-				List<MachineCommand>inSending=machineCommandMapper.findPendingCommand(0, entry.getKey());
+				List<MachineCommand>inSending=machineCommandRepository.findBySendStatusAndSerial(0, entry.getKey());
 			//	System.out.println("数据"+inSending);
 			    if(inSending.size()>0) {
-			    	List<MachineCommand>pendingCommand=machineCommandMapper.findPendingCommand(1, entry.getKey());
+			    	List<MachineCommand>pendingCommand=machineCommandRepository.findBySendStatusAndSerial(1, entry.getKey());
 			    	if (pendingCommand.size()<=0) {
 			    		
 			    		entry.getValue().getWebSocket().send(inSending.get(0).getContent());
-			    		machineCommandMapper.updateCommandStatus(0, 1,new Date(), inSending.get(0).getId());
+						MachineCommand machineCommand = new MachineCommand();
+						machineCommand.setStatus(0);
+						machineCommand.setSendStatus(1);
+						machineCommand.setRunTime(new Date());
+						machineCommand.setId(inSending.get(0).getId());
+						machineCommandRepository.save(machineCommand);
 					}else if(pendingCommand.size()==1){
 						if(System.currentTimeMillis()-(pendingCommand.get(0).getRunTime()).getTime()>20*1000) {
 							System.out.println("数据"+pendingCommand);
@@ -63,8 +68,8 @@ public class SendOrderJob extends Thread{
 							MachineCommand machineCommand=pendingCommand.get(0);
 							machineCommand.setErrCount(machineCommand.getErrCount()+1);
 							machineCommand.setRunTime(new Date());
-							machineCommandMapper.updateByPrimaryKey(machineCommand);
-					    	Device device=deviceMapper.selectDeviceBySerialNum(pendingCommand.get(0).getSerial());
+							machineCommandRepository.save(machineCommand);
+					    	Device device=deviceRepository.findBySerialNum(pendingCommand.get(0).getSerial());
 							if (device.getStatus()!=0) {
 								entry.getValue().getWebSocket().send(pendingCommand.get(0).getContent());
 								
@@ -72,7 +77,7 @@ public class SendOrderJob extends Thread{
 							}else {
 								MachineCommand machineCommand=pendingCommand.get(0);
 								machineCommand.setErrCount(machineCommand.getErrCount()+1);
-								machineCommandMapper.updateByPrimaryKey(machineCommand);
+								machineCommandRepository.save(machineCommand);
 							}
 						}
 					}

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface DeviceRepository extends JpaRepository<Device, Integer> {
 
     Device findOneById(Integer id);
-    Device findByBySerialNum(String serialNum);
+    Device findBySerialNum(String serialNum);
 
 }

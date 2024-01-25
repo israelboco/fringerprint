@@ -76,7 +76,7 @@ public class SendOrderJob extends Thread {
 							machineCommand.setErrCount(machineCommand.getErrCount()+1);
 							machineCommand.setRunTime(new Date());
 							machineCommandRepository.save(machineCommand);
-					    	Device device=deviceRepository.findByBySerialNum(pendingCommand.get(0).getSerial());
+					    	Device device=deviceRepository.findBySerialNum(pendingCommand.get(0).getSerial());
 							if (device.getStatus()!=0) {
 								entry.getValue().getWebSocket().send(pendingCommand.get(0).getContent());
 								
