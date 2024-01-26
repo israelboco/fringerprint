@@ -15,10 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.services.CompanieService;
 import com.presence.testpresence.services.device.*;
 import com.presence.testpresence.util.ControllerBase;
 import com.presence.testpresence.util.ImageProcess;
+import com.presence.testpresence.websokets.WebSocketPool;
 import com.presence.testpresence.ws.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -41,6 +45,7 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 @RequestMapping("v1.0/device")
 public class AllController {
 
+	private static Logger logger = LogManager.getLogger(AllController.class);
 	/*@Autowired
 	EnrollInfoService enrollInfoService;
 	*/
@@ -73,8 +78,8 @@ public class AllController {
 	private MachineCommandService machineComandService;
 
 
-	@GetMapping("/hello1")
-	public String hello() {
+	@GetMapping("{serialNum}/hello1")
+	public String hello(@PathVariable String serialNum) {
 		return "hello";
 	}
 
@@ -88,8 +93,8 @@ public class AllController {
 	}
 
 	/*获取所有考勤机*/
-	@GetMapping("/enrollInfo")
-	public Msg getAllEnrollInfo() {
+	@GetMapping("{serialNum}/enrollInfo")
+	public Msg getAllEnrollInfo(@PathVariable String serialNum) {
 		List<Person>enrollInfo=personService.selectAll();
 
 		return Msg.success().add("enrollInfo", enrollInfo);
@@ -101,10 +106,11 @@ public class AllController {
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
-		System.out.println("sss"+deviceSn);
+		logger.debug("sss : "+deviceSn);
 
-		//WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
+		WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
+
 		for (int i = 0; i < deviceList.size(); i++) {
 			MachineCommandWs machineCommand = new MachineCommandWs();
 			machineCommand.setContent(message);
@@ -126,8 +132,8 @@ public class AllController {
 	@PostMapping("addPerson")
 	public Msg addPerson(PersonTemp personTemp, MultipartFile pic, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 		String path="C:/dynamicface/picture/";
-	    System.out.println("图片真实路径"+path);
-	    System.out.println("密码是"+personTemp.getPassword());
+	    logger.debug("图片真实路径 : "+path);
+	    logger.debug("密码是 : "+personTemp.getPassword());
 	    String photoName="";
 	    String newName="";
 	 //   EnrollInfo enrollInfo=new EnrollInfo();
@@ -140,7 +146,6 @@ public class AllController {
 	    				photoFile.mkdirs();
 	    			}
 	    			pic.transferTo(photoFile);
-
 			}
 
 		}
@@ -175,7 +180,7 @@ public class AllController {
 	    	String base64Str= ImageProcess.imageToBase64Str("C:/dynamicface/picture/"+newName);
 	    	enrollInfoTemp.setImagePath(newName);
 	    	enrollInfoTemp.setSignatures(base64Str);
-	    	System.out.println("图片数据长度"+base64Str.length());
+	    	logger.debug("图片数据长度"+base64Str.length());
 	    	enrollInfoService.insertSelective(enrollInfoTemp);
 	    }
 
@@ -187,7 +192,7 @@ public class AllController {
 
 	@GetMapping("getUserInfo")
 	public Msg getUserInfo(@RequestParam("deviceSn")String deviceSn) {
-		System.out.println("进入controller");
+		logger.debug("进入controller");
 		List<Person>person=personService.selectAll();
 		List<EnrollInfo>enrollsPrepared=new ArrayList<EnrollInfo>();
         for (int i = 0; i < person.size(); i++) {
@@ -199,7 +204,7 @@ public class AllController {
 			}
 			}
 		}
-        System.out.println("采集用户数据"+enrollInfoService);
+        logger.debug("采集用户数据"+enrollInfoService);
         personService.getSignature2(enrollsPrepared, deviceSn);
 
 		return  Msg.success();
@@ -210,10 +215,8 @@ public class AllController {
     @GetMapping("sendGetUserInfo")
     public Msg sendGetUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("backupNum")int backupNum,@RequestParam("deviceSn")String deviceSn) {
 
-
-
 		List<Device>deviceList=deviceService.findAllDevice();
-		System.out.println("设备信息"+deviceList);
+		logger.debug("设备信息"+deviceList);
 
 		String message="{\"cmd\":\"getuserinfo\",\"enrollid\":"+enrollId+",\"backupnum\":"+ backupNum+"}";
 
@@ -282,7 +285,7 @@ public class AllController {
 	@GetMapping(value="/deletePersonFromDevice")
 	public Msg deleteDeviceUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("deviceSn")String deviceSn){
 
-		System.out.println("删除用户devicesn==================="+deviceSn);
+		logger.debug("删除用户devicesn==================="+deviceSn);
 		personService.deleteUserInfoFromDevice(enrollId, deviceSn);
 	//	personService.deleteByPrimaryKey(enrollId);
 		return Msg.success();
