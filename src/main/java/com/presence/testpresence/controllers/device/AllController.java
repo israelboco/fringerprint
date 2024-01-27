@@ -78,8 +78,8 @@ public class AllController {
 	private MachineCommandService machineComandService;
 
 
-	@GetMapping("{serialNum}/hello1")
-	public String hello(@PathVariable String serialNum) {
+	@GetMapping("{/hello1")
+	public String hello() {
 		return "hello";
 	}
 
@@ -93,8 +93,8 @@ public class AllController {
 	}
 
 	/*获取所有考勤机*/
-	@GetMapping("{serialNum}/enrollInfo")
-	public Msg getAllEnrollInfo(@PathVariable String serialNum) {
+	@GetMapping("/enrollInfo")
+	public Msg getAllEnrollInfo() {
 		List<Person>enrollInfo=personService.selectAll();
 
 		return Msg.success().add("enrollInfo", enrollInfo);

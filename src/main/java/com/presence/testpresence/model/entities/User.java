@@ -41,6 +41,9 @@ public class User implements Serializable {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @Column(name = "id_user_info")
+    private Integer idUserInfo;
+
 
     public Integer getId() {
         return id;
@@ -136,5 +139,13 @@ public class User implements Serializable {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Integer getIdUserInfo() {
+        return idUserInfo;
+    }
+
+    public void setIdUserInfo(Integer idUserInfo) {
+        this.idUserInfo = idUserInfo;
     }
 }
