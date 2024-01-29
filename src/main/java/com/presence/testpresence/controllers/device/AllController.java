@@ -42,7 +42,6 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 
 @RestController
-@RequestMapping("v1.0/device")
 public class AllController {
 
 	private static Logger logger = LogManager.getLogger(AllController.class);
@@ -108,7 +107,7 @@ public class AllController {
 
 		logger.debug("sss : "+deviceSn);
 
-		WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
+		//WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
 
 		for (int i = 0; i < deviceList.size(); i++) {

@@ -14,6 +14,7 @@ import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 public class OpenApiConfig {
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -43,5 +44,6 @@ public class OpenApiConfig {
         };
 
     }
+
 
 }
