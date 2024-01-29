@@ -77,7 +77,7 @@ public class AllController {
 	private MachineCommandService machineComandService;
 
 
-	@GetMapping("{/hello1")
+	@GetMapping("/hello1")
 	public String hello() {
 		return "hello";
 	}

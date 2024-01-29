@@ -14,17 +14,9 @@ import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 public class OpenApiConfig {
-
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-//                .antMatchers("/v2/api-docs",
-//                "/configuration/ui",
-//                "/swagger-resources/**",
-//                "/configuration/security",
-//                "/swagger-ui/**",
-//                "/webjars/**",
-//                "/v3/api-docs/**")
                 .components(new Components())
                 .info(new Info().title("BackOffice And Mobile service Application API").description(
                         "This service is in charge of backoffice module"));
@@ -44,6 +36,5 @@ public class OpenApiConfig {
         };
 
     }
-
 
 }
