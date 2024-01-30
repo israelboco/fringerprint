@@ -40,11 +40,12 @@ import com.fasterxml.jackson.annotation.JacksonInject.Value;
 
 
 
-
 @RestController
+@RequestMapping("api/v1/device")
 public class AllController {
 
 	private static Logger logger = LogManager.getLogger(AllController.class);
+
 	/*@Autowired
 	EnrollInfoService enrollInfoService;
 	*/
@@ -91,6 +92,12 @@ public class AllController {
 		return Msg.success().add("device", deviceList);
 	}
 
+	@PostMapping("/device")
+	public Msg insertDevice(@RequestParam String serialNum, @RequestParam Integer status) {
+		Integer device = deviceService.insert(serialNum, status);
+		return Msg.success();
+	}
+
 	/*获取所有考勤机*/
 	@GetMapping("/enrollInfo")
 	public Msg getAllEnrollInfo() {
@@ -105,9 +112,9 @@ public class AllController {
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
-		logger.debug("sss : "+deviceSn);
+		logger.debug("sss : " + deviceSn);
 
-		//WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
+		WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
 
 		for (int i = 0; i < deviceList.size(); i++) {
@@ -138,8 +145,8 @@ public class AllController {
 	 //   EnrollInfo enrollInfo=new EnrollInfo();
 	    if(pic!=null){
 	    	if (pic.getOriginalFilename()!=null&&!("").equals(pic.getOriginalFilename())) {
-	    		 photoName=pic.getOriginalFilename();
-	    		 newName=UUID.randomUUID().toString()+photoName.substring(photoName.lastIndexOf("."));
+	    		 photoName = pic.getOriginalFilename();
+	    		 newName = UUID.randomUUID().toString() + photoName.substring(photoName.lastIndexOf("."));
 	    		 File photoFile=new File(path, newName);
 	    			if (!photoFile.exists()) {
 	    				photoFile.mkdirs();
@@ -153,18 +160,18 @@ public class AllController {
 	    person.setName(personTemp.getName());
 	    person.setRollId(personTemp.getPrivilege());
 	    Person person2=personService.selectByPrimaryKey(personTemp.getUserId());
-	    if(person2==null) {
+	    if(person2 == null) {
 	    	personService.insert(person);
 	    }
-	    if(personTemp.getPassword()!=null) {
-	    	EnrollInfo enrollInfoTemp2=new EnrollInfo();
+	    if(personTemp.getPassword() != null) {
+	    	EnrollInfo enrollInfoTemp2 = new EnrollInfo();
 	    	enrollInfoTemp2.setBackupnum(10);
 	    	enrollInfoTemp2.setEnrollId(personTemp.getUserId());
 	    	enrollInfoTemp2.setSignatures(personTemp.getPassword());
 	    	enrollInfoService.insertSelective(enrollInfoTemp2);
 	    }
-	    if(personTemp.getCardNum()!=null) {
-	    	EnrollInfo enrollInfoTemp3=new EnrollInfo();
+	    if(personTemp.getCardNum() != null) {
+	    	EnrollInfo enrollInfoTemp3 = new EnrollInfo();
 	    	enrollInfoTemp3.setBackupnum(11);
 	    	enrollInfoTemp3.setEnrollId(personTemp.getUserId());
 	    	enrollInfoTemp3.setSignatures(personTemp.getCardNum());
@@ -203,7 +210,7 @@ public class AllController {
 			}
 			}
 		}
-        logger.debug("采集用户数据"+enrollInfoService);
+        logger.debug("采集用户数据"+enrollsPrepared);
         personService.getSignature2(enrollsPrepared, deviceSn);
 
 		return  Msg.success();

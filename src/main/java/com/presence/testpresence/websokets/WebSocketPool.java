@@ -13,14 +13,14 @@ import org.java_websocket.WebSocket;
 public class WebSocketPool {
 	
 	
-	public static  final Map<String, DeviceStatus>wsDevice=new HashMap<String, DeviceStatus>();
+	public static  final Map<String, DeviceStatus> wsDevice = new HashMap<String, DeviceStatus>();
 	
 	
     
   
   /*  带状态的socket*/
     public static WebSocket getDeviceSocketBySn(String deviceSn) {
-    	DeviceStatus deviceStatus=wsDevice.get(deviceSn);
+    	DeviceStatus deviceStatus = wsDevice.get(deviceSn);
     
 		return deviceStatus.getWebSocket();
 		
