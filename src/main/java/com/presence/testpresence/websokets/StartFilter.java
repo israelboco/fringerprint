@@ -31,7 +31,7 @@ public class StartFilter implements Filter {
     }
 
     /**
-     * 启动即时聊天服务
+     * Démarrage du service de chat en direct
      */
     public void startWebsocketInstantMsg() {
     	ApplicationContext ac = new FileSystemXmlApplicationContext("classpath:spring-mybatis.xml"); 

@@ -1,5 +1,8 @@
 package com.presence.testpresence.websokets;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -24,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 
 public class WSServer extends WebSocketServer{
@@ -54,29 +56,33 @@ public class WSServer extends WebSocketServer{
    static int l;
    Long timeStamp=0L;
    Long timeStamp2=0L;
+
+   //private static int TCP_PORT = 9000;
+
    public static boolean setUserResult;
    public static Logger logger = LoggerFactory.getLogger(WSServer.class);
   
 	  
 	  public WSServer(InetSocketAddress address) {
 	        super(address);
-	        logger.info("地址" + address);
+	        logger.info("adresse ws" + address);
 	    }
 
-	    public WSServer(int port) throws UnknownHostException {
-	        super(new InetSocketAddress(port));
-	        logger.info("端口" + port);
+	    public WSServer(int TCP_PORT) throws UnknownHostException {
+	        super(new InetSocketAddress(TCP_PORT));
+	        logger.info("port ws" + TCP_PORT);
 	    }
 	  
 	  
 	@Override
-	public void onOpen(org.java_websocket.WebSocket conn,
+	public void onOpen(WebSocket conn,
 			ClientHandshake handshake) {
 		// TODO Auto-generated method stub
 	//	deviceService=(DeviceService)ContextLoader.getCurrentWebApplicationContext().getBean(DeviceService.class);
-		  System.out.println("有人连接Socket conn:" + conn);
+		  logger.info("Quelqu'un se connecte à la prise :" + conn);
 	      //  l++;
-		 logger.info("有人连接Socket conn:" + conn.getRemoteSocketAddress());
+		 logger.info("New connection from :" + conn.getRemoteSocketAddress());
+		 //logger.info("New connection from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 		 l++;
 		
 	}
@@ -84,18 +90,18 @@ public class WSServer extends WebSocketServer{
 	
 	
 	@Override
-	public void onClose(org.java_websocket.WebSocket conn, int code,
+	public void onClose(WebSocket conn, int code,
 			String reason, boolean remote) {
 		// TODO Auto-generated method stub
 		    String sn=WebSocketPool.removeDeviceByWebsocket(conn);
 			//deviceService.updateStatusByPrimarykey(id, status)
 			Device d1=deviceService.selectDeviceBySerialNum(sn);
 			deviceService.updateStatusByPrimaryKey(d1.getId(), 0);
-		  logger.info("onClose:" + conn.getRemoteSocketAddress());
+		  logger.info("onClose connection from :" + conn.getRemoteSocketAddress());
 	}
 
 	@Override
-	public void onMessage(org.java_websocket.WebSocket conn, String message) {
+	public void onMessage(WebSocket conn, String message) {
 		
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        String ret;
@@ -109,7 +115,7 @@ public class WSServer extends WebSocketServer{
 					if (jsonNode.has("cmd")) {
 						ret=jsonNode.get("cmd").asText();
 						if ("reg".equals(ret)) {
-							System.out.println("设备信息"+jsonNode);
+							logger.info("Informations sur l'équipement "+jsonNode);
 							try {
 								
 							this.getDeviceInfo(jsonNode, conn);
@@ -173,10 +179,10 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
 						    updateCommandStatus(sn, "setuserinfo");
-							System.out.println("下发数据"+jsonNode);
+							logger.info("Diffusion des données: "+jsonNode);
 						}else if("getalllog".equals(ret)){
-							
-							System.out.println("获取所有打卡记录"+jsonNode);
+
+							logger.info("Obtenir tous les enregistrements de poinçons: "+jsonNode);
 							try {
 								this.getAllLog(jsonNode,conn);
 							} catch (Exception e) {
@@ -186,8 +192,9 @@ public class WSServer extends WebSocketServer{
 							}
 							
 						}else if("getnewlog".equals(ret)){
-							
-							System.out.println("获取所有打卡记录"+jsonNode);
+
+							logger.info("Obtenir tous les enregistrements de poinçons: "+jsonNode);
+
 							try {
 								this.getnewLog(jsonNode,conn);
 							} catch (Exception e) {
@@ -204,7 +211,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println("删除人员"+jsonNode);
+							logger.info("Suppression de personnel"+jsonNode);
 							updateCommandStatus(sn, "deleteuser");
 						}else if("initsys".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -213,7 +220,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println("初始化系统"+jsonNode);
+							logger.info("Initialisation du système: "+jsonNode);
 							updateCommandStatus(sn, "initsys");
 						}else if("setdevlock".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -222,7 +229,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println("设置天时间段"+jsonNode);
+							logger.info("Réglage de la période de jour: "+jsonNode);
 							updateCommandStatus(sn, "setdevlock");
 						}else if("setuserlock".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -231,7 +238,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println("门禁授权"+jsonNode);
+							logger.info("Autorisation d'accès: "+jsonNode);
 							updateCommandStatus(sn, "setuserlock");
 						}else if("getdevinfo".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -240,7 +247,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println(new Date()+"设备信息"+jsonNode);
+							logger.info(new Date()+ " Informations sur l'équipement: " +jsonNode);
 							updateCommandStatus(sn, "getdevinfo");
 						}else if("setusername".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -249,7 +256,7 @@ public class WSServer extends WebSocketServer{
 						    deviceStatus.setDeviceSn(sn);
 						    deviceStatus.setStatus(1);
 						    updateDevice(sn, deviceStatus);
-							System.out.println(new Date()+"下发姓名"+jsonNode);
+							logger.info(new Date()+ " Nom à délivrer " +jsonNode);
 							updateCommandStatus(sn, "setusername");
 						}else if("reboot".equals(ret)){
 							String sn=jsonNode.get("sn").asText();
@@ -290,7 +297,7 @@ public class WSServer extends WebSocketServer{
 
 	/*websocket链接发生错误的时候*/
 	@Override
-	public void onError(org.java_websocket.WebSocket conn, Exception ex) {
+	public void onError(WebSocket conn, Exception ex) {
 		// TODO Auto-generated method stub
 		ex.printStackTrace();
 		if(conn!=null){
@@ -298,7 +305,7 @@ public class WSServer extends WebSocketServer{
 			WebSocketPool.removeDeviceByWebsocket(conn);
 		}
 	//	System.out.println("socket断开了");
-		System.out.println("socket连接断开了"+conn);
+		logger.error("La connexion de la prise est interrompue: "+conn);
 	}
 
 	public void onStart() {
@@ -311,23 +318,25 @@ public class WSServer extends WebSocketServer{
 	
 	public void updateCommandStatus(String serial,String commandType) {
 		List<MachineCommand> machineCommand=machineCommandRepository.findBySendStatusAndSerial(1, serial);
-		if(!machineCommand.isEmpty() && machineCommand.get(0).getName().equals(commandType)) {
-			MachineCommand machineCmd = new MachineCommand();
-			machineCmd.setStatus(0);
-			machineCmd.setSendStatus(1);
-			machineCmd.setRunTime(new Date());
-			machineCmd.setId(machineCommand.get(0).getId());
-			machineCommandRepository.save(machineCmd);
-
+		for (MachineCommand mc: machineCommand){
+			if(mc.getName().equals(commandType)) {
+				MachineCommand machineCmd = new MachineCommand();
+				machineCmd.setStatus(0);
+				machineCmd.setSendStatus(1);
+				machineCmd.setRunTime(new Date());
+				machineCmd.setId(mc.getId());
+				machineCommandRepository.save(machineCmd);
+			}
 		}
+
 	}
 	
 	
 	
 	   //获得连接设备信息
-	public void getDeviceInfo(JsonNode jsonNode,org.java_websocket.WebSocket args1){
+	public void getDeviceInfo(JsonNode jsonNode, WebSocket args1){
 		String sn=jsonNode.get("sn").asText();
-		System.out.println("序列号"+sn);
+		logger.info("numero de serie :"+sn);
 		DeviceStatus deviceStatus=new DeviceStatus();
 		if(sn!=null){
 		
@@ -350,7 +359,7 @@ public class WSServer extends WebSocketServer{
 		    deviceStatus.setStatus(1);
 		    deviceStatus.setDeviceSn(sn);
 		    updateDevice(sn, deviceStatus);
-		    System.out.println(WebSocketPool.getDeviceStatus(sn));
+		    logger.debug("getDeviceInfo : " + WebSocketPool.getDeviceStatus(sn).getDeviceSn());
 	        
 		}else{
 			 args1.send("{\"ret\":\"reg\",\"result\":false,\"reason\":1}");
@@ -372,13 +381,13 @@ public class WSServer extends WebSocketServer{
 			WebSocketPool.addDeviceAndStatus(sn, deviceStatus);
 		}
 	}
-	
 
-   //获得打卡记录，包括机器号
+
+	//Accès aux registres de log, y compris les numéros de machine
 	private void getAttandence(JsonNode jsonNode,
-			org.java_websocket.WebSocket conn) {
+			WebSocket conn) {
 		// TODO Auto-generated method stub
-		System.out.println("打卡记录-----------"+jsonNode);
+		logger.debug("Buche de log -----------"+jsonNode);
 		String sn=jsonNode.get("sn").asText();
 		int count=jsonNode.get("count").asInt();
 		//int logindex=jsonNode.get("logindex").asInt();
@@ -408,7 +417,7 @@ public class WSServer extends WebSocketServer{
 					 temperature=type.get("temp").asDouble();
 					 temperature=temperature/100;
 					 temperature=(double) Math.round(temperature * 10) / 10;
-					System.out.println("温度值"+temperature);
+					logger.debug("valeur de la température: "+temperature);
 				}
 				Records record=new Records();
 				record.setDeviceSerialNum(sn);
@@ -463,7 +472,7 @@ public class WSServer extends WebSocketServer{
 		
 	}
 
-	//获取机器推送注册信息
+	// Obtenir des informations sur l'enregistrement de la poussée de la machine
 	private void getEnrollInfo(JsonNode jsonNode,
 			org.java_websocket.WebSocket conn) {
 		// TODO Auto-generated method stub
@@ -495,7 +504,7 @@ public class WSServer extends WebSocketServer{
 			//	System.out.println("员工号"+enrollId);
 				personService.selectByPrimaryKey(enrollId);
 				//System.out.println("人员信息"+personService.selectByPrimaryKey(enrollId));
-				System.out.println("获取人员数据"+personService.selectByPrimaryKey(enrollId));
+				logger.debug("Accès aux données du personnel : " + personService.selectByPrimaryKey(enrollId).getName());
 				if (personService.selectByPrimaryKey(enrollId)==null) {
 					personService.insert(person);
 				}
@@ -538,9 +547,9 @@ public class WSServer extends WebSocketServer{
 		 timeStamp2=System.currentTimeMillis();
 	}
 
-       //获取用户列表，服务器主动发出请求
+	// Obtenir une liste d'utilisateurs, demande initiée par le serveur
      	private void getUserList(JsonNode jsonNode,
-			org.java_websocket.WebSocket conn) {
+			WebSocket conn) {
 		    List<UserTemp>userTemps=new ArrayList<UserTemp>();
      		boolean result=jsonNode.get("result").asBoolean();
      		
@@ -609,9 +618,9 @@ public class WSServer extends WebSocketServer{
 	     }
 
 
-//     	获得用户详细信息
+	// Obtenir les détails de l'utilisateur
      	private void getUserInfo(JsonNode jsonNode,
-    			org.java_websocket.WebSocket conn) {
+    			WebSocket conn) {
     		// TODO Auto-generated method stub
      		System.out.println(jsonNode);
      		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -619,7 +628,7 @@ public class WSServer extends WebSocketServer{
      		Boolean result=jsonNode.get("result").asBoolean();
      		
      		String sn=jsonNode.get("sn").asText();
-     		System.out.println("sn数据"+sn);
+     		logger.debug("données sn"+sn);
      	
      		System.out.println(jsonNode);
      	//	DeviceStatus deviceStatus=new DeviceStatus();
@@ -664,8 +673,8 @@ public class WSServer extends WebSocketServer{
      		  updateCommandStatus(sn, "getuserinfo");
     	
     	}
-     	
-     	//获取全部打卡记录
+
+	//Importe tous les enregistrements de log
      	private void getAllLog(JsonNode jsonNode, WebSocket conn) {
     	
      		Boolean result=jsonNode.get("result").asBoolean();
@@ -692,7 +701,7 @@ public class WSServer extends WebSocketServer{
 							 temperature=type.get("temp").asDouble();
 							 temperature=temperature/100;
 							 temperature=(double) Math.round(temperature * 10) / 10;
-							System.out.println("温度值"+temperature);
+							logger.debug("valeur de la température: "+temperature);
 						}
 						Records record=new Records();
 					//	record.setDeviceSerialNum(sn);
@@ -721,13 +730,13 @@ public class WSServer extends WebSocketServer{
      		 updateCommandStatus(sn, "getalllog");
     		
     	}
-     	
-     	//获取全部打卡记录
+
+	//Importe tous les enregistrements de log
      	private void getnewLog(JsonNode jsonNode, WebSocket conn) {
     	
      		Boolean result=jsonNode.get("result").asBoolean();
      		List<Records>recordAll=new ArrayList<Records>();
-    		System.out.println("记录"+jsonNode);
+    		logger.debug("record (en sport, etc.): "+jsonNode);
      		String sn=jsonNode.get("sn").asText();
     		JsonNode records=jsonNode.get("record");
     		DeviceStatus deviceStatus=new DeviceStatus();
@@ -749,7 +758,7 @@ public class WSServer extends WebSocketServer{
 							 temperature=type.get("temp").asDouble();
 							 temperature=temperature/100;
 							 temperature=(double) Math.round(temperature * 10) / 10;
-							System.out.println("温度值"+temperature);
+							logger.debug("valeur de la température: "+temperature);
 						}
 						Records record=new Records();
 					//	record.setDeviceSerialNum(sn);
@@ -777,5 +786,10 @@ public class WSServer extends WebSocketServer{
      		updateCommandStatus(sn, "getnewlog");
     		
     	}
+
+
+	public static void main(String[] args) throws InterruptedException, IOException {
+
+	}
 }
 

@@ -14,28 +14,28 @@ public class WebSocketPool {
 	
 	
 	public static  final Map<String, DeviceStatus> wsDevice = new HashMap<String, DeviceStatus>();
-	
-	
-    
-  
-  /*  带状态的socket*/
+
+
+
+
+	/* Socket avec état */
     public static WebSocket getDeviceSocketBySn(String deviceSn) {
     	DeviceStatus deviceStatus = wsDevice.get(deviceSn);
     
 		return deviceStatus.getWebSocket();
 		
 	}
-    
-   
-    /*添加含状态的连接
+
+
+	/* Ajouter une connexion avec le statut
     */
     
     public static void addDeviceAndStatus(String deviceSn,DeviceStatus deviceStatus) {
 		wsDevice.put(deviceSn, deviceStatus);
 	}
-       
- 
-  /*  向带状态的用户单个用户发送数据*/
+
+
+	/* Envoi de données à un seul utilisateur avec statut */
     public static void sendMessageToDeviceStatus(String sn,String message) {
 		DeviceStatus deviceStatus=wsDevice.get(sn);
 		WebSocket conn=deviceStatus.getWebSocket();		
@@ -43,9 +43,9 @@ public class WebSocketPool {
 				conn.send(message);	
 			}			
 	}
-    
 
-   /*移除带状态的设备*/
+
+	/* delete l'equipement avec le statut */
     public static boolean removeDeviceStatus(String sn) {
 		if(wsDevice.containsKey(sn)){
 			wsDevice.remove(sn);
@@ -81,9 +81,9 @@ public class WebSocketPool {
       		}
       	}
 		return null;
-	}      
-    
-    /*判断状态*/
+	}
+
+	/* Status du device */
   public static DeviceStatus getDeviceStatus(String sn) {
 	//  System.out.println(wsDevice.get);
 	return wsDevice.get(sn);

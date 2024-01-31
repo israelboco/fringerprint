@@ -30,7 +30,7 @@ public class  ImageProcess {
 		 */
 	        String imagePath = "C:/dynamicface/picture/";
 	        String file = picName + ".jpg";
-	        System.out.println("图片路径" + imagePath + file);
+	        System.out.println("Trajectoire de l'image" + imagePath + file);
 	        File file2 = new File(imagePath + file);
 	        if (base64String == null) {
 	            return false;
@@ -70,12 +70,12 @@ public class  ImageProcess {
 	        String base64EncoderImg = preffix + Base64.getEncoder().encodeToString(mFile.getBytes()).replaceAll("[\\s*\t\n\r]", "");
 	        return base64EncoderImg;
 	    }
-	  
-	  /**
-	   * 图片转base64字符串
-	   * @param imgFile 图片路径
-	   * @return
-	   */
+
+	/**
+	 * Image vers chaîne de caractères base64
+	 * @param imgFile chemin d'accès à l'image
+	 * @return
+	 */
 	  public static String imageToBase64Str(String imgFile) {
 	   InputStream inputStream = null;
 	   byte[] data = null;
