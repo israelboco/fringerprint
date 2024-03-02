@@ -12,6 +12,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 @SpringBootApplication(scanBasePackages = {
 		"com.presence.testpresence.*"
@@ -25,24 +28,26 @@ public class TestPresenceApplication {
 	public static void main(String[] args)  throws InterruptedException, IOException {
 		SpringApplication.run(TestPresenceApplication.class, args);
 
-		int port = 8887; // 843 flash policy port
-		try {
-			port = Integer.parseInt(args[0]);
-		} catch (Exception ex) {
-		}
-		WSServer s = new WSServer(port);
-		s.start();
-		System.out.println("WSServer started on port: " + s.getPort());
-
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-		while (true) {
-			String in = sysin.readLine();
-			s.broadcast(in);
-			if (in.equals("exit")) {
-				s.stop(1000);
-				break;
-			}
-		}
+//		int port = 8887; // 843 flash policy port
+//		try {
+//			port = Integer.parseInt(args[0]);
+//		} catch (Exception ex) {
+//		}
+//		InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", port);
+//		WSServer s = new WSServer(inetSocketAddress);
+////		WSServer s = new WSServer(port);
+//		s.start();
+//		System.out.println("WSServer started on port: " + s.getPort());
+//		System.out.println("WSServer started on address: " + s.getAddress());
+//
+//		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+//		while (true) {
+//			String in = sysin.readLine();
+//			s.broadcast(in);
+//			if (in.equals("exit")) {
+//				s.stop(1000);
+//				break;
+//			}
+//		}
 	}
-
 }

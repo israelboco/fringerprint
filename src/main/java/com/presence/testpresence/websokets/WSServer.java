@@ -65,12 +65,12 @@ public class WSServer extends WebSocketServer{
 	  
 	  public WSServer(InetSocketAddress address) {
 	        super(address);
-	        logger.info("adresse ws" + address);
+	        logger.info("adresse ws " + address);
 	    }
 
 	    public WSServer(int TCP_PORT) throws UnknownHostException {
 	        super(new InetSocketAddress(TCP_PORT));
-	        logger.info("port ws" + TCP_PORT);
+	        logger.info("port ws " + TCP_PORT);
 	    }
 	  
 	  
@@ -79,9 +79,10 @@ public class WSServer extends WebSocketServer{
 			ClientHandshake handshake) {
 		// TODO Auto-generated method stub
 	//	deviceService=(DeviceService)ContextLoader.getCurrentWebApplicationContext().getBean(DeviceService.class);
-		  logger.info("Quelqu'un se connecte à la prise :" + conn);
+		  logger.debug("Quelqu'un se connecte à la prise :" + conn);
+		  System.out.println("Quelqu'un se connecte à la prise :" + conn);
 	      //  l++;
-		 logger.info("New connection from :" + conn.getRemoteSocketAddress());
+		 logger.debug("New connection from :" + conn.getRemoteSocketAddress());
 		 //logger.info("New connection from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 		 l++;
 		
@@ -97,15 +98,15 @@ public class WSServer extends WebSocketServer{
 			//deviceService.updateStatusByPrimarykey(id, status)
 			Device d1=deviceService.selectDeviceBySerialNum(sn);
 			deviceService.updateStatusByPrimaryKey(d1.getId(), 0);
-		  logger.info("onClose connection from :" + conn.getRemoteSocketAddress());
+		  logger.debug("onClose connection from :" + conn.getRemoteSocketAddress());
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		
+		System.out.println("Informations sur le message "+ message);
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        String ret;
-	       
+		logger.debug("Informations sur le message "+ message);
 	            try {
 	            	//Thread.sleep(7000);
 	    	        String msg = message.replaceAll(",]", "]");
@@ -290,10 +291,6 @@ public class WSServer extends WebSocketServer{
 		
 	}
 
-	
-
-
-	
 
 	/*websocket链接发生错误的时候*/
 	@Override
@@ -311,6 +308,7 @@ public class WSServer extends WebSocketServer{
 	public void onStart() {
 		
 		// TODO Auto-generated method stub
+		logger.debug("La connexion de la prise est start: ");
 		
 	}
 	
@@ -336,11 +334,12 @@ public class WSServer extends WebSocketServer{
 	   //获得连接设备信息
 	public void getDeviceInfo(JsonNode jsonNode, WebSocket args1){
 		String sn=jsonNode.get("sn").asText();
-		logger.info("numero de serie :"+sn);
+		logger.debug("numero de serie :"+sn);
 		DeviceStatus deviceStatus=new DeviceStatus();
 		if(sn!=null){
 		
 			Device d1=deviceService.selectDeviceBySerialNum(sn);
+
 			
 			if(d1==null){
 				int i=	deviceService.insert(sn, 1);
@@ -787,9 +786,5 @@ public class WSServer extends WebSocketServer{
     		
     	}
 
-
-	public static void main(String[] args) throws InterruptedException, IOException {
-
-	}
 }
 

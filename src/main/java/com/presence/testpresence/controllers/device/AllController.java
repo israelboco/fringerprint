@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("api/v1/device")
+@RequestMapping("v1/device")
 public class AllController {
 
 	private static Logger logger = LogManager.getLogger(AllController.class);
