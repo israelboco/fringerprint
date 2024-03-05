@@ -6,24 +6,25 @@ name: Package FingerPrint
 on:
   push:
     branches: ["dev"]
+
   workflow_dispatch:
 #  release:
 #    types: [created]
 
 jobs:
 
-  create-folder:
-    name: create-folder
-    runs-on: ubuntu-latest
-    steps:
-      - name: create-folder VM
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: whoami
+#  create-folder:
+#    name: create-folder
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: create-folder VM
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          script: whoami
 
   build:
 
