@@ -29,6 +29,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    needs: create-folder
+
     services:
       postgres:
         image: postgres
@@ -66,7 +68,6 @@ jobs:
     - name: Remame jar
       run: mv target/*.jar target/finger.jar
       uses: appleboy/scp-action@v0.1.7
-      needs: create-folder
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -75,7 +76,7 @@ jobs:
         source: "target/finger.jar"
         target: your_server_target_folder_path
 
-#    - name: Publish to GitHub Packages Apache Maven
-#      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-#      env:
-#        GITHUB_TOKEN: ${{ github.token }}
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
