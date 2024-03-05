@@ -227,7 +227,7 @@
 		<profile>
 			<id>staging</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+<!--				<activeByDefault>true</activeByDefault>-->
 			</activation>
 			<properties>
 				<spring.profiles.active>staging</spring.profiles.active>
