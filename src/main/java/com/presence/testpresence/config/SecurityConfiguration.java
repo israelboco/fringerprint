@@ -14,7 +14,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/swagger-ui/**", "/device/**").permitAll()
+                .antMatchers("/presence/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
