@@ -23,7 +23,7 @@ public class WebSocketConfig {
             port = Integer.parseInt(args[0]);
         } catch (Exception ex) {
         }
-        InetSocketAddress inetSocketAddress = new InetSocketAddress("https://is-fing.osc-fr1.scalingo.io", port);
+        InetSocketAddress inetSocketAddress = new InetSocketAddress("is-fing.osc-fr1.scalingo.io", port);
         WSServer s = new WSServer(inetSocketAddress);
         s.start();
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
