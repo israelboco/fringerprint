@@ -25,7 +25,7 @@ public class WebSocketConfig {
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress("is-fing.osc-fr1.scalingo.io", port);
         WSServer s = new WSServer(inetSocketAddress);
-        s.start();
+        //s.start();
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             String in = sysin.readLine();
