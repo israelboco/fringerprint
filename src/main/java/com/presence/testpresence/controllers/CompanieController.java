@@ -28,7 +28,7 @@ public class CompanieController {
     }
 
 
-    @PostMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
         ReponseWs reponseWs = this.companieService.listCompany(page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);

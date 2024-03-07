@@ -32,7 +32,7 @@ public class TypeCompanyController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
         ReponseWs reponseWs = companieTypeService.list(page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);

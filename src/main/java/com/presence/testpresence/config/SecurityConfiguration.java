@@ -23,8 +23,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("isboco")
-                .password(passwordEncoder().encode("isboco"))
+                .withUser("fingprint")
+                .password(passwordEncoder().encode("fingprint"))
                 .authorities("ADMIN");
     }
 
