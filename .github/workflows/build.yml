@@ -59,6 +59,7 @@ jobs:
 #      env:
 #        GITHUB_TOKEN: ${{ github.token }}
 
+
     - uses: kolok/deploy-to-scalingo@v1
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
