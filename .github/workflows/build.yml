@@ -13,24 +13,9 @@ on:
 
 jobs:
 
-#  create-folder:
-#    name: create-folder
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: create-folder VM
-#        uses: appleboy/ssh-action@v1.0.3
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          password: ${{ secrets.PASSWORD }}
-#          port: ${{ secrets.PORT }}
-#          script: whoami
-
   build:
 
     runs-on: ubuntu-latest
-
-#    needs: create-folder
 
     services:
       postgres:
@@ -64,20 +49,18 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -D maven.test.skip=true -B package --file pom.xml
+      run: mvn -B package --file pom.xml -DskipTests
 
-    - name: Remame jar
-      run: mv target/*.jar target/finger.jar
-#      uses: appleboy/scp-action@v0.1.7
-#      with:
-#        host: ${{ secrets.HOST }}
-#        username: ${{ secrets.USERNAME }}
-#        password: ${{ secrets.PASSWORD }}
-#        port: ${{ secrets.PORT }}
-#        source: "target/finger.jar"
-#        target: your_server_target_folder_path
+#    - name: Remame jar
+#      run: mv target/*.jar target/finger.jar
+#
+#    - name: Publish to GitHub Packages Apache Maven
+#      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+#      env:
+#        GITHUB_TOKEN: ${{ github.token }}
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+    - uses: kolok/deploy-to-scalingo@v1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        app-name: is-fing
+        known-host: ssh.osc-fr1.scalingo.com
