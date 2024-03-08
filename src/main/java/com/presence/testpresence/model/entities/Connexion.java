@@ -17,6 +17,9 @@ public class Connexion implements Serializable {
     private User user;
     @Column(name = "token")
     private String token;
+
+    @Column(name = "date_expire_token")
+    private Date date_expire_token;
     @Column(name = "active")
     private Boolean active;
 
@@ -65,4 +68,11 @@ public class Connexion implements Serializable {
         this.created = created;
     }
 
+    public Date getDate_expire_token() {
+        return date_expire_token;
+    }
+
+    public void setDate_expire_token(Date date_expire_token) {
+        this.date_expire_token = date_expire_token;
+    }
 }

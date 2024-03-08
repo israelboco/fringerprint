@@ -22,6 +22,10 @@ public class User implements Serializable {
     private String email;
     @Column(name = "password")
     private String password;
+
+    @Column(name = "enrollId")
+    private Integer enrollId;
+
     @ManyToMany(cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = {
             @JoinColumn(name = "USERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {

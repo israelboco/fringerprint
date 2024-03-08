@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("v1.0/presence")
+@RequestMapping("api/v1.0/presence")
 public class PresenceController {
 
     @Autowired

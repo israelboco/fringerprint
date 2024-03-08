@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("v1.0/user")
+@RequestMapping("api/v1.0/user")
 public class UserController {
 
     @Autowired
@@ -21,6 +21,17 @@ public class UserController {
     @PostMapping("/register")
     public ReponseWs register(@RequestBody UserWs ws){
         return this.userService.register(ws);
+    }
+
+    @GetMapping("/")
+    public ReponseWs getUser(@RequestParam String token){
+
+        return this.userService.getUser(token);
+    }
+
+    @GetMapping("/token/refresh")
+    public ReponseWs refeshToken(@RequestParam String token){
+        return this.userService.refeshToken(token);
     }
 
 

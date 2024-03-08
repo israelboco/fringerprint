@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("v1.0/companies")
+@RequestMapping("api/v1.0/companies")
 public class CompanieController {
 
     @Autowired
@@ -26,7 +26,6 @@ public class CompanieController {
         ReponseWs reponseWs = this.companieService.update(companieWs);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
-
 
     @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
