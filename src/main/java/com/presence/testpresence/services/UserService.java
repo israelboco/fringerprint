@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
@@ -30,15 +30,16 @@ public class UserService {
     ConnexionRepository connexionRepository;
     @Autowired
     ConnexionService connexionService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+//    @Autowired
+//    PasswordEncoder passwordEncoder;
 
 
     public ReponseWs login(String email, String password){
         Gson gson = new Gson();
         User user = this.userRepository.findOneByEmail(email);
         if (user == null) return new ReponseWs("failed", "user not found", 404, null);
-        boolean isPssw = this.passwordEncoder.matches(password, user.getPassword());
+        //boolean isPssw = this.passwordEncoder.matches(password, user.getPassword());
+        boolean isPssw = password.equals(user.getPassword());
         Connexion connexion = new Connexion();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 24);
@@ -61,7 +62,8 @@ public class UserService {
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user == null) return new ReponseWs("failed", "user found", 404, null);
-        String password = this.passwordEncoder.encode(ws.getPassword());
+        //String password = this.passwordEncoder.encode(ws.getPassword());
+        String password = ws.getPassword();
         Gson gson= new Gson();
         user = gson.fromJson(gson.toJson(ws), User.class);
         user.setNom(ws.getNom());
