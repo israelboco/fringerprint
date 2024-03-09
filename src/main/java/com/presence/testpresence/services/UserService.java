@@ -76,7 +76,7 @@ public class UserService {
         cal.add(Calendar.HOUR_OF_DAY, 24);
         Connexion connexion = new Connexion();
         connexion.setUser(user);
-        connexion.setActive(true);
+        connexion.setActive(false);
         connexion.setCreated(new Date());
         connexion.setToken(generatedString);
         connexion.setDate_expire_token(cal.getTime());
