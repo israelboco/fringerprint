@@ -14,8 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 // by this class
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig
-        implements WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketConfigurer {
 
     // Overriding a method which register the socket
     // handlers into a Registry
