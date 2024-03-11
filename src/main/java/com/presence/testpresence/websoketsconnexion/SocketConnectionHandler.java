@@ -24,8 +24,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     // This method is executed when client tries to connect
     // to the sockets
     @Override
-    public void
-    afterConnectionEstablished(WebSocketSession session)
+    public void afterConnectionEstablished(WebSocketSession session)
             throws Exception
     {
 
