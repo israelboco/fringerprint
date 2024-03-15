@@ -1,9 +1,12 @@
 package com.presence.testpresence.services;
 
+import com.presence.testpresence.model.entities.Companie;
 import com.presence.testpresence.model.entities.Connexion;
 import com.presence.testpresence.model.entities.User;
+import com.presence.testpresence.model.repositories.CompanieRepository;
 import com.presence.testpresence.model.repositories.ConnexionRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.ConnexionWs;
 import com.presence.testpresence.ws.ReponseWs;
 import com.presence.testpresence.ws.UserWs;
@@ -32,21 +35,22 @@ public class UserService {
     ConnexionService connexionService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CompanieRepository companieRepository;
 
 
     public ReponseWs login(String email, String password){
         Gson gson = new Gson();
         User user = this.userRepository.findOneByEmail(email);
-        if (user == null) return new ReponseWs("failed", "user not found", 404, null);
+        if (user == null) return new ReponseWs("failed", "user n'existe pas dèjà,", 404, null);
         boolean isPssw = this.passwordEncoder.matches(password, user.getPassword());
 //        boolean isPssw = password.equals(user.getPassword());
         Connexion connexion = new Connexion();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 24);
-        if(!isPssw) return new ReponseWs("failed", "password invalid", 401, null);
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        String generatedString = new String(array, Charset.forName("UTF-8"));
+        if(!isPssw) return new ReponseWs("failed", "password invalide", 401, null);
+        String generatedString = JwtUtil.generateToken(email);
+//        String generatedString = new String(array, Charset.forName("UTF-8"));
         connexion = this.connexionRepository.findByUserAndActive(user, true);
         connexion.setUser(user);
         connexion.setActive(true);
@@ -61,7 +65,9 @@ public class UserService {
     public ReponseWs register(UserWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
-        if (user != null) return new ReponseWs("failed", "user found", 404, null);
+        if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
+        Companie companie = this.companieRepository.findOneByNomOrCode(ws.getCompany());
+        if (companie == null) return new ReponseWs("failed", "L'entreprise n'existe pas", 404, null);
         String password = this.passwordEncoder.encode(ws.getPassword());
 //        String password = ws.getPassword();
         Gson gson= new Gson();
@@ -71,9 +77,10 @@ public class UserService {
         user.setEmail(ws.getEmail());
         user.setPassword(password);
         this.userRepository.save(user);
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        String generatedString = new String(array, Charset.forName("UTF-8"));
+        String generatedString = JwtUtil.generateToken(ws.getEmail());
+//        byte[] array = new byte[7];
+//        new Random().nextBytes(array);
+//        String generatedString = new String(array, Charset.forName("UTF-8"));
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 24);
         Connexion connexion = new Connexion();
@@ -91,9 +98,10 @@ public class UserService {
         Gson gson= new Gson();
         Connexion connexion = this.connexionRepository.findByTokenAndActive(token, true);
         if(connexion == null) return new ReponseWs("failed", "token not found", 401, null);
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        String generatedString = new String(array, Charset.forName("UTF-8"));
+        String generatedString = JwtUtil.generateToken(connexion.getUser().getEmail());
+        //        byte[] array = new byte[7];
+//        new Random().nextBytes(array);
+//        String generatedString = new String(array, Charset.forName("UTF-8"));
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 24);
         connexion.setToken(generatedString);
@@ -105,7 +113,8 @@ public class UserService {
 
     public ReponseWs getUser(String token){
         Gson gson= new Gson();
-        User user = this.connexionService.findByToken(token);
+        String email = JwtUtil.extractEmail(token);
+        User user = this.userRepository.findOneByEmail(email);
         if(user == null ) return  new ReponseWs("failed", "token not found or expired", 401, null);
         UserWs userws = gson.fromJson(gson.toJson(user), UserWs.class);
         return new ReponseWs("success", "user", 200, userws);

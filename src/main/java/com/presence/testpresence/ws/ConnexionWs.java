@@ -9,5 +9,6 @@ public class ConnexionWs {
     private UserWs user;
     private String token;
     private Boolean active;
+    private String deviceSerial;
 
 }

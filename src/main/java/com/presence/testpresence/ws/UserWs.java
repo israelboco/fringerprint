@@ -12,6 +12,7 @@ public class UserWs {
     private String nom;
     private String prenom;
     private String email;
+    private String company;
     private String password;
     private Integer enrollId;
     private Set<Role> roles;
