@@ -14,4 +14,16 @@ public class PointScheduleEmployee {
     @JoinColumn(name = "employees_id", referencedColumnName = "id")
     @ManyToOne
     private Employee employee;
+
+    @JoinColumn(name = "access_day_id", referencedColumnName = "id")
+    @ManyToOne
+    private AccessDay accessDay;
+
+    @JoinColumn(name = "access_week_id", referencedColumnName = "id")
+    @ManyToOne
+    private AccessWeek accessWeek;
+
+
+
+
 }

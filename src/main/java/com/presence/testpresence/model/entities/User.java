@@ -22,6 +22,10 @@ public class User implements Serializable {
     private String email;
     @Column(name = "password")
     private String password;
+
+    @Column(name = "enrollId")
+    private Integer enrollId;
+
     @ManyToMany(cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = {
             @JoinColumn(name = "USERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
@@ -40,6 +44,9 @@ public class User implements Serializable {
     private Boolean credentialsExpired;
     @Column(name = "enabled")
     private Boolean enabled;
+
+    @Column(name = "id_user_info")
+    private Integer idUserInfo;
 
 
     public Integer getId() {
@@ -136,5 +143,13 @@ public class User implements Serializable {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Integer getIdUserInfo() {
+        return idUserInfo;
+    }
+
+    public void setIdUserInfo(Integer idUserInfo) {
+        this.idUserInfo = idUserInfo;
     }
 }

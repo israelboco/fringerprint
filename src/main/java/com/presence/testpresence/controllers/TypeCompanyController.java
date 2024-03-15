@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("v1.0/type/companies")
+@RequestMapping("api/v1.0/type/companies")
 public class TypeCompanyController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class TypeCompanyController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
         ReponseWs reponseWs = companieTypeService.list(page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);

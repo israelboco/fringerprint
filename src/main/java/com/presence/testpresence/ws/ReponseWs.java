@@ -18,5 +18,7 @@ public class ReponseWs {
         this.code = code;
         this.data = data;
     }
+    public ReponseWs(){
+    }
 
 }

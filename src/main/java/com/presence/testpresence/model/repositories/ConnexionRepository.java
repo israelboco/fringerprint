@@ -12,5 +12,4 @@ public interface ConnexionRepository extends JpaRepository<Connexion, Integer> {
     Connexion findByUserAndActive(User user, Boolean active);
     Connexion findByTokenAndActive(String token, Boolean active);
 
-
 }

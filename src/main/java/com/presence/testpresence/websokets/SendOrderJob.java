@@ -61,7 +61,7 @@ public class SendOrderJob extends Thread{
 						machineCommandRepository.save(machineCommand);
 					}else if(pendingCommand.size()==1){
 						if(System.currentTimeMillis()-(pendingCommand.get(0).getRunTime()).getTime()>20*1000) {
-							System.out.println("数据"+pendingCommand);
+							System.out.println("numeros"+pendingCommand);
 							if(pendingCommand.get(0).getErrCount()<3) {
 							//	System.out.println("数据"+pendingCommand);
 							//entry.getValue().getWebSocket().send(pendingCommand.get(0).getContent());
