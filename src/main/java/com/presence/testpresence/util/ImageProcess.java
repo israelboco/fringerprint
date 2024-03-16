@@ -71,11 +71,11 @@ public class  ImageProcess {
 	        return base64EncoderImg;
 	    }
 
-	/**
-	 * Image vers chaîne de caractères base64
-	 * @param imgFile chemin d'accès à l'image
-	 * @return
-	 */
+	  /**
+	   * 图片转base64字符串
+	   * @param imgFile 图片路径
+	   * @return
+	   */
 	  public static String imageToBase64Str(String imgFile) {
 	   InputStream inputStream = null;
 	   byte[] data = null;

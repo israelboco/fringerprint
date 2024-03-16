@@ -10,6 +10,7 @@ public interface ConnexionRepository extends JpaRepository<Connexion, Integer> {
 
     Connexion findOneById(Integer id);
     Connexion findByUserAndActive(User user, Boolean active);
+    Connexion findByUser(User user);
     Connexion findByTokenAndActive(String token, Boolean active);
 
 }
