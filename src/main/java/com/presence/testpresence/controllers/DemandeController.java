@@ -21,7 +21,7 @@ public class DemandeController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/accept")
+    @PostMapping("/refuse")
     public ResponseEntity<ReponseWs> refuse(@RequestParam String token, @RequestBody DemandeWs demandeWs){
         ReponseWs reponseWs = this.demandeService.refuse(token, demandeWs);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
