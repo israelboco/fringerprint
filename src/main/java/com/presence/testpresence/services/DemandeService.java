@@ -42,7 +42,7 @@ public class DemandeService {
         User userAdmin = userRepository.findOneByEmail(emailAdmin);
         if(userAdmin == null) return new ReponseWs("failed", "token invalide", 404, null);
         Employee employeeAdmin = this.employeeRepository.findByUser(userAdmin);
-        User user = userRepository.findOneById(ws.getUser_id());
+        User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs("failed", "L'utilisateur n'existe pas", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
         connexion.setActive(true);
@@ -65,7 +65,7 @@ public class DemandeService {
         String emailAdmin = JwtUtil.extractEmail(token);
         User userAdmin = userRepository.findOneByEmail(emailAdmin);
         if(userAdmin == null) return new ReponseWs("failed", "token invalide", 404, null);
-        User user = userRepository.findOneById(ws.getUser_id());
+        User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs("failed", "L'utilisateur n'existe pas", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
         connexion.setActive(true);

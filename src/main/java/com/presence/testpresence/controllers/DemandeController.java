@@ -28,13 +28,13 @@ public class DemandeController {
     }
 
     @GetMapping("/list/accepter")
-    public ResponseEntity<ReponseWs> listAccepter(@RequestParam String token, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size){
+    public ResponseEntity<ReponseWs> listAccepter(@RequestParam String token, @RequestParam(required = false, value = "0") Integer page, @RequestParam(required = false, value = "25") Integer size){
         ReponseWs reponseWs = this.demandeService.listAccept(token, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/list/resufer")
-    public ResponseEntity<ReponseWs> listrefuser(@RequestParam String token, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size){
+    public ResponseEntity<ReponseWs> listrefuser(@RequestParam String token, @RequestParam(required = false, value = "0") Integer page, @RequestParam(required = false, value = "25") Integer size){
         ReponseWs reponseWs = this.demandeService.listRefuser(token, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
