@@ -55,8 +55,16 @@ public class CompanieService {
         Pageable pageable = PageRequest.of(page, size);
         Gson gson = new Gson();
         List<Companie> companies = companieRepository.findAll();
-        List<CompanieWs> companiesWs = companies.stream().map(c -> gson.fromJson(gson.toJson(c), CompanieWs.class)).collect(Collectors.toList());
+        List<CompanieWs> companiesWs = companies.stream().map(this::getCompanieWs).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, companiesWs);
+    }
+
+
+    private CompanieWs getCompanieWs(Companie companie){
+        Gson gson = new Gson();
+        CompanieWs companieWs = gson.fromJson(gson.toJson(companie), CompanieWs.class);
+        companieWs.setIdType(companie.getType().getId());
+        return companieWs;
     }
 
 

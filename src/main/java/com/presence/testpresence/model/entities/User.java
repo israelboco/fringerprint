@@ -1,6 +1,7 @@
 package com.presence.testpresence.model.entities;
 
 import com.presence.testpresence.model.enums.UserTypeEnum;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,11 +21,11 @@ public class User implements Serializable {
     private String prenom;
     @Column(name = "email")
     private String email;
+    @JsonIgnore
     @Column(name = "password")
     private String password;
     @Column(name = "enrollId")
     private Integer enrollId;
-
     @ManyToMany(cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = {
             @JoinColumn(name = "USERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {

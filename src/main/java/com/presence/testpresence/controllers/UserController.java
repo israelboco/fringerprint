@@ -24,13 +24,18 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ReponseWs getUser(@RequestHeader("access-token") String token){
+    public ReponseWs getUser(@RequestParam() String token){
 
         return this.userService.getUser(token);
     }
+    @GetMapping("/list")
+    public ReponseWs listUser(@RequestParam Integer page, @RequestParam Integer size){
+        return this.userService.listUser(page, size);
+    }
+
 
     @GetMapping("/token/refresh")
-    public ReponseWs refeshToken(@RequestHeader("access-token") String token){
+    public ReponseWs refeshToken(@RequestParam() String token){
         return this.userService.refeshToken(token);
     }
 
