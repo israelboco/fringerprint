@@ -3,8 +3,12 @@ package com.presence.testpresence.services;
 import com.google.gson.Gson;
 import com.presence.testpresence.model.entities.Companie;
 import com.presence.testpresence.model.entities.Employee;
+import com.presence.testpresence.model.entities.EnrollInfo;
+import com.presence.testpresence.model.entities.User;
 import com.presence.testpresence.model.repositories.CompanieRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
+import com.presence.testpresence.model.repositories.EnrollInfoRepository;
+import com.presence.testpresence.model.repositories.UserRepository;
 import com.presence.testpresence.ws.EmployeeWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.apache.logging.log4j.LogManager;
@@ -24,16 +28,25 @@ public class EmployeeService {
 
     @Autowired
     EmployeeRepository employeeRepository;
-
     @Autowired
     CompanieRepository companieRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EnrollInfoRepository enrollInfoRepository;
 
     public ReponseWs saveEmployee(EmployeeWs ws){
         Companie companie = companieRepository.findOneById(ws.getIdCompany());
         if (companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
         Gson gson = new Gson();
+        User user = this.userRepository.findOneById(ws.getUser_id());
+        if (user == null) return new ReponseWs("failed", "user not found", 404, null);
+        EnrollInfo enrollInfo = this.enrollInfoRepository.findOneById(ws.getEnrollId());
+        if (enrollInfo == null) return new ReponseWs("failed", "EnrollInfo not found", 404, null);
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
+        employee.setUser(user);
+        employee.setEnrollInfo(enrollInfo);
         employeeRepository.save(employee);
         return new ReponseWs("success", "create", 200, ws);
     }

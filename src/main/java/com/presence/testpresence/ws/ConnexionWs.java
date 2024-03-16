@@ -12,5 +12,5 @@ public class ConnexionWs {
     private String token;
     private Boolean active;
     private String deviceSerial;
-
+    private Boolean confirmDemande;
 }

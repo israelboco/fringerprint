@@ -19,14 +19,14 @@ public class Connexion implements Serializable {
     private String token;
 
     @Column(name = "date_expire_token")
-    private Date date_expire_token;
+    private Date dateExpireToken;
     @Column(name = "active")
     private Boolean active;
-
+    @Column(name = "confirm_demande")
+    private Boolean confirmDemande;
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-
 
     public Integer getId() {
         return id;
@@ -68,11 +68,19 @@ public class Connexion implements Serializable {
         this.created = created;
     }
 
-    public Date getDate_expire_token() {
-        return date_expire_token;
+    public Date getDateExpireToken() {
+        return dateExpireToken;
     }
 
-    public void setDate_expire_token(Date date_expire_token) {
-        this.date_expire_token = date_expire_token;
+    public void setDateExpireToken(Date dateExpireToken) {
+        this.dateExpireToken = dateExpireToken;
+    }
+
+    public Boolean getConfirmDemande() {
+        return confirmDemande;
+    }
+
+    public void setConfirmDemande(Boolean confirmDemande) {
+        this.confirmDemande = confirmDemande;
     }
 }
