@@ -19,6 +19,9 @@ public class Employee implements Serializable {
     private String telephone;
     @Column(name = "email")
     private String email;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User user;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne
     private Companie companie;
@@ -29,6 +32,8 @@ public class Employee implements Serializable {
     private String pin;
     @Column(name = "salt")
     private String salt;
+    @Column(name = "isAdmin")
+    private Boolean isAdmin;
 
     public Integer getId() {
         return id;
@@ -100,5 +105,21 @@ public class Employee implements Serializable {
 
     public void setEnrollInfo(EnrollInfo enrollInfo) {
         this.enrollInfo = enrollInfo;
+    }
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

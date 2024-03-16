@@ -22,7 +22,6 @@ public class User implements Serializable {
     private String email;
     @Column(name = "password")
     private String password;
-
     @Column(name = "enrollId")
     private Integer enrollId;
 
@@ -44,7 +43,6 @@ public class User implements Serializable {
     private Boolean credentialsExpired;
     @Column(name = "enabled")
     private Boolean enabled;
-
     @Column(name = "id_user_info")
     private Integer idUserInfo;
 

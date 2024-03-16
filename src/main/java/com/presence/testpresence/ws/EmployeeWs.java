@@ -11,7 +11,7 @@ public class EmployeeWs {
     private String telephone;
     private String email;
     private Integer idCompany;
-    private String pin;
-    private String salt;
+    private String company;
+    private Boolean isAdmin;
 
 }

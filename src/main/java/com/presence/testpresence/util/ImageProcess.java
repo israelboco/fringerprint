@@ -30,7 +30,7 @@ public class  ImageProcess {
 		 */
 	        String imagePath = "C:/dynamicface/picture/";
 	        String file = picName + ".jpg";
-	        System.out.println("图片路径" + imagePath + file);
+	        System.out.println("Trajectoire de l'image" + imagePath + file);
 	        File file2 = new File(imagePath + file);
 	        if (base64String == null) {
 	            return false;

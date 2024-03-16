@@ -13,6 +13,8 @@ public class Companie implements Serializable {
     private Integer id;
     @Column(name = "nom")
     private String nom;
+    @Column(name = "code")
+    private String code;
     @Column(name = "logo")
     private String logo;
     @JoinColumn(name = "companies_type_id", referencedColumnName = "id")
@@ -50,5 +52,13 @@ public class Companie implements Serializable {
 
     public void setType(CompanieType type) {
         this.type = type;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

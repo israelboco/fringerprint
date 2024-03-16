@@ -1,50 +1,34 @@
 package com.presence.testpresence.controllers.device;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import javax.annotation.Resource;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.presence.testpresence.model.entities.*;
-import com.presence.testpresence.services.CompanieService;
 import com.presence.testpresence.services.device.*;
-import com.presence.testpresence.util.ControllerBase;
 import com.presence.testpresence.util.ImageProcess;
 import com.presence.testpresence.websokets.WebSocketPool;
 import com.presence.testpresence.ws.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-import org.w3c.dom.ls.LSInput;
-
-import com.fasterxml.jackson.annotation.JacksonInject.Value;
-
-
 
 
 @RestController
+@RequestMapping("v1/device")
 public class AllController {
 
 	private static Logger logger = LogManager.getLogger(AllController.class);
+
 	/*@Autowired
 	EnrollInfoService enrollInfoService;
 	*/
@@ -91,6 +75,12 @@ public class AllController {
 		return Msg.success().add("device", deviceList);
 	}
 
+	@PostMapping("/device")
+	public Msg insertDevice(@RequestParam String serialNum, @RequestParam Integer status) {
+		Integer device = deviceService.insert(serialNum, status);
+		return Msg.success();
+	}
+
 	/*获取所有考勤机*/
 	@GetMapping("/enrollInfo")
 	public Msg getAllEnrollInfo() {
@@ -105,7 +95,7 @@ public class AllController {
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
-		logger.debug("sss : "+deviceSn);
+		logger.debug("sss : " + deviceSn);
 
 		WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
@@ -138,8 +128,8 @@ public class AllController {
 	 //   EnrollInfo enrollInfo=new EnrollInfo();
 	    if(pic!=null){
 	    	if (pic.getOriginalFilename()!=null&&!("").equals(pic.getOriginalFilename())) {
-	    		 photoName=pic.getOriginalFilename();
-	    		 newName=UUID.randomUUID().toString()+photoName.substring(photoName.lastIndexOf("."));
+	    		 photoName = pic.getOriginalFilename();
+	    		 newName = UUID.randomUUID().toString() + photoName.substring(photoName.lastIndexOf("."));
 	    		 File photoFile=new File(path, newName);
 	    			if (!photoFile.exists()) {
 	    				photoFile.mkdirs();
@@ -153,18 +143,18 @@ public class AllController {
 	    person.setName(personTemp.getName());
 	    person.setRollId(personTemp.getPrivilege());
 	    Person person2=personService.selectByPrimaryKey(personTemp.getUserId());
-	    if(person2==null) {
+	    if(person2 == null) {
 	    	personService.insert(person);
 	    }
-	    if(personTemp.getPassword()!=null) {
-	    	EnrollInfo enrollInfoTemp2=new EnrollInfo();
+	    if(personTemp.getPassword() != null) {
+	    	EnrollInfo enrollInfoTemp2 = new EnrollInfo();
 	    	enrollInfoTemp2.setBackupnum(10);
 	    	enrollInfoTemp2.setEnrollId(personTemp.getUserId());
 	    	enrollInfoTemp2.setSignatures(personTemp.getPassword());
 	    	enrollInfoService.insertSelective(enrollInfoTemp2);
 	    }
-	    if(personTemp.getCardNum()!=null) {
-	    	EnrollInfo enrollInfoTemp3=new EnrollInfo();
+	    if(personTemp.getCardNum() != null) {
+	    	EnrollInfo enrollInfoTemp3 = new EnrollInfo();
 	    	enrollInfoTemp3.setBackupnum(11);
 	    	enrollInfoTemp3.setEnrollId(personTemp.getUserId());
 	    	enrollInfoTemp3.setSignatures(personTemp.getCardNum());
@@ -203,7 +193,7 @@ public class AllController {
 			}
 			}
 		}
-        logger.debug("采集用户数据"+enrollInfoService);
+        logger.debug("采集用户数据"+enrollsPrepared);
         personService.getSignature2(enrollsPrepared, deviceSn);
 
 		return  Msg.success();

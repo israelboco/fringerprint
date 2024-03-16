@@ -56,7 +56,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception
     {
-        //message.getPayload().toString()
+
         System.out.println(message + " message ");
         super.handleMessage(session, message);
 
