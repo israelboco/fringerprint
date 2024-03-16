@@ -1,5 +1,6 @@
 package com.presence.testpresence.services.device;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.presence.testpresence.ws.DeviceStatus;
 import com.presence.testpresence.ws.SendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.TextMessage;
 
 @Component
 public class PersonService {
@@ -129,7 +131,7 @@ public class PersonService {
       
       
        
-      public void getSignature(int enrollId,String deviceSn,int backupNum) {
+      public void getSignature(int enrollId,String deviceSn,int backupNum) throws IOException {
     	  try {
 	   			Thread.sleep(400);
 	   		} catch (InterruptedException e) {
@@ -147,7 +149,7 @@ public class PersonService {
  			deviceStatus.setStatus(0);
 	 		updateDevice(deviceSn, deviceStatus);          
 	 		if (null!=deviceStatus.getWebSocket()) {
-				deviceStatus.getWebSocket().send(message1);
+				deviceStatus.getWebSocket().sendMessage(new TextMessage(message1));
 	 			
 			}
  		}else{
