@@ -17,7 +17,7 @@ public class ConnexionService {
     public User findByToken(String token) {
         Connexion connexion = connexionRepository.findByTokenAndActive(token, true);
         Date dateNow = new Date();
-        if(connexion != null && dateNow.after(connexion.getDate_expire_token())) return connexion.getUser();
+        if(connexion != null && dateNow.after(connexion.getDateExpireToken())) return connexion.getUser();
         return null;
     }
 }

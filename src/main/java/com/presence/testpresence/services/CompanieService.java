@@ -33,7 +33,9 @@ public class CompanieService {
         CompanieType companieType = companieTypeRepository.findOneById(ws.getIdType());
         if (companieType == null) return new ReponseWs("failed", "type compagnie not found", 404, null);
         Gson gson = new Gson();
-        Companie companie = gson.fromJson(gson.toJson(ws), Companie.class);
+        Companie companie = this.companieRepository.findOneByNomOrCode(ws.getNom(), ws.getCode());
+        if (companie != null) return new ReponseWs("failed", "Compagnie existe déja", 407, null);
+        companie = gson.fromJson(gson.toJson(ws), Companie.class);
         companie.setType(companieType);
         companieRepository.save(companie);
         return new ReponseWs("success", "create", 200, ws);

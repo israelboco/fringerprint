@@ -6,6 +6,8 @@ import lombok.Data;
 public class EmployeeWs {
 
     private Integer id;
+    private Integer enrollId;
+    private Integer user_id;
     private String nom;
     private String prenom;
     private String telephone;

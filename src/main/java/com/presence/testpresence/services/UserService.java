@@ -67,7 +67,7 @@ public class UserService {
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
         connexion.setUser(user);
         connexion.setToken(generatedString);
-        connexion.setDate_expire_token(cal.getTime());
+        connexion.setDateExpireToken(cal.getTime());
         connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setEmployeeWs(employeeWs);
         connexionWs.setIsAdmin(employeeWs.getIsAdmin());
@@ -98,9 +98,10 @@ public class UserService {
         Connexion connexion = new Connexion();
         connexion.setUser(user);
         connexion.setActive(false);
+        connexion.setConfirmDemande(false);
         connexion.setCreated(new Date());
         connexion.setToken(generatedString);
-        connexion.setDate_expire_token(cal.getTime());
+        connexion.setDateExpireToken(cal.getTime());
         this.connexionRepository.save(connexion);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
@@ -117,7 +118,7 @@ public class UserService {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 24);
         connexion.setToken(generatedString);
-        connexion.setDate_expire_token(cal.getTime());
+        connexion.setDateExpireToken(cal.getTime());
         this.connexionRepository.save(connexion);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "refresh token", 200, connexionWs);
