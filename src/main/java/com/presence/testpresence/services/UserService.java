@@ -17,13 +17,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Component
 public class UserService {
@@ -55,13 +61,14 @@ public class UserService {
         if(!isPssw) return new ReponseWs("failed", "Mot de passe invalide", 401, null);
         String generatedString = JwtUtil.generateToken(email);
         connexion = this.connexionRepository.findByUser(user);
-        if(!connexion.getActive()) return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 415, null);
+        ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        if(!connexion.getActive()) return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 415, connexionWs);
         Employee employee = this.employeeRepository.findByUser(user);
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
         connexion.setUser(user);
         connexion.setToken(generatedString);
         connexion.setDate_expire_token(cal.getTime());
-        ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setEmployeeWs(employeeWs);
         connexionWs.setIsAdmin(employeeWs.getIsAdmin());
         return new ReponseWs("success", "user login", 200, connexionWs);
@@ -125,4 +132,17 @@ public class UserService {
         return new ReponseWs("success", "user", 200, userws);
     }
 
+    public ReponseWs listUser(Integer page, Integer size){
+        Gson gson= new Gson();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> listUser = this.userRepository.findAll(pageable);
+        List<UserWs> listUserWs = listUser.getContent().stream().map(this::getUserWs).collect(Collectors.toList());
+        PageImpl<UserWs> userWsPage = new PageImpl<>(listUserWs, pageable, listUser.getTotalPages());
+        return new ReponseWs("success", "user", 200, userWsPage);
+    }
+
+    private UserWs getUserWs(User user){
+        Gson gson= new Gson();
+        return gson.fromJson(gson.toJson(user), UserWs.class);
+    }
 }
