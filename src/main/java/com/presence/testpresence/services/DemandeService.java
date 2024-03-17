@@ -54,7 +54,31 @@ public class DemandeService {
         employeeWs.setPrenom(user.getPrenom());
         employeeWs.setEnrollId(ws.getEnrollId());
         employeeWs.setEmail(user.getEmail());
-        employeeWs.setIsAdmin(false);
+        employeeWs.setIsAdmin(true);
+        employeeWs.setUser_id(user.getId());
+        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
+        if (reponseWs.getStatus().equals("failed")) return reponseWs;
+        return new ReponseWs("success", "employee accepter avec success", 200, null);
+    }
+
+    public ReponseWs acceptAdmin(DemandeWs ws){
+//        String emailAdmin = JwtUtil.extractEmail(token);
+//        User userAdmin = userRepository.findOneByEmail(emailAdmin);
+//        if(userAdmin == null) return new ReponseWs("failed", "token invalide", 404, null);
+//        Employee employeeAdmin = this.employeeRepository.findByUser(userAdmin);
+        User user = userRepository.findOneById(ws.getUserId());
+        if(user == null) return new ReponseWs("failed", "L'utilisateur n'existe pas", 404, null);
+        Connexion connexion = connexionRepository.findByUser(user);
+        connexion.setActive(true);
+        connexion.setConfirmDemande(true);
+        connexionRepository.save(connexion);
+        EmployeeWs employeeWs = new EmployeeWs();
+        employeeWs.setIdCompany(ws.getCompanyID());
+        employeeWs.setNom(user.getNom());
+        employeeWs.setPrenom(user.getPrenom());
+        employeeWs.setEnrollId(ws.getEnrollId());
+        employeeWs.setEmail(user.getEmail());
+        employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
         ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
         if (reponseWs.getStatus().equals("failed")) return reponseWs;

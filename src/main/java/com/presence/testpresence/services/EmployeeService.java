@@ -42,11 +42,16 @@ public class EmployeeService {
         User user = this.userRepository.findOneById(ws.getUser_id());
         if (user == null) return new ReponseWs("failed", "user not found", 404, null);
         EnrollInfo enrollInfo = this.enrollInfoRepository.findOneById(ws.getEnrollId());
-        if (enrollInfo == null) return new ReponseWs("failed", "EnrollInfo not found", 404, null);
+        if (enrollInfo == null) {
+            enrollInfo = new EnrollInfo();
+            enrollInfo.setEnrollId(ws.getEnrollId());
+            enrollInfoRepository.save(enrollInfo);
+        }
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
         employee.setEnrollInfo(enrollInfo);
+        employee.setAdmin(ws.getIsAdmin());
         employeeRepository.save(employee);
         return new ReponseWs("success", "create", 200, ws);
     }
