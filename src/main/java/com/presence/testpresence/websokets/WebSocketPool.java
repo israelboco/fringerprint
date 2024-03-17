@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.presence.testpresence.ws.DeviceStatus;
-import org.java_websocket.WebSocket;
+import org.springframework.web.socket.WebSocketSession;
+//import org.java_websocket.WebSocket;
 
 
 public class WebSocketPool {
@@ -19,7 +20,7 @@ public class WebSocketPool {
 
 
 	/* Socket avec état */
-    public static WebSocket getDeviceSocketBySn(String deviceSn) {
+    public static WebSocketSession getDeviceSocketBySn(String deviceSn) {
     	DeviceStatus deviceStatus = wsDevice.get(deviceSn);
     
 		return deviceStatus.getWebSocket();
@@ -38,7 +39,7 @@ public class WebSocketPool {
 	/* Envoi de données à un seul utilisateur avec statut */
     public static void sendMessageToDeviceStatus(String sn,String message) {
 		DeviceStatus deviceStatus=wsDevice.get(sn);
-		WebSocket conn=deviceStatus.getWebSocket();		
+		WebSocketSession conn=deviceStatus.getWebSocket();
 			if(null!=conn){				
 				conn.send(message);	
 			}			
