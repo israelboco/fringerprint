@@ -1,5 +1,5 @@
 package com.presence.testpresence.websoketsconnexion;
-// Program to eastablish the socket sessionection
+// Program to eastablish the socket connexion
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-// Socket-sessionection Configuration class
+// Socket-connexion Configuration class
 public class SocketConnectionHandler extends TextWebSocketHandler {
 
     public static Logger logger = LoggerFactory.getLogger(SocketConnectionHandler.class);
@@ -49,7 +49,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     Long timeStamp=0L;
     Long timeStamp2=0L;
     
-    // In this list all the sessionections will be stored
+    // In this list all the connexions will be stored
     // Then it will be used to broadcast the message
     List<WebSocketSession> webSocketSessions
             = Collections.synchronizedList(new ArrayList<>());
@@ -62,9 +62,9 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     {
 
         super.afterConnectionEstablished(session);
-        // Logging the sessionection ID with sessionected Message
+        // Logging the connexion ID with sessionected Message
         //System.out.println(session.getId() + " sessionected");
-        logger.debug(session.getId() + " sessionected");
+        logger.debug(session.getId() + " connexion");
 
         // Adding the session into the list
         webSocketSessions.add(session);
@@ -79,7 +79,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
         System.out.println(session.getId() + " Dissessionected");
 
-        // Removing the sessionection info from the list
+        // Removing the connexion info from the list
         webSocketSessions.remove(session);
     }
 
