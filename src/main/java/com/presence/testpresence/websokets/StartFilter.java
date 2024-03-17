@@ -26,18 +26,18 @@ public class StartFilter implements Filter {
 
     }
 
-    public void init(FilterConfig arg0) throws ServletException {
-        this.startWebsocketInstantMsg();
-    }
+//    public void init(FilterConfig arg0) throws ServletException {
+//        this.startWebsocketInstantMsg();
+//    }
 
     /**
-     * Démarrage du service de chat en direct
+     * 启动即时聊天服务
      */
-    public void startWebsocketInstantMsg() {
-    	ApplicationContext ac = new FileSystemXmlApplicationContext("classpath:spring-mybatis.xml"); 
-    	WSServer ws=(WSServer) ac.getBean("webSocket");
-		ws.start();
-	//	ws.onMessage( , message);
-	//	String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
-    }
+//    public void startWebsocketInstantMsg() {
+//    	ApplicationContext ac = new FileSystemXmlApplicationContext("classpath:spring-mybatis.xml");
+//    	WSServer ws=(WSServer) ac.getBean("webSocket");
+//		ws.start();
+//	//	ws.onMessage( , message);
+//	//	String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
+//    }
 }
