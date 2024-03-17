@@ -45,6 +45,12 @@ public class MachineController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<ReponseWs> findMachine(@PathVariable Integer id){
+        ReponseWs reponseWs = this.machineService.findMachine(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/list-of-compagnie")
     public ResponseEntity<ReponseWs> listOfCompany(@RequestParam Integer idCompany){
         ReponseWs reponseWs = machineService.listMachineOfCompanie(idCompany);

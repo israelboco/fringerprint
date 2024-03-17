@@ -1,6 +1,7 @@
 package com.presence.testpresence.controllers.device;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +93,7 @@ public class AllController {
 
 	/*采集所有的用户*/
     @GetMapping("/sendWs")
-    public Msg sendWs(@RequestParam("deviceSn")String deviceSn) {
+    public Msg sendWs(@RequestParam("deviceSn")String deviceSn) throws IOException {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
 		logger.debug("sss : " + deviceSn);

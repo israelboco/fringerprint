@@ -53,4 +53,12 @@ public class CompanieTypeService {
         List<CompanieTypeWs> companieTypeWs = companieTypes.stream().map(co -> gson.fromJson(gson.toJson(co), CompanieTypeWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, companieTypeWs);
     }
+
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        CompanieType companieType = companieTypeRepository.findOneById(id);
+        if(companieType == null) return new ReponseWs("failed", "companieType not found", 404, null);
+        CompanieTypeWs companieTypeWs = gson.fromJson(gson.toJson(companieType), CompanieTypeWs.class);
+        return new ReponseWs("success", "find", 200, companieTypeWs);
+    }
 }

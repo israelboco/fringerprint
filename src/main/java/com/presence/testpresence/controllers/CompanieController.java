@@ -27,11 +27,19 @@ public class CompanieController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<ReponseWs> find(@PathVariable Integer id){
+        ReponseWs reponseWs = this.companieService.findCompany(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
         ReponseWs reponseWs = this.companieService.listCompany(page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
+
+
 
 
 }
