@@ -1,7 +1,7 @@
 package com.presence.testpresence;
 
 
-import com.presence.testpresence.websokets.WSServer;
+//import com.presence.testpresence.websokets.WSServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
