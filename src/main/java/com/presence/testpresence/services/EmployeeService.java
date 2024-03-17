@@ -81,4 +81,12 @@ public class EmployeeService {
         return new ReponseWs("success", "list", 200, employeesWs);
     }
 
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        Employee employee = employeeRepository.findOneById(id);
+        if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
+        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        return new ReponseWs("success", "find", 200, employeeWs);
+    }
+
 }

@@ -32,6 +32,12 @@ public class TypeCompanyController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<ReponseWs> find(@PathVariable Integer id){
+        ReponseWs reponseWs = this.companieTypeService.find(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/list")
     public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
         ReponseWs reponseWs = companieTypeService.list(page, size);

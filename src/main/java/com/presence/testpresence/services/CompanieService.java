@@ -61,6 +61,14 @@ public class CompanieService {
         return new ReponseWs("success", "list", 200, companiesWs);
     }
 
+    public ReponseWs findCompany(Integer idCompagnie){
+        Gson gson = new Gson();
+        Companie companie = companieRepository.findOneById(idCompagnie);
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
+        CompanieWs companieWs = gson.fromJson(gson.toJson(companie), CompanieWs.class);
+        return new ReponseWs("success", "find", 200, companieWs);
+    }
+
 
     private CompanieWs getCompanieWs(Companie companie){
         Gson gson = new Gson();
