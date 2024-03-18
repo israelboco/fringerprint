@@ -9,6 +9,7 @@ import com.presence.testpresence.model.repositories.CompanieRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
 import com.presence.testpresence.model.repositories.EnrollInfoRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.EmployeeWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.apache.logging.log4j.LogManager;
@@ -91,6 +92,24 @@ public class EmployeeService {
         Employee employee = employeeRepository.findOneById(id);
         if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        employeeWs.setCompany(employee.getCompanie().getNom());
+        employeeWs.setIdCompany(employee.getCompanie().getId());
+        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
+        employeeWs.setUser_id(employee.getUser().getId());
+        return new ReponseWs("success", "find", 200, employeeWs);
+    }
+
+    public ReponseWs find(String token){
+        Gson gson = new Gson();
+        String email = JwtUtil.extractEmail(token);
+        User user = userRepository.findOneByEmail(email);
+        Employee employee = employeeRepository.findByUser(user);
+        if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
+        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        employeeWs.setCompany(employee.getCompanie().getNom());
+        employeeWs.setIdCompany(employee.getCompanie().getId());
+        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
+        employeeWs.setUser_id(employee.getUser().getId());
         return new ReponseWs("success", "find", 200, employeeWs);
     }
 

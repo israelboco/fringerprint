@@ -21,7 +21,11 @@ public class PresenceController {
     @GetMapping("/list")
     public ReponseWs list(@RequestParam String token){
         return this.presenceService.list(token);
+    }
 
+    @GetMapping("/find")
+    public ReponseWs find(@RequestParam String token, @RequestParam String date){
+        return this.presenceService.find(token, date);
     }
 
 }
