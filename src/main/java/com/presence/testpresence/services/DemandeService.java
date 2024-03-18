@@ -121,6 +121,17 @@ public class DemandeService {
         return new ReponseWs("success", "Listes employees accepte", 200, connexionWsPage);
     }
 
+    public ReponseWs listDemande(String token, Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size);
+        String emailAdmin = JwtUtil.extractEmail(token);
+        User userAdmin = userRepository.findOneByEmail(emailAdmin);
+        if(userAdmin == null) return new ReponseWs("failed", "token invalide", 404, null);
+        Page<Connexion> connexionPage = connexionRepository.findByConfirmDemande(null, pageable);
+        List<ConnexionWs> connexionWsList = connexionPage.stream().map(this::getConnexionWs).collect(Collectors.toList());
+        PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
+        return new ReponseWs("success", "Listes employees accepte", 200, connexionWsPage);
+    }
+
     private ConnexionWs getConnexionWs(Connexion connexion){
         Gson gson = new Gson();
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
