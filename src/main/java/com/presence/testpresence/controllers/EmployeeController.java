@@ -37,10 +37,16 @@ public class EmployeeController {
         ReponseWs reponseWs = this.employeeService.find(id);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
+
+    @GetMapping("/find")
+    public ResponseEntity<ReponseWs> find(@RequestParam String token){
+        ReponseWs reponseWs = this.employeeService.find(token);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/list")
     public ReponseWs list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size){
         return this.employeeService.listEmployee(page, size);
-
     }
 
 }

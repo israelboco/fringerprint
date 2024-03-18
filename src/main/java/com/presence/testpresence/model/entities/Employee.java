@@ -19,6 +19,8 @@ public class Employee implements Serializable {
     private String telephone;
     @Column(name = "email")
     private String email;
+    @Column(name = "fonction")
+    private String fonction;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User user;
@@ -121,5 +123,13 @@ public class Employee implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getFonction() {
+        return fonction;
+    }
+
+    public void setFonction(String fonction) {
+        this.fonction = fonction;
     }
 }

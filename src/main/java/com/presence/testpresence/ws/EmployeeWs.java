@@ -10,6 +10,7 @@ public class EmployeeWs {
     private Integer user_id;
     private String nom;
     private String prenom;
+    private String fonction;
     private String telephone;
     private String email;
     private Integer idCompany;
