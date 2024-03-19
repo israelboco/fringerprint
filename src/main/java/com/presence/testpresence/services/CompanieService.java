@@ -65,7 +65,7 @@ public class CompanieService {
         Gson gson = new Gson();
         Companie companie = companieRepository.findOneById(idCompagnie);
         if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
-        CompanieWs companieWs = gson.fromJson(gson.toJson(companie), CompanieWs.class);
+        CompanieWs companieWs = this.getCompanieWs(companie);
         return new ReponseWs("success", "find", 200, companieWs);
     }
 

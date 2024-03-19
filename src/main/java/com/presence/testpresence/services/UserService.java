@@ -68,6 +68,7 @@ public class UserService {
         connexion.setUser(user);
         connexion.setToken(generatedString);
         connexion.setDateExpireToken(cal.getTime());
+        connexionRepository.save(connexion);
         connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setEmployeeWs(employeeWs);
         connexionWs.setIsAdmin(employeeWs.getIsAdmin());
@@ -98,8 +99,9 @@ public class UserService {
         Connexion connexion = new Connexion();
         connexion.setUser(user);
         connexion.setActive(false);
-        connexion.setConfirmDemande(false);
+        connexion.setConfirmDemande(null);
         connexion.setCreated(new Date());
+        connexion.setCompany(companie.getNom());
         connexion.setToken(generatedString);
         connexion.setDateExpireToken(cal.getTime());
         this.connexionRepository.save(connexion);
