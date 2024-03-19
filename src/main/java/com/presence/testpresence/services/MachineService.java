@@ -27,14 +27,16 @@ public class MachineService {
 
     public ReponseWs saveMachine(MachineWs ws){
         Gson gson = new Gson();
-        Machine machine = gson.fromJson(gson.toJson(ws), Machine.class);
+        Machine machine = machineRepository.findOneBySerialNo(ws.getSerialNo());
+        if(machine != null) return new ReponseWs("failed", "machine exist", 408, null);
+        machine = gson.fromJson(gson.toJson(ws), Machine.class);
         machineRepository.save(machine);
         return new ReponseWs("success", "create", 200, ws);
     }
 
     public ReponseWs updateMachine(MachineWs ws){
         Gson gson = new Gson();
-        Machine machine = machineRepository.findOneById(ws.getId());
+        Machine machine = machineRepository.findOneBySerialNo(ws.getSerialNo());
         if(machine == null) return new ReponseWs("failed", "machine not found", 404, null);
         machine = gson.fromJson(gson.toJson(ws), Machine.class);
         machineRepository.save(machine);

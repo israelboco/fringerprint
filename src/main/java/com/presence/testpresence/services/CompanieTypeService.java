@@ -24,7 +24,9 @@ public class CompanieTypeService {
     CompanieTypeRepository companieTypeRepository;
 
     public ReponseWs create(String label, String description){
-        CompanieType companieType = new CompanieType();
+        CompanieType companieType = companieTypeRepository.findOneByLabel(label);
+        if(companieType != null) return new ReponseWs("failed", "companieType exist", 408, null);
+        companieType = new CompanieType();
         companieType.setLabel(label);
         companieType.setDescription(description);
         companieTypeRepository.save(companieType);

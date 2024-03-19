@@ -11,6 +11,7 @@ import java.util.List;
 public interface MachineRepository extends JpaRepository<Machine, Integer> {
 
     Machine findOneById(Integer id);
+    Machine findOneBySerialNo(String id);
     List<Machine> findByActive(Boolean active);
     List<Machine> findByCompanieAndActive(Companie companie, Boolean active);
     List<Machine> findAllByCompanie(Companie companie);
