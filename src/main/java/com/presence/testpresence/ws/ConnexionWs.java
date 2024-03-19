@@ -10,7 +10,10 @@ public class ConnexionWs {
     private EmployeeWs employeeWs;
     private Boolean isAdmin;
     private String token;
+    private String company;
     private Boolean active;
     private String deviceSerial;
     private Boolean confirmDemande;
+    private long dateTimestamp;
+
 }

@@ -17,7 +17,8 @@ public class Connexion implements Serializable {
     private User user;
     @Column(name = "token")
     private String token;
-
+    @Column(name = "company")
+    private String company;
     @Column(name = "date_expire_token")
     private Date dateExpireToken;
     @Column(name = "active")
@@ -82,5 +83,13 @@ public class Connexion implements Serializable {
 
     public void setConfirmDemande(Boolean confirmDemande) {
         this.confirmDemande = confirmDemande;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 }
