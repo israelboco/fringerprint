@@ -18,6 +18,10 @@ public class EnrollInfo {
     @Column(name = "signatures")
     private String signatures;
 
+    @JoinColumn(name = "machines_id", referencedColumnName = "id")
+    @ManyToOne
+    private Machine machine;
+
     public Integer getId() {
         return id;
     }
@@ -67,7 +71,13 @@ public class EnrollInfo {
 	}
 
 
-	
+    public Machine getMachine() {
+        return machine;
+    }
+
+    public void setMachine(Machine machine) {
+        this.machine = machine;
+    }
     
     
 }

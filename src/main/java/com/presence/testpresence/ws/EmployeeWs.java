@@ -16,5 +16,6 @@ public class EmployeeWs {
     private Integer idCompany;
     private String company;
     private Boolean isAdmin;
+    private String deviceSerial;
 
 }
