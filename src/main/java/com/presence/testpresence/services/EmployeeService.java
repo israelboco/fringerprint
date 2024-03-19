@@ -57,15 +57,23 @@ public class EmployeeService {
         return new ReponseWs("success", "create", 200, ws);
     }
 
-    public ReponseWs updateEmployee(EmployeeWs ws){
-        Companie companie = companieRepository.findOneById(ws.getIdCompany());
+    public ReponseWs updateEmployee(String token, EmployeeWs ws){
+        String email = JwtUtil.extractEmail(token);
+        User user = userRepository.findOneByEmail(email);
+        Employee employee = employeeRepository.findByUser(user);
+        Companie companie = companieRepository.findOneById(employee.getCompanie().getId());
         if (companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
         Gson gson = new Gson();
-        Employee employee = employeeRepository.findOneById(ws.getId());
-        if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
-        employee = gson.fromJson(gson.toJson(ws), Employee.class);
+        employee.setNom(ws.getNom());
+        employee.setPrenom(ws.getPrenom());
+        employee.setTelephone(ws.getTelephone());
+        employee.setEmail(ws.getEmail());
         employee.setCompanie(companie);
         employeeRepository.save(employee);
+        user.setNom(ws.getNom());
+        user.setPrenom(ws.getPrenom());
+        user.setEmail(ws.getEmail());
+        userRepository.save(user);
         return new ReponseWs("success", "update", 200, ws);
     }
 

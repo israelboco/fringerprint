@@ -21,8 +21,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/update")
-    public ReponseWs update(@RequestBody EmployeeWs ws){
-        return this.employeeService.updateEmployee(ws);
+    public ReponseWs update(@RequestParam String token, @RequestBody EmployeeWs ws){
+        return this.employeeService.updateEmployee(token, ws);
     }
 
     @GetMapping("/company/list")
