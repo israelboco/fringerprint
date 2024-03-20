@@ -153,7 +153,7 @@ public class UserService {
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
-        Companie companie = this.companieRepository.findOneByNomOrCode(ws.getCompany(), ws.getCompany());
+        Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
         if (companie == null) return new ReponseWs("failed", "L'entreprise n'existe pas, veillez corriger", 404, null);
         String password = this.passwordEncoder.encode(ws.getPassword());
 //        String password = ws.getPassword();
