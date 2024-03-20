@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public ReponseWs update(@RequestParam String email, @RequestParam String password){
-        return this.userService.login(email, password);
+    public ReponseWs update(@RequestBody UserWs userWs){
+        return this.userService.update(userWs);
     }
 
     @PostMapping("/register")
