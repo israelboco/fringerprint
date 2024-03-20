@@ -26,9 +26,6 @@ public class Machine implements Serializable {
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne
     private Companie companie;
-    @JoinColumn(name = "device_id", referencedColumnName = "id")
-    @ManyToOne
-    private Device device;
     @Column(name = "active")
     private Boolean active;
     @Column(name = "created")
@@ -107,11 +104,4 @@ public class Machine implements Serializable {
         this.name = name;
     }
 
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
 }

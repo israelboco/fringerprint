@@ -14,7 +14,7 @@ public class MachineWs {
     private String AdressMac;
     private String AdresseIp;
     private CompanieWs companie;
-    private String active;
-    private Date created;
+    private Boolean active;
+    private long createdTimestamp;
 
 }
