@@ -1,14 +1,9 @@
 package com.presence.testpresence.services;
 
 import com.google.gson.Gson;
-import com.presence.testpresence.model.entities.Companie;
-import com.presence.testpresence.model.entities.Employee;
-import com.presence.testpresence.model.entities.EnrollInfo;
-import com.presence.testpresence.model.entities.User;
-import com.presence.testpresence.model.repositories.CompanieRepository;
-import com.presence.testpresence.model.repositories.EmployeeRepository;
-import com.presence.testpresence.model.repositories.EnrollInfoRepository;
-import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.model.enums.Constant;
+import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.EmployeeWs;
 import com.presence.testpresence.ws.ReponseWs;
@@ -34,20 +29,26 @@ public class EmployeeService {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    MachineRepository machineRepository;
+    @Autowired
     EnrollInfoRepository enrollInfoRepository;
 
     public ReponseWs saveEmployee(EmployeeWs ws){
         Companie companie = companieRepository.findOneById(ws.getIdCompany());
-        if (companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
+        if (companie == null) return new ReponseWs(Constant.FAILED, "compagnie not found", 404, null);
         Gson gson = new Gson();
         User user = this.userRepository.findOneById(ws.getUser_id());
-        if (user == null) return new ReponseWs("failed", "user not found", 404, null);
-        EnrollInfo enrollInfo = this.enrollInfoRepository.findOneById(ws.getEnrollId());
+        if (user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        Machine machine = machineRepository.findOneBySerialNo(ws.getDeviceSerial());
+        if (machine == null) return new ReponseWs(Constant.FAILED, "device Serial not found", 404, null);
+        EnrollInfo enrollInfo = this.enrollInfoRepository.findOneByIdAndMachine(ws.getEnrollId(), machine);
         if (enrollInfo == null) {
             enrollInfo = new EnrollInfo();
             enrollInfo.setEnrollId(ws.getEnrollId());
+            enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
+
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
@@ -62,7 +63,7 @@ public class EmployeeService {
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
         Companie companie = companieRepository.findOneById(employee.getCompanie().getId());
-        if (companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
+        if (companie == null) return new ReponseWs(Constant.FAILED, "compagnie not found", 404, null);
         Gson gson = new Gson();
         employee.setNom(ws.getNom());
         employee.setPrenom(ws.getPrenom());
@@ -81,7 +82,7 @@ public class EmployeeService {
         Pageable pageable = PageRequest.of(page, size);
         Gson gson = new Gson();
         Companie companie = companieRepository.findOneById(idCompanie);
-        if(companie == null) return new ReponseWs("failed", "company not found", 404, null);
+        if(companie == null) return new ReponseWs(Constant.FAILED, "company not found", 404, null);
         List<Employee> employees = employeeRepository.findByCompanie(companie);
         List<EmployeeWs> employeesWs = employees.stream().map(m -> gson.fromJson(gson.toJson(m), EmployeeWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, employeesWs);
@@ -98,7 +99,7 @@ public class EmployeeService {
     public ReponseWs find(Integer id){
         Gson gson = new Gson();
         Employee employee = employeeRepository.findOneById(id);
-        if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
+        if(employee == null) return new ReponseWs(Constant.FAILED, "employee not found", 404, null);
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
         employeeWs.setCompany(employee.getCompanie().getNom());
         employeeWs.setIdCompany(employee.getCompanie().getId());
@@ -112,7 +113,7 @@ public class EmployeeService {
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
-        if(employee == null) return new ReponseWs("failed", "employee not found", 404, null);
+        if(employee == null) return new ReponseWs(Constant.FAILED, "employee not found", 404, null);
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
         employeeWs.setCompany(employee.getCompanie().getNom());
         employeeWs.setIdCompany(employee.getCompanie().getId());

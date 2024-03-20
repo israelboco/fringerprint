@@ -1,13 +1,11 @@
 package com.presence.testpresence.services;
 
 import com.google.gson.Gson;
-import com.presence.testpresence.model.entities.Companie;
-import com.presence.testpresence.model.entities.Connexion;
-import com.presence.testpresence.model.entities.Employee;
-import com.presence.testpresence.model.entities.User;
+import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.repositories.ConnexionRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
+import com.presence.testpresence.model.repositories.MachineRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.*;
@@ -37,6 +35,8 @@ public class DemandeService {
     EmployeeRepository employeeRepository;
     @Autowired
     ConnexionRepository connexionRepository;
+    @Autowired
+    MachineRepository machineRepository;
 
 
     public ReponseWs accept(String token, DemandeWs ws){
@@ -46,6 +46,8 @@ public class DemandeService {
         Employee employeeAdmin = this.employeeRepository.findByUser(userAdmin);
         User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs(Constant.FAILED, "L'utilisateur n'existe pas", 404, null);
+        Machine machine = machineRepository.findOneBySerialNo(ws.getDeviceSerial());
+        if (machine == null) return new ReponseWs(Constant.FAILED, "device Serial not found", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
         connexion.setActive(true);
         connexion.setConfirmDemande(true);
@@ -56,6 +58,7 @@ public class DemandeService {
         employeeWs.setPrenom(user.getPrenom());
         employeeWs.setEnrollId(ws.getEnrollId());
         employeeWs.setEmail(user.getEmail());
+        employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
         ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);

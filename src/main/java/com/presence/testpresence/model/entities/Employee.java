@@ -36,7 +36,6 @@ public class Employee implements Serializable {
     private String salt;
     @Column(name = "isAdmin")
     private Boolean isAdmin;
-
     public Integer getId() {
         return id;
     }
@@ -132,4 +131,5 @@ public class Employee implements Serializable {
     public void setFonction(String fonction) {
         this.fonction = fonction;
     }
+
 }
