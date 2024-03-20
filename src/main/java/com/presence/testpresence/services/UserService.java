@@ -170,7 +170,10 @@ public class UserService {
 
     private UserWs getUserWs(User user){
         Gson gson= new Gson();
-        return gson.fromJson(gson.toJson(user), UserWs.class);
+        Connexion connexion = this.connexionRepository.findByUser(user);
+        UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
+        userWs.setCompany(connexion.getCompany());
+        return userWs;
     }
 
     public ReponseWs userAdmin(UserWs ws){
