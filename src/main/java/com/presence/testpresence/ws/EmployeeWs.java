@@ -15,6 +15,7 @@ public class EmployeeWs {
     private String email;
     private Integer idCompany;
     private String company;
+    private String profile;
     private Boolean isAdmin;
     private String deviceSerial;
 

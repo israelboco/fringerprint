@@ -49,4 +49,9 @@ public class EmployeeController {
         return this.employeeService.listEmployee(page, size);
     }
 
+    @PostMapping("/set/profile")
+    public ReponseWs list(@RequestParam String token, @RequestParam String profile){
+        return this.employeeService.setProfile(token, profile);
+    }
+
 }
