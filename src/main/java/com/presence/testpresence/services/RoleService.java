@@ -56,6 +56,7 @@ public class RoleService {
         Gson gson = new Gson();
         Role role = roleRepository.findOneById(id);
         RoleWs roleWs = gson.fromJson(gson.toJson(role), RoleWs.class);
+        roleWs.setLabel(role.getName());
         return new ReponseWs("success", "find", 200, roleWs);
     }
 
