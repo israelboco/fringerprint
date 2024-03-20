@@ -153,7 +153,9 @@ public class UserService {
         String email = JwtUtil.extractEmail(token);
         User user = this.userRepository.findOneByEmail(email);
         if (user == null) return  new ReponseWs("failed", "token not found or expired", 401, null);
+        Connexion connexion = this.connexionRepository.findByUser(user);
         UserWs userws = gson.fromJson(gson.toJson(user), UserWs.class);
+        userws.setCompany(connexion.getCompany());
         return new ReponseWs("success", "user", 200, userws);
     }
 
