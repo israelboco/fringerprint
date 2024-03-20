@@ -38,5 +38,11 @@ public class RoleController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/find")
+    public ResponseEntity<ReponseWs> find(@RequestParam Integer id){
+        ReponseWs reponseWs = roleService.find(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
 
 }

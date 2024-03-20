@@ -52,5 +52,12 @@ public class RoleService {
         return new ReponseWs("success", "list", 200, roleWs);
     }
 
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        Role role = roleRepository.findOneById(id);
+        RoleWs roleWs = gson.fromJson(gson.toJson(role), RoleWs.class);
+        return new ReponseWs("success", "find", 200, roleWs);
+    }
+
 
 }
