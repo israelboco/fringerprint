@@ -18,6 +18,11 @@ public class UserController {
         return this.userService.login(email, password);
     }
 
+    @PostMapping("/update")
+    public ReponseWs update(@RequestParam String email, @RequestParam String password){
+        return this.userService.login(email, password);
+    }
+
     @PostMapping("/register")
     public ReponseWs register(@RequestBody UserWs ws){
         return this.userService.register(ws);

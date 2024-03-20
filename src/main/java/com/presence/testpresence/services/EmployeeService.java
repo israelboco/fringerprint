@@ -48,7 +48,7 @@ public class EmployeeService {
             enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
-        
+
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
@@ -76,6 +76,16 @@ public class EmployeeService {
         user.setEmail(ws.getEmail());
         userRepository.save(user);
         return new ReponseWs("success", "update", 200, ws);
+    }
+
+    public ReponseWs setProfile(String token, String profile){
+        String email = JwtUtil.extractEmail(token);
+        User user = userRepository.findOneByEmail(email);
+        Employee employee = employeeRepository.findByUser(user);
+        if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
+        employee.setProfile(profile);
+        employeeRepository.save(employee);
+        return new ReponseWs("success", "profile", 200, null);
     }
 
     public ReponseWs listEmployeeOfCompany(Integer idCompanie, Integer page, Integer size){

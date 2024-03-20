@@ -75,6 +75,37 @@ public class UserService {
         return new ReponseWs("success", "user login", 200, connexionWs);
     }
 
+    public ReponseWs update(UserWs ws){
+        logger.debug("user {} ", ws);
+        User user = this.userRepository.findOneByEmail(ws.getEmail());
+        if (user == null) return new ReponseWs("failed", "user not found", 404, null);
+        Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
+        if (companie == null) return new ReponseWs("failed", "L'entreprise n'existe pas, veillez corriger", 404, null);
+        String password = this.passwordEncoder.encode(ws.getPassword());
+        Gson gson= new Gson();
+        user = gson.fromJson(gson.toJson(ws), User.class);
+        user.setNom(ws.getNom());
+        user.setPrenom(ws.getPrenom());
+        user.setEmail(ws.getEmail());
+        user.setPassword(password);
+        this.userRepository.save(user);
+        String generatedString = JwtUtil.generateToken(ws.getEmail());
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR_OF_DAY, 24);
+        Connexion connexion = new Connexion();
+        connexion.setUser(user);
+        connexion.setActive(false);
+        connexion.setConfirmDemande(null);
+        connexion.setCreated(new Date());
+        connexion.setCompany(companie.getNom());
+        connexion.setToken(generatedString);
+        connexion.setDateExpireToken(cal.getTime());
+        this.connexionRepository.save(connexion);
+        ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
+
+    }
+
     public ReponseWs register(UserWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
