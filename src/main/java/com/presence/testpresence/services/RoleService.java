@@ -48,15 +48,21 @@ public class RoleService {
     public ReponseWs list(Integer page, Integer size){
         Gson gson = new Gson();
         List<Role> role = roleRepository.findAll();
-        List<RoleWs> roleWs = role.stream().map(ro -> gson.fromJson(gson.toJson(ro), RoleWs.class)).collect(Collectors.toList());
+        List<RoleWs> roleWs = role.stream().map(this::getroleWs).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, roleWs);
     }
 
     public ReponseWs find(Integer id){
-        Gson gson = new Gson();
         Role role = roleRepository.findOneById(id);
-        RoleWs roleWs = gson.fromJson(gson.toJson(role), RoleWs.class);
+        RoleWs roleWs = this.getroleWs(role);
         return new ReponseWs("success", "find", 200, roleWs);
+    }
+
+    private RoleWs getroleWs(Role role){
+        Gson gson = new Gson();
+        RoleWs roleWs = gson.fromJson(gson.toJson(role), RoleWs.class);
+        roleWs.setLabel(role.getName());
+        return roleWs;
     }
 
 
