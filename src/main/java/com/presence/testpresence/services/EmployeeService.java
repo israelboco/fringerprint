@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.repositories.*;
+import com.presence.testpresence.util.ImageUtils;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.EmployeeWs;
 import com.presence.testpresence.ws.ReponseWs;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,13 +83,13 @@ public class EmployeeService {
         return new ReponseWs("success", "update", 200, ws);
     }
 
-    public ReponseWs setProfile(String token, MultipartFile file){
+    public ReponseWs setProfile(String token, MultipartFile file) throws IOException {
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
         if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
-        String profile = fileService.uploadFile(file);
-        employee.setProfile(profile);
+        byte[] profile =  ImageUtils.compressImage(file.getBytes());
+        employee.setImageData(profile);
         employeeRepository.save(employee);
         return new ReponseWs("success", "profile", 200, null);
     }
@@ -98,7 +100,7 @@ public class EmployeeService {
         Companie companie = companieRepository.findOneById(idCompanie);
         if(companie == null) return new ReponseWs(Constant.FAILED, "company not found", 404, null);
         List<Employee> employees = employeeRepository.findByCompanie(companie);
-        List<EmployeeWs> employeesWs = employees.stream().map(m -> gson.fromJson(gson.toJson(m), EmployeeWs.class)).collect(Collectors.toList());
+        List<EmployeeWs> employeesWs = employees.stream().map(this::getEmployeeWs).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, employeesWs);
     }
 
@@ -106,7 +108,7 @@ public class EmployeeService {
         Pageable pageable = PageRequest.of(page, size);
         Gson gson = new Gson();
         Page<Employee> employees = employeeRepository.findAll(pageable);
-        List<EmployeeWs> employeesWs = employees.getContent().stream().map(m -> gson.fromJson(gson.toJson(m), EmployeeWs.class)).collect(Collectors.toList());
+        List<EmployeeWs> employeesWs = employees.getContent().stream().map(this::getEmployeeWs).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, employeesWs);
     }
 
@@ -114,11 +116,7 @@ public class EmployeeService {
         Gson gson = new Gson();
         Employee employee = employeeRepository.findOneById(id);
         if(employee == null) return new ReponseWs(Constant.FAILED, "employee not found", 404, null);
-        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
-        employeeWs.setCompany(employee.getCompanie().getNom());
-        employeeWs.setIdCompany(employee.getCompanie().getId());
-        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
-        employeeWs.setUser_id(employee.getUser().getId());
+        EmployeeWs employeeWs = this.getEmployeeWs(employee);
         return new ReponseWs("success", "find", 200, employeeWs);
     }
 
@@ -128,12 +126,19 @@ public class EmployeeService {
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
         if(employee == null) return new ReponseWs(Constant.FAILED, "employee not found", 404, null);
+        EmployeeWs employeeWs = this.getEmployeeWs(employee);
+        return new ReponseWs("success", "find", 200, employeeWs);
+    }
+
+    private EmployeeWs getEmployeeWs(Employee employee){
+        Gson gson = new Gson();
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
         employeeWs.setCompany(employee.getCompanie().getNom());
         employeeWs.setIdCompany(employee.getCompanie().getId());
         employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
         employeeWs.setUser_id(employee.getUser().getId());
-        return new ReponseWs("success", "find", 200, employeeWs);
+        if(employee.getImageData() != null)
+            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
+        return employeeWs;
     }
-
 }

@@ -1,5 +1,7 @@
 package com.presence.testpresence.model.entities;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -38,6 +40,10 @@ public class Employee implements Serializable {
     private Boolean isAdmin;
     @Column(name = "profile")
     private String profile;
+    @Lob
+    @Type(type = "org.hibernate.type.ImageType")
+    private byte[] imageData;
+
     public Integer getId() {
         return id;
     }
@@ -140,5 +146,13 @@ public class Employee implements Serializable {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 }
