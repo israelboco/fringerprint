@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,8 @@ public class EmployeeService {
     MachineRepository machineRepository;
     @Autowired
     EnrollInfoRepository enrollInfoRepository;
+    @Autowired
+    FileService fileService;
 
     public ReponseWs saveEmployee(EmployeeWs ws){
         Companie companie = companieRepository.findOneById(ws.getIdCompany());
@@ -78,11 +81,12 @@ public class EmployeeService {
         return new ReponseWs("success", "update", 200, ws);
     }
 
-    public ReponseWs setProfile(String token, String profile){
+    public ReponseWs setProfile(String token, MultipartFile file){
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
         if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
+        String profile = fileService.uploadFile(file);
         employee.setProfile(profile);
         employeeRepository.save(employee);
         return new ReponseWs("success", "profile", 200, null);

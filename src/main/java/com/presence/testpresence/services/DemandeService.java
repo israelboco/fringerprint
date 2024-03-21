@@ -46,6 +46,8 @@ public class DemandeService {
         Employee employeeAdmin = this.employeeRepository.findByUser(userAdmin);
         User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs(Constant.FAILED, "L'utilisateur n'existe pas", 404, null);
+        if(ws.getDeviceSerial() == null)
+            ws.setDeviceSerial(employeeAdmin.getEnrollInfo().getMachine().getSerialNo());
         Machine machine = machineRepository.findOneBySerialNo(ws.getDeviceSerial());
         if (machine == null) return new ReponseWs(Constant.FAILED, "device Serial not found", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);

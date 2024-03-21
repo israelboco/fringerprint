@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1.0/employee")
@@ -50,8 +51,8 @@ public class EmployeeController {
     }
 
     @PostMapping("/set/profile")
-    public ReponseWs list(@RequestParam String token, @RequestParam String profile){
-        return this.employeeService.setProfile(token, profile);
+    public ReponseWs list(@RequestParam String token, @RequestParam("file") MultipartFile file){
+        return this.employeeService.setProfile(token, file);
     }
 
 }
