@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("api/v1.0/employee")
 public class EmployeeController {
@@ -51,7 +53,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/set/profile")
-    public ReponseWs list(@RequestParam String token, @RequestParam("file") MultipartFile file){
+    public ReponseWs list(@RequestParam String token, @RequestParam("file") MultipartFile file) throws IOException {
         return this.employeeService.setProfile(token, file);
     }
 
