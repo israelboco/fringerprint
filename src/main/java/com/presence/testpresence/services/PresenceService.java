@@ -5,6 +5,7 @@ import com.presence.testpresence.model.entities.Connexion;
 import com.presence.testpresence.model.entities.Employee;
 import com.presence.testpresence.model.entities.Presence;
 import com.presence.testpresence.model.entities.User;
+import com.presence.testpresence.model.enums.PresenceEnum;
 import com.presence.testpresence.model.repositories.ConnexionRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
 import com.presence.testpresence.model.repositories.PresenceRepository;
@@ -91,15 +92,26 @@ public class PresenceService {
         LocalDate localNow = LocalDate.of(localDateFromCalendar.getYear(), localDateFromCalendar.getMonthValue(), localDateFromCalendar.getDayOfMonth());
         LocalDate debutJournee = localNow.atStartOfDay().toLocalDate();
         LocalDateTime finJournee = localNow.atTime(23, 59, 59, 999999999);
-
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
-        boolean present = false;
+        PresenceEnum present = PresenceEnum.ABSENT;
         Date dateDEBUT= Date.from(debutJournee.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date dateFIN= Date.from(finJournee.atZone(ZoneId.systemDefault()).toInstant());
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
-        if(presence != null) present = true;
+        if(presence != null) {
+            Calendar carHour = Calendar.getInstance();
+            carHour.setTime(presence.getCreated());
+            int hour = carHour.get(Calendar.HOUR_OF_DAY);
+            int minute = carHour.get(Calendar.MINUTE);
+            LocalTime hourNow = LocalTime.of(hour, minute);
+            LocalTime hourLimit = LocalTime.of(8, 5);
+            if (hourNow.isAfter(hourLimit)) {
+                present = PresenceEnum.EN_RETARD;
+            } else {
+                present = PresenceEnum.A_HEURE;
+            }
+        }
         JourWs jourWs = new JourWs();
         jourWs.setJour(String.valueOf(debutJournee.getDayOfMonth()));
         jourWs.setMois(String.valueOf(debutJournee.getMonthValue()));
@@ -108,10 +120,7 @@ public class PresenceService {
         return new ReponseWs("success", "presence find", 200, jourWs);
     }
 
-
     public ReponseWs presenceMonth(String token, String date){
-        String email = JwtUtil.extractEmail(token);
-        User user = userRepository.findOneByEmail(email);
         Date dataNow = new Date();
         try{
             dataNow = dateFormat.parse(date);
