@@ -5,6 +5,7 @@ import com.presence.testpresence.model.entities.Connexion;
 import com.presence.testpresence.model.entities.Employee;
 import com.presence.testpresence.model.entities.Presence;
 import com.presence.testpresence.model.entities.User;
+import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.enums.PresenceEnum;
 import com.presence.testpresence.model.repositories.ConnexionRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -59,6 +57,7 @@ public class PresenceService {
         Gson gson = new Gson();
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user neot found", 404, null);
         Connexion connexion = this.connexionRepository.findByUser(user);
         if(connexion == null) return new ReponseWs("failed", "user not found", 404, null);
         List<Presence> list = this.presenceRepository.findByUser(connexion.getUser());
@@ -121,6 +120,7 @@ public class PresenceService {
     }
 
     public ReponseWs presenceMonth(String token, String date){
+        Gson gson = new Gson();
         Date dataNow = new Date();
         try{
             dataNow = dateFormat.parse(date);
@@ -141,10 +141,14 @@ public class PresenceService {
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         // Parcourir tous les jours du mois
+        List<JourWs> jourWsList = new ArrayList<>();
         for (int day = 1; day <= daysInMonth; day++) {
             calendar.set(Calendar.DAY_OF_MONTH, day); // Définir le jour
             Date jour = calendar.getTime(); // Obtenir la date correspondante
-            // Faites quelque chose avec la date...
+            String dateString = dateFormat.format(jour);
+            ReponseWs reponseWs = this.find(token, dateString);
+            JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
+            jourWsList.add(jourWs);
         }
         return new ReponseWs();
     }
