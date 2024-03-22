@@ -6,6 +6,7 @@ import com.presence.testpresence.model.entities.Employee;
 import com.presence.testpresence.model.entities.Presence;
 import com.presence.testpresence.model.entities.User;
 import com.presence.testpresence.model.repositories.ConnexionRepository;
+import com.presence.testpresence.model.repositories.EmployeeRepository;
 import com.presence.testpresence.model.repositories.PresenceRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
 import com.presence.testpresence.util.JwtUtil;
@@ -40,6 +41,8 @@ public class PresenceService {
     ConnexionRepository connexionRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     public ReponseWs create(String token){
         Connexion connexion = this.connexionRepository.findByTokenAndActive(token, true);
@@ -53,11 +56,22 @@ public class PresenceService {
 
     public ReponseWs list(String token){
         Gson gson = new Gson();
-        Connexion connexion = this.connexionRepository.findByTokenAndActive(token, true);
+        String email = JwtUtil.extractEmail(token);
+        User user = userRepository.findOneByEmail(email);
+        Connexion connexion = this.connexionRepository.findByUser(user);
         if(connexion == null) return new ReponseWs("failed", "user not found", 404, null);
         List<Presence> list = this.presenceRepository.findByUser(connexion.getUser());
-        List<PresenceWs> listWs = list.stream().map(p -> gson.fromJson(gson.toJson(p), PresenceWs.class)).sorted(Comparator.comparingInt(PresenceWs::getId)).collect(Collectors.toList());
+        List<PresenceWs> listWs = list.stream().map(this::getPresenceWs).sorted(Comparator.comparingInt(PresenceWs::getId).reversed()).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, listWs);
+    }
+
+    private PresenceWs getPresenceWs(Presence presence){
+        Gson gson = new Gson();
+        Employee employee = employeeRepository.findByUser(presence.getUser());
+        PresenceWs presenceWs = gson.fromJson(gson.toJson(presence), PresenceWs.class);
+        presenceWs.setEmployeeWs(gson.fromJson(gson.toJson(employee), EmployeeWs.class));
+        presenceWs.setDateTimestamp(presence.getCreated().getTime());
+        return presenceWs;
     }
 
     public ReponseWs find(String token, String date)  {
@@ -92,5 +106,37 @@ public class PresenceService {
         jourWs.setAnnee(String.valueOf(debutJournee.getYear()));
         jourWs.setPresence(present);
         return new ReponseWs("success", "presence find", 200, jourWs);
+    }
+
+
+    public ReponseWs presenceMonth(String token, String date){
+        String email = JwtUtil.extractEmail(token);
+        User user = userRepository.findOneByEmail(email);
+        Date dataNow = new Date();
+        try{
+            dataNow = dateFormat.parse(date);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Calendar car = Calendar.getInstance();
+        car.setTime(dataNow);
+        Instant instantFromCalendar = car.toInstant();
+        ZonedDateTime zonedDateTimeFromCalendar = instantFromCalendar.atZone(ZoneId.systemDefault());
+        LocalDate localDateFromCalendar = zonedDateTimeFromCalendar.toLocalDate();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, localDateFromCalendar.getYear()); // Définir l'année
+        calendar.set(Calendar.MONTH, localDateFromCalendar.getMonthValue() - 1); // Définir le mois (0-indexé)
+
+        // Obtenir le nombre de jours dans le mois
+        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        // Parcourir tous les jours du mois
+        for (int day = 1; day <= daysInMonth; day++) {
+            calendar.set(Calendar.DAY_OF_MONTH, day); // Définir le jour
+            Date jour = calendar.getTime(); // Obtenir la date correspondante
+            // Faites quelque chose avec la date...
+        }
+        return new ReponseWs();
     }
 }

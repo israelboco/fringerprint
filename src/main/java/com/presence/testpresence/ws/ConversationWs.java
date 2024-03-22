@@ -2,14 +2,13 @@ package com.presence.testpresence.ws;
 
 import lombok.Data;
 
-import java.util.Date;
 
 @Data
-public class PresenceWs {
+public class ConversationWs {
 
     private Integer id;
-    private UserWs user;
-    private EmployeeWs employeeWs;
+    private String contenu;
+    private Integer senderId;
+    private Integer receiverId;
     private long dateTimestamp;
-
 }
