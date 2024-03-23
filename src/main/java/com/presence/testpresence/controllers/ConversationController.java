@@ -23,8 +23,13 @@ public class ConversationController {
     }
 
     @GetMapping("/receive")
-    public ResponseEntity<ReponseWs> receive(@RequestParam String token, @RequestParam Integer employeeId){
+    public ResponseEntity<ReponseWs> receive(@RequestParam String token, @RequestParam Integer employeeId, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         ReponseWs reponseWs = this.conversationService.receive(token, employeeId);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/list/receive")
+    public ResponseEntity<ReponseWs> listReceive(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.conversationService.listReceive(token, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
