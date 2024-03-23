@@ -28,4 +28,9 @@ public class PresenceController {
         return this.presenceService.find(token, date);
     }
 
+    @GetMapping("/presenceMonth")
+    public ReponseWs presenceMonth(@RequestParam String token, @RequestParam String date){
+        return this.presenceService.presenceMonth(token, date);
+    }
+
 }

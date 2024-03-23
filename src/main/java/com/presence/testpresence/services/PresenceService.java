@@ -75,6 +75,7 @@ public class PresenceService {
     }
 
     public ReponseWs find(String token, String date)  {
+        logger.debug(date);
         Date dataNow = new Date();
         try{
             dataNow = dateFormat.parse(date);
@@ -137,6 +138,7 @@ public class PresenceService {
         calendar.set(Calendar.YEAR, localDateFromCalendar.getYear()); // Définir l'année
         calendar.set(Calendar.MONTH, localDateFromCalendar.getMonthValue() - 1); // Définir le mois (0-indexé)
 
+        
         // Obtenir le nombre de jours dans le mois
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -150,6 +152,6 @@ public class PresenceService {
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
             jourWsList.add(jourWs);
         }
-        return new ReponseWs();
+        return new ReponseWs(Constant.SUCCESS, "liste des presence du mois", 200, jourWsList);
     }
 }
