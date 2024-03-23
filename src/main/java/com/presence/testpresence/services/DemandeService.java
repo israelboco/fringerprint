@@ -37,6 +37,8 @@ public class DemandeService {
     ConnexionRepository connexionRepository;
     @Autowired
     MachineRepository machineRepository;
+    @Autowired
+    FileService fileService;
 
 
     public ReponseWs accept(String token, DemandeWs ws){
@@ -151,6 +153,21 @@ public class DemandeService {
         Gson gson = new Gson();
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setDateTimestamp(connexion.getCreated().getTime());
+        Employee employee = employeeRepository.findByUser(connexion.getUser());
+        if (employee != null)
+            connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
         return connexionWs;
+    }
+
+    private EmployeeWs getEmployeeWs(Employee employee){
+        Gson gson = new Gson();
+        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        employeeWs.setCompany(employee.getCompanie().getNom());
+        employeeWs.setIdCompany(employee.getCompanie().getId());
+        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
+        employeeWs.setUser_id(employee.getUser().getId());
+        if(employee.getImageData() != null)
+            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
+        return employeeWs;
     }
 }

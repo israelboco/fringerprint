@@ -1,7 +1,6 @@
 package com.presence.testpresence.services;
 
 import com.google.gson.Gson;
-import com.presence.testpresence.model.entities.Connexion;
 import com.presence.testpresence.model.entities.Conversation;
 import com.presence.testpresence.model.entities.Employee;
 import com.presence.testpresence.model.entities.User;
@@ -11,9 +10,7 @@ import com.presence.testpresence.model.repositories.ConversationRepository;
 import com.presence.testpresence.model.repositories.EmployeeRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
 import com.presence.testpresence.util.JwtUtil;
-import com.presence.testpresence.ws.ConnexionWs;
-import com.presence.testpresence.ws.ConversationWs;
-import com.presence.testpresence.ws.ReponseWs;
+import com.presence.testpresence.ws.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +37,8 @@ public class ConversationService {
     UserRepository userRepository;
     @Autowired
     ConnexionRepository connexionRepository;
+    @Autowired
+    FileService fileService;
 
     public ReponseWs sender(ConversationWs ws){
         Employee sender = employeeRepository.findOneById(ws.getSenderId());
@@ -71,16 +70,30 @@ public class ConversationService {
         if(user == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employeeAdmin = employeeRepository.findByUser(user);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
-        Page<Connexion> connexionPage = connexionRepository.findByConfirmDemande(true, pageable);
-        List<ConnexionWs> connexionWsList = connexionPage.stream().filter(d -> employeeRepository.findByUserAndCompanie(d.getUser(), employeeAdmin.getCompanie()) != null)
-                .map(this::getConnexionWs).collect(Collectors.toList());
-        PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
-        List<Conversation> conversations = conversationRepository.findBySenderAndReceiverOrderByCreatedDesc(employeeT, employeeT);
-
-        List<ConversationWs> conversationWsList = conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
-        return new ReponseWs(Constant.SUCCESS, "list conversation", 200, conversationWsList);
+        Page<Employee> employees = employeeRepository.findByCompanie(employeeAdmin.getCompanie(), pageable);
+        List<ListConversationWs> list = employees.stream().filter(d -> d.getUser() != employeeAdmin.getUser())
+                .map(this::getListConversationWs).collect(Collectors.toList());
+        PageImpl<ListConversationWs> listConWs = new PageImpl<>(list, pageable, employees.getTotalPages() - 1);
+        return new ReponseWs(Constant.SUCCESS, "list des employees pour la conversation", 200, listConWs);
     }
 
+    private ListConversationWs getListConversationWs(Employee employee){
+        ListConversationWs listConversationWs = new ListConversationWs();
+        listConversationWs.setEmployeeWs(this.getEmployeeWs(employee));
+        return listConversationWs;
+    }
+
+    private EmployeeWs getEmployeeWs(Employee employee){
+        Gson gson = new Gson();
+        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        employeeWs.setCompany(employee.getCompanie().getNom());
+        employeeWs.setIdCompany(employee.getCompanie().getId());
+        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
+        employeeWs.setUser_id(employee.getUser().getId());
+        if(employee.getImageData() != null)
+            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
+        return employeeWs;
+    }
     private ConversationWs getConversationWs(Conversation conversation){
         Gson gson = new Gson();
         ConversationWs conversationWs = gson.fromJson(gson.toJson(conversation), ConversationWs.class);
