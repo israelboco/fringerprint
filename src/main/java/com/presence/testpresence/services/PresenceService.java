@@ -96,7 +96,7 @@ public class PresenceService {
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
-        PresenceEnum present = PresenceEnum.NO_DEFINE;
+        PresenceEnum present = PresenceEnum.NON_DEFINIE;
         Date dateDEBUT= Date.from(debutJournee.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date dateFIN= Date.from(finJournee.atZone(ZoneId.systemDefault()).toInstant());
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
@@ -114,7 +114,7 @@ public class PresenceService {
             }
         }
         if(presence == null){
-            if(connexion.getCreated().after(dataNow)){
+            if(dataNow.after(connexion.getCreated())){
                 if (finJournee.isBefore(LocalDateTime.now())) {
                     present = PresenceEnum.ABSENT;
                 }
