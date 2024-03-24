@@ -95,7 +95,8 @@ public class PresenceService {
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
-        PresenceEnum present = PresenceEnum.ABSENT;
+        Connexion connexion = connexionRepository.findByUser(user);
+        PresenceEnum present = PresenceEnum.NO_DEFINE;
         Date dateDEBUT= Date.from(debutJournee.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date dateFIN= Date.from(finJournee.atZone(ZoneId.systemDefault()).toInstant());
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
@@ -110,6 +111,13 @@ public class PresenceService {
                 present = PresenceEnum.EN_RETARD;
             } else {
                 present = PresenceEnum.A_HEURE;
+            }
+        }
+        if(presence == null){
+            if(connexion.getCreated().after(dataNow)){
+                if (finJournee.isBefore(LocalDateTime.now())) {
+                    present = PresenceEnum.ABSENT;
+                }
             }
         }
         JourWs jourWs = new JourWs();
