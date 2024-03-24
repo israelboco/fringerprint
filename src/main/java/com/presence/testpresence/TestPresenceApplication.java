@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @SpringBootApplication(scanBasePackages = {
 		"com.presence.testpresence.*"
 })
+@EnableWebSocket
 @Configuration
 @EnableAsync
 @EnableScheduling
