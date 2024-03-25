@@ -87,6 +87,7 @@ public class DemandeService {
         employeeWs.setPrenom(user.getPrenom());
         employeeWs.setEnrollId(ws.getEnrollId());
         employeeWs.setEmail(user.getEmail());
+        employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
         ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
