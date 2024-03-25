@@ -22,9 +22,20 @@ public class ConversationController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @PostMapping("/senderWithAdmin")
+    public ResponseEntity<ReponseWs> senderWithAdmin(@RequestBody ConversationWs ws){
+        ReponseWs reponseWs = this.conversationService.senderWithAdmin(ws);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/receive")
-    public ResponseEntity<ReponseWs> receive(@RequestParam String token, @RequestParam Integer employeeId){
-        ReponseWs reponseWs = this.conversationService.receive(token, employeeId);
+    public ResponseEntity<ReponseWs> receive(@RequestParam String token, @RequestParam Integer employeeId, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size){
+        ReponseWs reponseWs = this.conversationService.receive(token, employeeId, page, size);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/list/receive")
+    public ResponseEntity<ReponseWs> listReceive(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size){
+        ReponseWs reponseWs = this.conversationService.listReceive(token, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 

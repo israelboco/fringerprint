@@ -34,7 +34,7 @@ public class UserController {
         return this.userService.getUser(token);
     }
     @GetMapping("/list")
-    public ReponseWs listUser(@RequestParam Integer page, @RequestParam Integer size){
+    public ReponseWs listUser(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         return this.userService.listUser(page, size);
     }
 

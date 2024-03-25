@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @GetMapping("/company/list")
     public ReponseWs listOfCompany(@RequestParam Integer idCompany, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                   @RequestParam(required = false, defaultValue = "10") Integer size
+                                   @RequestParam(required = false, defaultValue = "25") Integer size
                                    ){
         return this.employeeService.listEmployeeOfCompany(idCompany, page, size);
     }
@@ -48,7 +48,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/list")
-    public ReponseWs list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size){
+    public ReponseWs list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         return this.employeeService.listEmployee(page, size);
     }
 

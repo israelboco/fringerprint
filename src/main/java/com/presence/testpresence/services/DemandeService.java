@@ -37,6 +37,8 @@ public class DemandeService {
     ConnexionRepository connexionRepository;
     @Autowired
     MachineRepository machineRepository;
+    @Autowired
+    FileService fileService;
 
 
     public ReponseWs accept(String token, DemandeWs ws){
@@ -110,8 +112,9 @@ public class DemandeService {
         Pageable pageable = PageRequest.of(page, size);
         String emailAdmin = JwtUtil.extractEmail(token);
         User userAdmin = userRepository.findOneByEmail(emailAdmin);
+        if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
-        if(userAdmin == null || employeeAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
+        if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         Page<Connexion> connexionPage = connexionRepository.findByConfirmDemande(true, pageable);
         List<ConnexionWs> connexionWsList = connexionPage.stream().filter(d -> employeeRepository.findByUserAndCompanie(d.getUser(), employeeAdmin.getCompanie()) != null)
                 .map(this::getConnexionWs).collect(Collectors.toList());
@@ -150,6 +153,21 @@ public class DemandeService {
         Gson gson = new Gson();
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setDateTimestamp(connexion.getCreated().getTime());
+        Employee employee = employeeRepository.findByUser(connexion.getUser());
+        if (employee != null)
+            connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
         return connexionWs;
+    }
+
+    private EmployeeWs getEmployeeWs(Employee employee){
+        Gson gson = new Gson();
+        EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        employeeWs.setCompany(employee.getCompanie().getNom());
+        employeeWs.setIdCompany(employee.getCompanie().getId());
+        employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
+        employeeWs.setUser_id(employee.getUser().getId());
+        if(employee.getImageData() != null)
+            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
+        return employeeWs;
     }
 }

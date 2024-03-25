@@ -39,7 +39,7 @@ public class TypeCompanyController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ReponseWs> list(@RequestParam Integer page, @RequestParam Integer size){
+    public ResponseEntity<ReponseWs> list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         ReponseWs reponseWs = companieTypeService.list(page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
