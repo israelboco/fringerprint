@@ -24,13 +24,13 @@ public class PresenceController {
     }
 
     @GetMapping("/find")
-    public ReponseWs find(@RequestParam String token, @RequestParam String date){
-        return this.presenceService.find(token, date);
+    public ReponseWs find(@RequestParam String token, @RequestParam String date, @RequestParam(required = false) Integer userID){
+        return this.presenceService.find(token, date, userID);
     }
 
     @GetMapping("/presenceMonth")
-    public ReponseWs presenceMonth(@RequestParam String token, @RequestParam String date){
-        return this.presenceService.presenceMonth(token, date);
+    public ReponseWs presenceMonth(@RequestParam String token, @RequestParam String date, @RequestParam(required = false) Integer employeeID){
+        return this.presenceService.presenceMonth(token, date, employeeID);
     }
 
 }

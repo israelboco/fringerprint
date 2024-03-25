@@ -74,7 +74,7 @@ public class PresenceService {
         return presenceWs;
     }
 
-    public ReponseWs find(String token, String date)  {
+    public ReponseWs find(String token, String date, Integer userID)  {
         logger.debug(date);
         Date dataNow = new Date();
         try{
@@ -92,8 +92,13 @@ public class PresenceService {
         LocalDate localNow = LocalDate.of(localDateFromCalendar.getYear(), localDateFromCalendar.getMonthValue(), localDateFromCalendar.getDayOfMonth());
         LocalDate debutJournee = localNow.atStartOfDay().toLocalDate();
         LocalDateTime finJournee = localNow.atTime(23, 59, 59, 999999999);
-        String email = JwtUtil.extractEmail(token);
-        User user = userRepository.findOneByEmail(email);
+        User user = new User();
+        if(userID != null){
+            user = userRepository.findOneById(userID);
+        }else {
+            String email = JwtUtil.extractEmail(token);
+            user = userRepository.findOneByEmail(email);
+        }
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
         PresenceEnum present = PresenceEnum.NON_DEFINIE;
@@ -128,7 +133,7 @@ public class PresenceService {
         return new ReponseWs("success", "presence find", 200, jourWs);
     }
 
-    public ReponseWs presenceMonth(String token, String date){
+    public ReponseWs presenceMonth(String token, String date, Integer userID){
         Gson gson = new Gson();
         Date dataNow = new Date();
         try{
@@ -146,7 +151,6 @@ public class PresenceService {
         calendar.set(Calendar.YEAR, localDateFromCalendar.getYear()); // Définir l'année
         calendar.set(Calendar.MONTH, localDateFromCalendar.getMonthValue() - 1); // Définir le mois (0-indexé)
 
-        
         // Obtenir le nombre de jours dans le mois
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -156,7 +160,13 @@ public class PresenceService {
             calendar.set(Calendar.DAY_OF_MONTH, day); // Définir le jour
             Date jour = calendar.getTime(); // Obtenir la date correspondante
             String dateString = dateFormat.format(jour);
-            ReponseWs reponseWs = this.find(token, dateString);
+            ReponseWs reponseWs = new ReponseWs();
+            if(userID != null){
+                reponseWs = this.find(token, dateString, userID);
+            }
+            else{
+                reponseWs = this.find(token, dateString, null);
+            }
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
             jourWsList.add(jourWs);
         }

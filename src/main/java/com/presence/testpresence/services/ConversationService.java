@@ -41,7 +41,10 @@ public class ConversationService {
     FileService fileService;
 
     public ReponseWs sender(ConversationWs ws){
-        Employee sender = employeeRepository.findOneById(ws.getSenderId());
+        String email = JwtUtil.extractEmail(ws.getToken());
+        User user = userRepository.findOneByEmail(email);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        Employee sender = employeeRepository.findByUser(user);
         Employee receiver = employeeRepository.findOneById(ws.getReceiverId());
         if(sender == null || receiver == null) return new ReponseWs(Constant.FAILED, "sender or receiver not found", 404, null);
         Conversation conversation = new Conversation();
@@ -53,14 +56,38 @@ public class ConversationService {
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
     }
 
-    public ReponseWs receive(String token, Integer employeeId){
+    public ReponseWs senderWithAdmin(ConversationWs ws){
+        String email = JwtUtil.extractEmail(ws.getToken());
+        User user = userRepository.findOneByEmail(email);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        Employee sender = employeeRepository.findByUser(user);
+        if(sender == null) return new ReponseWs(Constant.FAILED, "sender not found", 404, null);
+        List<Employee> receivers = employeeRepository.findByCompanieAndIsAdmin(sender.getCompanie(), true);
+
+        for (Employee admin: receivers){
+            ws.setReceiverId(admin.getId());
+            logger.debug(ws);
+            this.sender(ws);
+        }
+
+        return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
+    }
+
+
+    public ReponseWs receive(String token, Integer employeeId, Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size);
         Employee employeeA = employeeRepository.findOneById(employeeId);
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         Employee employeeT = employeeRepository.findByUser(user);
-        List<Conversation> conversations = conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeT, employeeA, employeeA, employeeT);
-        List<ConversationWs> conversationWsList = conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
-        return new ReponseWs(Constant.SUCCESS, "list conversation", 200, conversationWsList);
+        Page<ConversationWs> listConWs = this.getPageConversationWs(employeeA, employeeT, pageable);
+        return new ReponseWs(Constant.SUCCESS, "list conversation", 200, listConWs);
+    }
+    private Page<ConversationWs> getPageConversationWs(Employee employeeA, Employee employeeT, Pageable pageable){
+        Page<Conversation> conversations = conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeT, employeeA, employeeA, employeeT, pageable);
+        List<ConversationWs> conversationWsList = conversations.getContent().stream().map(this::getConversationWs).collect(Collectors.toList());
+        PageImpl<ConversationWs> listConWs = new PageImpl<>(conversationWsList, pageable, conversations.getTotalPages());
+        return listConWs;
     }
 
     public ReponseWs listReceive(String token, Integer page, Integer size){
@@ -72,14 +99,16 @@ public class ConversationService {
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         Page<Employee> employees = employeeRepository.findByCompanie(employeeAdmin.getCompanie(), pageable);
         List<ListConversationWs> list = employees.stream().filter(d -> d.getUser() != employeeAdmin.getUser())
-                .map(this::getListConversationWs).collect(Collectors.toList());
-        PageImpl<ListConversationWs> listConWs = new PageImpl<>(list, pageable, employees.getTotalPages() - 1);
-        return new ReponseWs(Constant.SUCCESS, "list des employees pour la conversation", 200, listConWs);
+                .filter(v -> !conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeAdmin, v, v, employeeAdmin).isEmpty()).map(v -> this.getListConversationWs(employeeAdmin, v)).collect(Collectors.toList());
+        return new ReponseWs(Constant.SUCCESS, "list des employees pour la conversation", 200, list);
     }
 
-    private ListConversationWs getListConversationWs(Employee employee){
+    private ListConversationWs getListConversationWs(Employee employeeAdmin, Employee employee){
         ListConversationWs listConversationWs = new ListConversationWs();
         listConversationWs.setEmployeeWs(this.getEmployeeWs(employee));
+        List<Conversation> conversations = conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeAdmin, employee, employee, employeeAdmin);
+        List<ConversationWs> conversationWsList = conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
+        listConversationWs.setConversation(conversationWsList);
         return listConversationWs;
     }
 
@@ -90,8 +119,8 @@ public class ConversationService {
         employeeWs.setIdCompany(employee.getCompanie().getId());
         employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
         employeeWs.setUser_id(employee.getUser().getId());
-        if(employee.getImageData() != null)
-            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
+//        if(employee.getImageData() != null)
+//            employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
         return employeeWs;
     }
     private ConversationWs getConversationWs(Conversation conversation){
