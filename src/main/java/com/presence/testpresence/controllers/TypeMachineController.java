@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1.0/type-machine")
+@RequestMapping("api/v1.0/typemachine")
 public class TypeMachineController {
 
     @Autowired
