@@ -53,7 +53,6 @@ public class EmployeeService {
             enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
-
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
