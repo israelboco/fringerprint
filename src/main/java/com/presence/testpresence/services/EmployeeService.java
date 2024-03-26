@@ -90,6 +90,7 @@ public class EmployeeService {
         if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
         byte[] profile =  ImageUtils.compressImage(file.getBytes());
         employee.setImageData(null);
+//        employee.setImageData(profile);
         employeeRepository.save(employee);
         return new ReponseWs("success", "profile", 200, null);
     }
