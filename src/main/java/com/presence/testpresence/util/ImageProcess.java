@@ -70,7 +70,7 @@ public class  ImageProcess {
 	        String base64EncoderImg = preffix + Base64.getEncoder().encodeToString(mFile.getBytes()).replaceAll("[\\s*\t\n\r]", "");
 	        return base64EncoderImg;
 	    }
-	  
+
 	  /**
 	   * 图片转base64字符串
 	   * @param imgFile 图片路径

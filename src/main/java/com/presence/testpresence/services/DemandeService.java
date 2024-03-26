@@ -39,6 +39,8 @@ public class DemandeService {
     MachineRepository machineRepository;
     @Autowired
     FileService fileService;
+    @Autowired
+    PresenceService presenceService;
 
 
     public ReponseWs accept(String token, DemandeWs ws){
@@ -87,6 +89,7 @@ public class DemandeService {
         employeeWs.setPrenom(user.getPrenom());
         employeeWs.setEnrollId(ws.getEnrollId());
         employeeWs.setEmail(user.getEmail());
+        employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
         ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
@@ -156,6 +159,20 @@ public class DemandeService {
         Employee employee = employeeRepository.findByUser(connexion.getUser());
         if (employee != null)
             connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
+        return connexionWs;
+    }
+
+    private ConnexionWs getConnexionWithPresenceWs(Connexion connexion){
+        Gson gson = new Gson();
+        ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        connexionWs.setDateTimestamp(connexion.getCreated().getTime());
+        Employee employee = employeeRepository.findByUser(connexion.getUser());
+        if (employee != null){
+            connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
+            ReponseWs reponseWs = this.presenceService.find(null, null, employee.getUser().getId());
+            JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
+            connexionWs.setPresence(jourWs.getPresence());
+        }
         return connexionWs;
     }
 

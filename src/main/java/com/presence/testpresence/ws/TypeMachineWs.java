@@ -5,8 +5,11 @@ import lombok.Data;
 @Data
 public class TypeMachineWs {
 
-    private Long id;
+    private Integer id;
+
     private String label;
+
     private String description;
+
 
 }
