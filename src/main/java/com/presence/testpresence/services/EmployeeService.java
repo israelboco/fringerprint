@@ -53,7 +53,6 @@ public class EmployeeService {
             enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
-
         Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
@@ -89,7 +88,8 @@ public class EmployeeService {
         Employee employee = employeeRepository.findByUser(user);
         if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
         byte[] profile =  ImageUtils.compressImage(file.getBytes());
-        employee.setImageData(profile);
+        employee.setImageData(null);
+//        employee.setImageData(profile);
         employeeRepository.save(employee);
         return new ReponseWs("success", "profile", 200, null);
     }

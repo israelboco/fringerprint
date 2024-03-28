@@ -74,7 +74,8 @@ public class PresenceService {
         return presenceWs;
     }
 
-    public ReponseWs find(String token, String date)  {
+    public ReponseWs find(String token, String date, Integer userID)  {
+        logger.debug(date);
         Date dataNow = new Date();
         try{
             dataNow = dateFormat.parse(date);
@@ -91,10 +92,16 @@ public class PresenceService {
         LocalDate localNow = LocalDate.of(localDateFromCalendar.getYear(), localDateFromCalendar.getMonthValue(), localDateFromCalendar.getDayOfMonth());
         LocalDate debutJournee = localNow.atStartOfDay().toLocalDate();
         LocalDateTime finJournee = localNow.atTime(23, 59, 59, 999999999);
-        String email = JwtUtil.extractEmail(token);
-        User user = userRepository.findOneByEmail(email);
+        User user = new User();
+        if(userID != null){
+            user = userRepository.findOneById(userID);
+        }else {
+            String email = JwtUtil.extractEmail(token);
+            user = userRepository.findOneByEmail(email);
+        }
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
-        PresenceEnum present = PresenceEnum.ABSENT;
+        Connexion connexion = connexionRepository.findByUser(user);
+        PresenceEnum present = PresenceEnum.NON_DEFINIE;
         Date dateDEBUT= Date.from(debutJournee.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date dateFIN= Date.from(finJournee.atZone(ZoneId.systemDefault()).toInstant());
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
@@ -111,6 +118,13 @@ public class PresenceService {
                 present = PresenceEnum.A_HEURE;
             }
         }
+        if(presence == null){
+            if(dataNow.after(connexion.getCreated())){
+                if (finJournee.isBefore(LocalDateTime.now())) {
+                    present = PresenceEnum.ABSENT;
+                }
+            }
+        }
         JourWs jourWs = new JourWs();
         jourWs.setJour(String.valueOf(debutJournee.getDayOfMonth()));
         jourWs.setMois(String.valueOf(debutJournee.getMonthValue()));
@@ -119,7 +133,7 @@ public class PresenceService {
         return new ReponseWs("success", "presence find", 200, jourWs);
     }
 
-    public ReponseWs presenceMonth(String token, String date){
+    public ReponseWs presenceMonth(String token, String date, Integer userID){
         Gson gson = new Gson();
         Date dataNow = new Date();
         try{
@@ -146,10 +160,16 @@ public class PresenceService {
             calendar.set(Calendar.DAY_OF_MONTH, day); // Définir le jour
             Date jour = calendar.getTime(); // Obtenir la date correspondante
             String dateString = dateFormat.format(jour);
-            ReponseWs reponseWs = this.find(token, dateString);
+            ReponseWs reponseWs = new ReponseWs();
+            if(userID != null){
+                reponseWs = this.find(token, dateString, userID);
+            }
+            else{
+                reponseWs = this.find(token, dateString, null);
+            }
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
             jourWsList.add(jourWs);
         }
-        return new ReponseWs();
+        return new ReponseWs(Constant.SUCCESS, "liste des presence du mois", 200, jourWsList);
     }
 }
