@@ -1,6 +1,11 @@
 //package com.presence.testpresence.config;
 //
 //import jdk.internal.loader.Resource;
+//import org.apache.http.conn.HttpClientConnectionManager;
+//import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+//import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.impl.client.HttpClients;
+//import org.apache.http.ssl.SSLContextBuilder;
 //import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
