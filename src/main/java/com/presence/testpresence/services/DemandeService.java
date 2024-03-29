@@ -185,7 +185,7 @@ public class DemandeService {
             connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
             ReponseWs reponseWs = this.presenceService.find(null, null, employee.getUser().getId());
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
-            connexionWs.setPresence(jourWs.getPresence());
+            connexionWs.setJourWs(jourWs);
         }
         return connexionWs;
     }

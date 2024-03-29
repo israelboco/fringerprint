@@ -1,6 +1,5 @@
 package com.presence.testpresence.ws;
 
-import com.presence.testpresence.model.enums.PresenceEnum;
 import lombok.Data;
 
 @Data
@@ -16,6 +15,6 @@ public class ConnexionWs {
     private String deviceSerial;
     private Boolean confirmDemande;
     private long dateTimestamp;
-    private PresenceEnum presence;
+    private JourWs jourWs;
 
 }
