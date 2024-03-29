@@ -16,6 +16,6 @@ public class ConnexionWs {
     private String deviceSerial;
     private Boolean confirmDemande;
     private long dateTimestamp;
-    private PresenceEnum presence;
+    private JourWs jourWs;
 
 }

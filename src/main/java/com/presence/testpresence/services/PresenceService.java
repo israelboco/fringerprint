@@ -12,13 +12,15 @@ import com.presence.testpresence.model.repositories.EmployeeRepository;
 import com.presence.testpresence.model.repositories.PresenceRepository;
 import com.presence.testpresence.model.repositories.UserRepository;
 import com.presence.testpresence.util.JwtUtil;
-import com.presence.testpresence.ws.EmployeeWs;
-import com.presence.testpresence.ws.JourWs;
-import com.presence.testpresence.ws.PresenceWs;
-import com.presence.testpresence.ws.ReponseWs;
+import com.presence.testpresence.ws.*;
+import okhttp3.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 
@@ -131,6 +133,30 @@ public class PresenceService {
         jourWs.setAnnee(String.valueOf(debutJournee.getYear()));
         jourWs.setPresence(present);
         return new ReponseWs("success", "presence find", 200, jourWs);
+    }
+
+    public ReponseWs listPresenceMonth(String token, String date, Integer page , Integer size){
+        Gson gson = new Gson();
+        Pageable pageable = PageRequest.of(page, size);
+        String emailAdmin = JwtUtil.extractEmail(token);
+        User userAdmin = userRepository.findOneByEmail(emailAdmin);
+        if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
+        Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
+        if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
+        Page<Connexion> connexionPage = connexionRepository.findByConfirmDemandeAndCompany(true, employeeAdmin.getCompanie().getNom(), pageable);
+        List<RapportPresenceWs> rapportPresenceWs = new ArrayList<>();
+        for (Connexion connexion: connexionPage){
+            RapportPresenceWs rapport = new RapportPresenceWs();
+            ReponseWs reponseWs = this.find(token, date, connexion.getUser().getId());
+            JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
+            Employee employee = employeeRepository.findByUser(connexion.getUser());
+            if(employee != null)
+                rapport.setEmployeeWs(gson.fromJson(gson.toJson(employee), EmployeeWs.class));
+            rapport.setJourWs(jourWs);
+            rapportPresenceWs.add(rapport);
+        }
+        PageImpl<RapportPresenceWs> rapportPresenceWsPage = new PageImpl<>(rapportPresenceWs, pageable, connexionPage.getTotalPages());
+        return new ReponseWs(Constant.SUCCESS, "liste des presence d'un mois", 200, rapportPresenceWsPage);
     }
 
     public ReponseWs presenceMonth(String token, String date, Integer userID){

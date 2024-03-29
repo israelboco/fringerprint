@@ -33,4 +33,8 @@ public class PresenceController {
         return this.presenceService.presenceMonth(token, date, employeeID);
     }
 
+    @GetMapping("list/presence/jour")
+    public ReponseWs listPresenceMonth(@RequestParam String token, @RequestParam String date, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        return this.presenceService.listPresenceMonth(token, date, page, size);
+    }
 }
