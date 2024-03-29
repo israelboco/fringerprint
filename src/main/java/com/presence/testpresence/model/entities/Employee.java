@@ -4,6 +4,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "employees")
@@ -43,6 +44,9 @@ public class Employee implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.ImageType")
     private byte[] imageData;
+    @Column(name = "created")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
     public Integer getId() {
         return id;
@@ -155,4 +159,13 @@ public class Employee implements Serializable {
     public void setImageData(byte[] imageData) {
         this.imageData = imageData;
     }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
 }

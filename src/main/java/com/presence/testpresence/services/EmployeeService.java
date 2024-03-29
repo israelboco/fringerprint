@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class EmployeeService {
         employee.setUser(user);
         employee.setEnrollInfo(enrollInfo);
         employee.setAdmin(ws.getIsAdmin());
+        employee.setCreated(new Date());
         employeeRepository.save(employee);
         return new ReponseWs("success", "create", 200, ws);
     }

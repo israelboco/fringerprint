@@ -17,6 +17,8 @@ public interface ConnexionRepository extends JpaRepository<Connexion, Integer> {
     Connexion findByUser(User user);
     Connexion findByTokenAndActive(String token, Boolean active);
     Page<Connexion> findByCompanyAndConfirmDemandeIsNull(String company, Pageable pageable);
+    Page<Connexion> findByCompany(String company, Pageable pageable);
     Page<Connexion> findByConfirmDemande(Boolean confirm, Pageable pageable);
+    Page<Connexion> findByConfirmDemandeAndCompany(Boolean confirm, String company, Pageable pageable);
 
 }

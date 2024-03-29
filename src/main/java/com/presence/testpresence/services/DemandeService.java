@@ -118,11 +118,25 @@ public class DemandeService {
         if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
-        Page<Connexion> connexionPage = connexionRepository.findByConfirmDemande(true, pageable);
+        Page<Connexion> connexionPage = connexionRepository.findByConfirmDemandeAndCompany(true, employeeAdmin.getCompanie().getNom(), pageable);
         List<ConnexionWs> connexionWsList = connexionPage.stream().filter(d -> employeeRepository.findByUserAndCompanie(d.getUser(), employeeAdmin.getCompanie()) != null)
                 .map(this::getConnexionWs).collect(Collectors.toList());
         PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes employees accepte", 200, connexionWsPage);
+    }
+
+    public ReponseWs list(String token, Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size);
+        String emailAdmin = JwtUtil.extractEmail(token);
+        User userAdmin = userRepository.findOneByEmail(emailAdmin);
+        if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
+        Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
+        if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
+        Page<Connexion> connexionPage = connexionRepository.findByCompany(employeeAdmin.getCompanie().getNom(), pageable);
+        List<ConnexionWs> connexionWsList = connexionPage.stream().filter(d -> employeeRepository.findByUserAndCompanie(d.getUser(), employeeAdmin.getCompanie()) != null)
+                .map(this::getConnexionWithPresenceWs).collect(Collectors.toList());
+        PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
+        return new ReponseWs(Constant.SUCCESS, "Listes employees total", 200, connexionWsPage);
     }
 
     public ReponseWs listRefuser(String token, Integer page, Integer size){
