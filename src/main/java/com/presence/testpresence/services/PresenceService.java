@@ -107,17 +107,21 @@ public class PresenceService {
         Date dateDEBUT= Date.from(debutJournee.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date dateFIN= Date.from(finJournee.atZone(ZoneId.systemDefault()).toInstant());
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
+        String hours = null;
+        LocalTime hourLimit = LocalTime.of(8, 5);
+        logger.debug(hourLimit.toString());
         if(presence != null) {
             Calendar carHour = Calendar.getInstance();
             carHour.setTime(presence.getCreated());
             int hour = carHour.get(Calendar.HOUR_OF_DAY);
             int minute = carHour.get(Calendar.MINUTE);
             LocalTime hourNow = LocalTime.of(hour, minute);
-            LocalTime hourLimit = LocalTime.of(8, 5);
             if (hourNow.isAfter(hourLimit)) {
                 present = PresenceEnum.EN_RETARD;
+                hours = hourNow.toString();
             } else {
                 present = PresenceEnum.A_HEURE;
+                hours = hourNow.toString();
             }
         }
         if(presence == null){
@@ -131,6 +135,7 @@ public class PresenceService {
         jourWs.setJour(String.valueOf(debutJournee.getDayOfMonth()));
         jourWs.setMois(String.valueOf(debutJournee.getMonthValue()));
         jourWs.setAnnee(String.valueOf(debutJournee.getYear()));
+        jourWs.setHours(hours);
         jourWs.setPresence(present);
         return new ReponseWs("success", "presence find", 200, jourWs);
     }
