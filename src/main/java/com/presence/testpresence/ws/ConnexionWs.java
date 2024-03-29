@@ -1,6 +1,5 @@
 package com.presence.testpresence.ws;
 
-import com.presence.testpresence.model.enums.PresenceEnum;
 import lombok.Data;
 
 @Data
