@@ -125,7 +125,7 @@ public class DemandeService {
         return new ReponseWs(Constant.SUCCESS, "Listes employees accepte", 200, connexionWsPage);
     }
 
-    public ReponseWs list(String token, Integer page, Integer size){
+    public ReponseWs list(String token, String date, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
         String emailAdmin = JwtUtil.extractEmail(token);
         User userAdmin = userRepository.findOneByEmail(emailAdmin);
@@ -134,7 +134,7 @@ public class DemandeService {
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         Page<Connexion> connexionPage = connexionRepository.findByCompany(employeeAdmin.getCompanie().getNom(), pageable);
         List<ConnexionWs> connexionWsList = connexionPage.stream().filter(d -> employeeRepository.findByUserAndCompanie(d.getUser(), employeeAdmin.getCompanie()) != null)
-                .map(this::getConnexionWithPresenceWs).collect(Collectors.toList());
+                .map(v -> this.getConnexionWithPresenceWs(v, date)).collect(Collectors.toList());
         PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes employees total", 200, connexionWsPage);
     }
@@ -176,14 +176,14 @@ public class DemandeService {
         return connexionWs;
     }
 
-    private ConnexionWs getConnexionWithPresenceWs(Connexion connexion){
+    private ConnexionWs getConnexionWithPresenceWs(Connexion connexion, String date){
         Gson gson = new Gson();
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setDateTimestamp(connexion.getCreated().getTime());
         Employee employee = employeeRepository.findByUser(connexion.getUser());
         if (employee != null){
             connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
-            ReponseWs reponseWs = this.presenceService.find(null, null, employee.getUser().getId());
+            ReponseWs reponseWs = this.presenceService.find(null, date, employee.getUser().getId());
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
             connexionWs.setJourWs(jourWs);
         }

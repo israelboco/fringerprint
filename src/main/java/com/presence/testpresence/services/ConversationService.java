@@ -45,7 +45,7 @@ public class ConversationService {
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Employee sender = employeeRepository.findByUser(user);
-        Employee receiver = employeeRepository.findOneById(ws.getReceiverId());
+        Employee receiver = employeeRepository.findOneById(ws.getReceiver().getId());
         if(sender == null || receiver == null) return new ReponseWs(Constant.FAILED, "sender or receiver not found", 404, null);
         Conversation conversation = new Conversation();
         conversation.setContenu(ws.getContenu());
@@ -57,6 +57,7 @@ public class ConversationService {
     }
 
     public ReponseWs senderWithAdmin(ConversationWs ws){
+        Gson gson = new Gson();
         String email = JwtUtil.extractEmail(ws.getToken());
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
@@ -65,7 +66,7 @@ public class ConversationService {
         List<Employee> receivers = employeeRepository.findByCompanieAndIsAdmin(sender.getCompanie(), true);
 
         for (Employee admin: receivers){
-            ws.setReceiverId(admin.getId());
+            ws.setReceiver(gson.fromJson(gson.toJson(admin), EmployeeWs.class));
             logger.debug(ws);
             this.sender(ws);
         }
@@ -126,8 +127,8 @@ public class ConversationService {
     private ConversationWs getConversationWs(Conversation conversation){
         Gson gson = new Gson();
         ConversationWs conversationWs = gson.fromJson(gson.toJson(conversation), ConversationWs.class);
-        conversationWs.setReceiverId(conversation.getReceiver().getId());
-        conversationWs.setSenderId(conversation.getReceiver().getId());
+        conversationWs.setReceiver(gson.fromJson(gson.toJson(conversation.getReceiver()), EmployeeWs.class));
+        conversationWs.setSender(gson.fromJson(gson.toJson(conversation.getSender()), EmployeeWs.class));
         conversationWs.setDateTimestamp(conversation.getCreated().getTime());
         return conversationWs;
     }

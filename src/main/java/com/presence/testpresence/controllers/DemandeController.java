@@ -39,8 +39,8 @@ public class DemandeController {
     }
 
     @GetMapping("/list/employee")
-    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.demandeService.list(token, page, size);
+    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false) String date, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.demandeService.list(token, date, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
