@@ -1,6 +1,7 @@
 package com.presence.testpresence.controllers;
 
 import com.presence.testpresence.services.MachineService;
+import com.presence.testpresence.ws.MachineRequestWs;
 import com.presence.testpresence.ws.MachineWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,13 @@ public class MachineController {
     MachineService machineService;
 
     @PostMapping("/save")
-    public ResponseEntity<ReponseWs> createMachine(@RequestBody MachineWs ws){
+    public ResponseEntity<ReponseWs> createMachine(@RequestBody MachineRequestWs ws){
         ReponseWs reponseWs = machineService.saveMachine(ws);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ReponseWs> updateMachine(@RequestBody MachineWs ws){
+    public ResponseEntity<ReponseWs> updateMachine(@RequestBody MachineRequestWs ws){
         ReponseWs reponseWs = machineService.updateMachine(ws);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
