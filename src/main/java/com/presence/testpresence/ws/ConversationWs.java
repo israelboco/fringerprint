@@ -8,8 +8,8 @@ public class ConversationWs {
 
     private Integer id;
     private String contenu;
-    private Integer senderId;
+    private EmployeeWs sender;
     private String token;
-    private Integer receiverId;
+    private EmployeeWs receiver;
     private long dateTimestamp;
 }
