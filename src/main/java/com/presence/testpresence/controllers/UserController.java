@@ -5,6 +5,8 @@ import com.presence.testpresence.ws.ReponseWs;
 import com.presence.testpresence.ws.UserRequestWs;
 import com.presence.testpresence.ws.UserWs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -45,5 +47,9 @@ public class UserController {
         return this.userService.refeshToken(token);
     }
 
-
+    @GetMapping("/find")
+    public ResponseEntity<ReponseWs> find(@RequestParam Integer id){
+        ReponseWs reponseWs = this.userService.find(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
 }

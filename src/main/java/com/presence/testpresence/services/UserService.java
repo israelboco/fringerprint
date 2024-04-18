@@ -1,6 +1,7 @@
 package com.presence.testpresence.services;
 
 import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.*;
@@ -213,4 +214,13 @@ public class UserService {
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
     }
+
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        User user = userRepository.findOneById(id);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        UserWs userWs = this.getUserWs(user);
+        return new ReponseWs("success", "find", 200, userWs);
+    }
+
 }
