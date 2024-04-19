@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("web/api/v1.0/demande")
-public class DemandeController {
+public class WebDemandeController {
     @Autowired
     DemandeService demandeService;
 
