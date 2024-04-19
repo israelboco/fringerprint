@@ -97,6 +97,13 @@ public class MachineService {
         return new ReponseWs("success", "list", 200, machinesWs);
     }
 
+    public ReponseWs list(){
+        Gson gson = new Gson();
+        List<Machine> machines = machineRepository.findAll();
+        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
+        return new ReponseWs("success", "list", 200, machinesWs);
+    }
+
     public ReponseWs connect(Integer idMachine, Integer idCompanie){
         Gson gson = new Gson();
         Companie companie = companieRepository.findOneById(idCompanie);

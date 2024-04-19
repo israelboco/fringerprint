@@ -58,6 +58,12 @@ public class MachineController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ReponseWs> list(){
+        ReponseWs reponseWs = machineService.list();
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/connect/compagnie")
     public ResponseEntity<ReponseWs> connect(@RequestParam Integer idMachine, @RequestParam Integer idCompany){
         ReponseWs reponseWs = machineService.connect(idMachine, idCompany);
