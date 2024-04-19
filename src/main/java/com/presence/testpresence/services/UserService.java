@@ -104,10 +104,12 @@ public class UserService {
 //        String password = ws.getPassword();
         Gson gson= new Gson();
         Set<Role> roles = new HashSet<>();
-        for(Integer id: ws.getIdRoles()){
-            Role role = this.roleRepository.findOneById(id);
-            if(role != null)
-                roles.add(role);
+        if(ws.getIdRoles() != null) {
+            for (Integer id : ws.getIdRoles()) {
+                Role role = this.roleRepository.findOneById(id);
+                if (role != null)
+                    roles.add(role);
+            }
         }
         user = gson.fromJson(gson.toJson(ws), User.class);
         user.setNom(ws.getNom());
