@@ -127,8 +127,15 @@ public class DemandeService {
 
     public ReponseWs list(String token, String date, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
-        String emailAdmin = JwtUtil.extractEmail(token);
-        User userAdmin = userRepository.findOneByEmail(emailAdmin);
+        String emailAdmin = null;
+        try{
+            emailAdmin = JwtUtil.extractEmail(token);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        User userAdmin = null;
+        if (emailAdmin != null)
+            userAdmin = userRepository.findOneByEmail(emailAdmin);
         if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
@@ -155,9 +162,19 @@ public class DemandeService {
 
     public ReponseWs listDemandeForCompanie(String token, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
-        String emailAdmin = JwtUtil.extractEmail(token);
-        User userAdmin = userRepository.findOneByEmail(emailAdmin);
-        Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
+        String emailAdmin = null;
+        try{
+            emailAdmin = JwtUtil.extractEmail(token);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        User userAdmin = new User();
+        if (emailAdmin == null)
+            return new ReponseWs(Constant.SUCCESS, "token invalide", 401, null);
+        userAdmin = userRepository.findOneByEmail(emailAdmin);
+        Employee employeeAdmin = new Employee();
+        if (userAdmin != null)
+            employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(userAdmin == null || employeeAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Page<Connexion> connexionPage = connexionRepository.findByCompanyAndConfirmDemandeIsNull(employeeAdmin.getCompanie().getNom(), pageable);
         List<ConnexionWs> connexionWsList = connexionPage.stream()
@@ -169,10 +186,19 @@ public class DemandeService {
 
     public ReponseWs listAll(String token, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
-        String emailAdmin = JwtUtil.extractEmail(token);
-        User userAdmin = userRepository.findOneByEmail(emailAdmin);
-        Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
-        if(userAdmin == null || employeeAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
+        String emailAdmin = null;
+        try{
+            emailAdmin = JwtUtil.extractEmail(token);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+//        User userAdmin = new User();
+//        if (emailAdmin == null)
+//            return new ReponseWs(Constant.SUCCESS, "token invalide", 401, null);
+//        userAdmin = userRepository.findOneByEmail(emailAdmin);
+//        Employee employeeAdmin = new Employee();
+//        if (userAdmin != null)
+//            employeeAdmin = employeeRepository.findByUser(userAdmin);
         Page<Connexion> connexionPage = connexionRepository.findByConfirmDemandeIsNull(pageable);
         List<ConnexionWs> connexionWsList = connexionPage.stream()
                 .map(this::getConnexionWs).collect(Collectors.toList());
