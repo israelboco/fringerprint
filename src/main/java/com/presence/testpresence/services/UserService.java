@@ -176,7 +176,7 @@ public class UserService {
         Gson gson= new Gson();
         Connexion connexion = this.connexionRepository.findByUser(user);
         UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
-        if (connexion.getCompany() != null)
+        if (connexion != null)
             userWs.setCompany(connexion.getCompany());
         return userWs;
     }
