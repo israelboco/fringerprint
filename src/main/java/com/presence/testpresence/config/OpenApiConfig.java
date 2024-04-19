@@ -28,8 +28,8 @@ public class OpenApiConfig {
             Parameter headerParam = new Parameter()
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema())
-                    .name("access-token")
-                    .description("access-token")
+                    .name("access_token")
+                    .description("access_token")
                     .required(false);
             operation.addParametersItem(headerParam);
             return operation;
