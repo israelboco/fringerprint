@@ -92,7 +92,6 @@ public class UserService {
         Connexion connexion = connexionRepository.findByUser(user);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "update user.", 200, connexionWs);
-
     }
 
     public ReponseWs register(UserRequestWs ws){
@@ -177,7 +176,8 @@ public class UserService {
         Gson gson= new Gson();
         Connexion connexion = this.connexionRepository.findByUser(user);
         UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
-        userWs.setCompany(connexion.getCompany());
+        if (connexion.getCompany() != null)
+            userWs.setCompany(connexion.getCompany());
         return userWs;
     }
 
