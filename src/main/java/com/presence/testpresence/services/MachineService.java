@@ -36,7 +36,9 @@ public class MachineService {
         if(machine != null) return new ReponseWs("failed", "machine exist", 408, null);
         machine = gson.fromJson(gson.toJson(ws), Machine.class);
         TypeMachine typeMachine = this.typeMachineRepository.findOneById(ws.getTypeMachineId());
+        if(typeMachine == null) return new ReponseWs("failed", "typeMachine not found", 404, null);
         Companie companie = this.companieRepository.findOneById(ws.getCompanieId());
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
         machine.setTypeMachine(typeMachine);
         machine.setCompanie(companie);
         machineRepository.save(machine);
@@ -49,7 +51,9 @@ public class MachineService {
         if(machine == null) return new ReponseWs("failed", "machine not found", 404, null);
         machine = gson.fromJson(gson.toJson(ws), Machine.class);
         TypeMachine typeMachine = this.typeMachineRepository.findOneById(ws.getTypeMachineId());
+        if(typeMachine == null) return new ReponseWs("failed", "typeMachine not found", 404, null);
         Companie companie = this.companieRepository.findOneById(ws.getCompanieId());
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
         machine.setTypeMachine(typeMachine);
         machine.setCompanie(companie);
         machineRepository.save(machine);

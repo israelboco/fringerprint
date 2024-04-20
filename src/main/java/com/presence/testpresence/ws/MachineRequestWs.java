@@ -9,8 +9,8 @@ public class MachineRequestWs {
     private String serialNo;
     private Integer typeMachineId;
     private String name;
-    private String AdressMac;
-    private String AdresseIp;
+    private String adressMac;
+    private String adresseIp;
     private Integer companieId;
     private Boolean active;
     private long createdTimestamp;
