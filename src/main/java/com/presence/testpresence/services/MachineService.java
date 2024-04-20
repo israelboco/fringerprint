@@ -69,8 +69,7 @@ public class MachineService {
         Gson gson = new Gson();
         Machine machine = machineRepository.findOneById(id);
         if (machine == null) return new ReponseWs("failed", "machine not found", 200, null);
-        MachineWs machineWs = gson.fromJson(gson.toJson(id), MachineWs.class);
-        machineRepository.save(machine);
+        MachineWs machineWs = gson.fromJson(gson.toJson(machine), MachineWs.class);
         return new ReponseWs("success", "find", 200, machineWs);
     }
 
