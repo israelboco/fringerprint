@@ -1,6 +1,7 @@
 package com.presence.testpresence.controllers;
 
 import com.presence.testpresence.services.ConversationService;
+import com.presence.testpresence.ws.ConversationRequestWs;
 import com.presence.testpresence.ws.ConversationWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,13 @@ public class ConversationController {
 
 
     @PostMapping("/sender")
-    public ResponseEntity<ReponseWs> sender(@RequestBody ConversationWs ws){
+    public ResponseEntity<ReponseWs> sender(@RequestBody ConversationRequestWs ws){
         ReponseWs reponseWs = this.conversationService.sender(ws);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/senderWithAdmin")
-    public ResponseEntity<ReponseWs> senderWithAdmin(@RequestBody ConversationWs ws){
+    public ResponseEntity<ReponseWs> senderWithAdmin(@RequestBody ConversationRequestWs ws){
         ReponseWs reponseWs = this.conversationService.senderWithAdmin(ws);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }

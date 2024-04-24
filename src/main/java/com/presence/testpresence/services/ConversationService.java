@@ -40,12 +40,14 @@ public class ConversationService {
     @Autowired
     FileService fileService;
 
-    public ReponseWs sender(ConversationWs ws){
+    public ReponseWs sender(ConversationRequestWs ws){
         String email = JwtUtil.extractEmail(ws.getToken());
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Employee sender = employeeRepository.findByUser(user);
-        Employee receiver = employeeRepository.findOneById(ws.getReceiver().getId());
+        Employee receiver = new Employee();
+        if (ws.getReceiverId() != null)
+            receiver = employeeRepository.findOneById(ws.getReceiverId());
         if(sender == null || receiver == null) return new ReponseWs(Constant.FAILED, "sender or receiver not found", 404, null);
         Conversation conversation = new Conversation();
         conversation.setContenu(ws.getContenu());
@@ -56,7 +58,7 @@ public class ConversationService {
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
     }
 
-    public ReponseWs senderWithAdmin(ConversationWs ws){
+    public ReponseWs senderWithAdmin(ConversationRequestWs ws){
         Gson gson = new Gson();
         String email = JwtUtil.extractEmail(ws.getToken());
         User user = userRepository.findOneByEmail(email);
@@ -66,7 +68,7 @@ public class ConversationService {
         List<Employee> receivers = employeeRepository.findByCompanieAndIsAdmin(sender.getCompanie(), true);
 
         for (Employee admin: receivers){
-            ws.setReceiver(gson.fromJson(gson.toJson(admin), EmployeeWs.class));
+            ws.setReceiverId(admin.getId());
             logger.debug(ws);
             this.sender(ws);
         }
