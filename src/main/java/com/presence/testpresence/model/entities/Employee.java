@@ -49,7 +49,7 @@ public class Employee implements Serializable {
     private Date created;
     @JoinColumn(name = "employee_admin_id", referencedColumnName = "id")
     @ManyToOne
-    private Employee EmployeeAdmin;
+    private Employee employeeAdmin;
 
     public Integer getId() {
         return id;
@@ -172,10 +172,10 @@ public class Employee implements Serializable {
     }
 
     public Employee getEmployeeAdmin() {
-        return EmployeeAdmin;
+        return employeeAdmin;
     }
 
     public void setEmployeeAdmin(Employee employeeAdmin) {
-        EmployeeAdmin = employeeAdmin;
+        this.employeeAdmin = employeeAdmin;
     }
 }
