@@ -20,7 +20,7 @@ public class EmployeeController {
 
     @PostMapping("/create")
     public ReponseWs create(@RequestBody EmployeeWs ws){
-        return this.employeeService.saveEmployee(ws);
+        return this.employeeService.saveEmployee(ws, null);
     }
 
     @PutMapping("/update")

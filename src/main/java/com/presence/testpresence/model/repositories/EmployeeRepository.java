@@ -2,6 +2,7 @@ package com.presence.testpresence.model.repositories;
 
 import com.presence.testpresence.model.entities.Companie;
 import com.presence.testpresence.model.entities.Employee;
+import com.presence.testpresence.model.entities.EnrollInfo;
 import com.presence.testpresence.model.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +17,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Employee findOneById(Integer id);
     List<Employee> findByCompanie(Companie companie);
     List<Employee> findByCompanieAndIsAdmin(Companie companie, Boolean isAdmin);
+    List<Employee> findByEmployeeAdmin(Employee employeeAdmin);
     Page<Employee> findByCompanie(Companie companie, Pageable pageable);
     Employee findByUser(User user);
+    Employee findByEnrollInfo(EnrollInfo enrollInfo);
     Employee findByUserAndCompanie(User user, Companie companie);
 
 

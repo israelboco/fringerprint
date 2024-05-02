@@ -1,6 +1,7 @@
 package com.presence.testpresence.services;
 
 import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.*;
@@ -91,7 +92,6 @@ public class UserService {
         Connexion connexion = connexionRepository.findByUser(user);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "update user.", 200, connexionWs);
-
     }
 
     public ReponseWs register(UserRequestWs ws){
@@ -104,10 +104,12 @@ public class UserService {
 //        String password = ws.getPassword();
         Gson gson= new Gson();
         Set<Role> roles = new HashSet<>();
-        for(Integer id: ws.getIdRoles()){
-            Role role = this.roleRepository.findOneById(id);
-            if(role != null)
-                roles.add(role);
+        if(ws.getIdRoles() != null) {
+            for (Integer id : ws.getIdRoles()) {
+                Role role = this.roleRepository.findOneById(id);
+                if (role != null)
+                    roles.add(role);
+            }
         }
         user = gson.fromJson(gson.toJson(ws), User.class);
         user.setNom(ws.getNom());
@@ -176,11 +178,12 @@ public class UserService {
         Gson gson= new Gson();
         Connexion connexion = this.connexionRepository.findByUser(user);
         UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
-        userWs.setCompany(connexion.getCompany());
+        if (connexion != null)
+            userWs.setCompany(connexion.getCompany());
         return userWs;
     }
 
-    public ReponseWs userAdmin(UserWs ws){
+    public ReponseWs userAdmin(UserRequestWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
@@ -213,4 +216,13 @@ public class UserService {
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
     }
+
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        User user = userRepository.findOneById(id);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        UserWs userWs = this.getUserWs(user);
+        return new ReponseWs("success", "find", 200, userWs);
+    }
+
 }

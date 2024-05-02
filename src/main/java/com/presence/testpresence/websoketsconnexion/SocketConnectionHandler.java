@@ -48,7 +48,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
     Long timeStamp=0L;
     Long timeStamp2=0L;
-    
+
     // In this list all the connexions will be stored
     // Then it will be used to broadcast the message
     List<WebSocketSession> webSocketSessions
@@ -288,7 +288,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
             webSocketSession.sendMessage(message);
         }
     }
-    
+
 
     public void updateCommandStatus(String serial,String commandType) {
         List<MachineCommand> machineCommand=machineCommandRepository.findBySendStatusAndSerial(1, serial);
@@ -508,7 +508,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
             updateDevice(sn, deviceStatus);
 			/*}else{
 				System.out.println("卡号或者密码的情况"+jsonNode);
-				
+
 				 session.send("{\"ret\":\"senduser\",\"result\":true,\"cloudtime\":\"" + sdf.format(new Date()) + "\"}");
 				 deviceStatus.setWebSocket(session);
 				    deviceStatus.setStatus(1);

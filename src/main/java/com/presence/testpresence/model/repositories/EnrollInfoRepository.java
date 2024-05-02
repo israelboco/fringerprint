@@ -16,6 +16,7 @@ public interface EnrollInfoRepository extends JpaRepository<EnrollInfo, Integer>
     EnrollInfo findByEnrollIdAndBackupnum(Integer enrollId, Integer backupnum);
 
     List<EnrollInfo> findByEnrollId(Integer enrollId);
+//    EnrollInfo findByEnrollId(Integer enrollId);
 
     void deleteByEnrollId(Integer enrollId);
 

@@ -11,8 +11,8 @@ public class MachineWs {
     private String serialNo;
     private TypeMachineWs typeMachine;
     private String name;
-    private String AdressMac;
-    private String AdresseIp;
+    private String adressMac;
+    private String adresseIp;
     private CompanieWs companie;
     private Boolean active;
     private long createdTimestamp;
