@@ -183,7 +183,7 @@ public class UserService {
         return userWs;
     }
 
-    public ReponseWs userAdmin(UserWs ws){
+    public ReponseWs userAdmin(UserRequestWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
