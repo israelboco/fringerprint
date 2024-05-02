@@ -67,7 +67,7 @@ public class DemandeService {
         employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
-        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
+        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs, employeeAdmin);
         if (reponseWs.getStatus().equals(Constant.FAILED)) return reponseWs;
         return new ReponseWs(Constant.SUCCESS, "employee accepter avec SUCCESS", 200, null);
     }
@@ -92,7 +92,7 @@ public class DemandeService {
         employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
-        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs);
+        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs, null);
         if (reponseWs.getStatus().equals(Constant.FAILED)) return reponseWs;
         return new ReponseWs(Constant.SUCCESS, "employee accepter avec SUCCESS", 200, null);
     }

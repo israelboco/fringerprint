@@ -15,6 +15,9 @@ public class Presence implements Serializable {
     @JoinColumn(name = "users_id", referencedColumnName = "id")
     @ManyToOne
     private User user;
+    @JoinColumn(name = "record_id", referencedColumnName = "id")
+    @ManyToOne
+    private Records record;
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
@@ -41,5 +44,13 @@ public class Presence implements Serializable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public Records getRecord() {
+        return record;
+    }
+
+    public void setRecord(Records record) {
+        this.record = record;
     }
 }

@@ -47,6 +47,9 @@ public class Employee implements Serializable {
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    @JoinColumn(name = "employee_admin_id", referencedColumnName = "id")
+    @ManyToOne
+    private Employee EmployeeAdmin;
 
     public Integer getId() {
         return id;
@@ -168,4 +171,11 @@ public class Employee implements Serializable {
         this.created = created;
     }
 
+    public Employee getEmployeeAdmin() {
+        return EmployeeAdmin;
+    }
+
+    public void setEmployeeAdmin(Employee employeeAdmin) {
+        EmployeeAdmin = employeeAdmin;
+    }
 }

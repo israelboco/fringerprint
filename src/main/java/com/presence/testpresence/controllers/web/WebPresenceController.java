@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("web/ api/v1.0/presence")
+@RequestMapping("web/api/v1.0/presence")
 public class WebPresenceController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class WebPresenceController {
         return this.presenceService.find(token, date, userID);
     }
 
-    @GetMapping("/presenceMonth")
+    @GetMapping("/employee/presenceMonth")
     public ReponseWs presenceMonth(@RequestParam String token, @RequestParam String date, @RequestParam(required = false) Integer employeeID){
         return this.presenceService.presenceMonth(token, date, employeeID);
     }

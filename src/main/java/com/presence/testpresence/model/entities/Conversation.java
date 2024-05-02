@@ -23,6 +23,9 @@ public class Conversation implements Serializable {
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    @JoinColumn(name = "row_id", referencedColumnName = "id")
+    @ManyToOne
+    private RowConversation row;
 
     public Integer getId() {
         return id;
@@ -62,5 +65,13 @@ public class Conversation implements Serializable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public RowConversation getRow() {
+        return row;
+    }
+
+    public void setRow(RowConversation row) {
+        this.row = row;
     }
 }

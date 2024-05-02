@@ -1,8 +1,7 @@
-package com.presence.testpresence.controllers;
+package com.presence.testpresence.controllers.web;
 
 import com.presence.testpresence.services.ConversationService;
 import com.presence.testpresence.ws.ConversationRequestWs;
-import com.presence.testpresence.ws.ConversationWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1.0/conversation")
-public class ConversationController {
+@RequestMapping("web/api/v1.0/conversation")
+public class WebConversationController {
 
     @Autowired
     ConversationService conversationService;
