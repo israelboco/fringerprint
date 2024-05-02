@@ -13,10 +13,10 @@ public class RowConversation implements Serializable {
     @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "create_by_id", referencedColumnName = "id")
-    @ManyToMany
+    @ManyToOne
     private Employee createBy;
     @JoinColumn(name = "create_to_id", referencedColumnName = "id")
-    @ManyToMany
+    @ManyToOne
     private Employee createTo;
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
