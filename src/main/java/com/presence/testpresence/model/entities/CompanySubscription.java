@@ -12,10 +12,9 @@ public class CompanySubscription implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "nom")
-    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    @JoinColumn(name = "companie_id", referencedColumnName = "id")
     @ManyToOne
-    private Companie Company;
+    private Companie companie;
     @JoinColumn(name = "subscription_id", referencedColumnName = "id")
     @ManyToOne
     private Subscription subscription;
@@ -59,11 +58,11 @@ public class CompanySubscription implements Serializable {
         this.endDate = endDate;
     }
 
-    public Companie getCompany() {
-        return Company;
+    public Companie getCompanie() {
+        return companie;
     }
 
-    public void setCompany(Companie company) {
-        Company = company;
+    public void setCompanie(Companie companie) {
+        this.companie = companie;
     }
 }
