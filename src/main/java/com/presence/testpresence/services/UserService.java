@@ -63,7 +63,7 @@ public class UserService {
         connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setEmployeeWs(employeeWs);
         connexionWs.setIsAdmin(employeeWs.getIsAdmin());
-        return new ReponseWs("success", "user login", 200, connexionWs);
+        return new ReponseWs("success", "utilisateur connecté", 200, connexionWs);
     }
 
     public ReponseWs update(UserRequestWs ws){
