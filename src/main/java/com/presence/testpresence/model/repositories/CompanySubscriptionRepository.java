@@ -12,6 +12,6 @@ import java.util.List;
 public interface CompanySubscriptionRepository extends JpaRepository<CompanySubscription, Integer> {
 
     CompanySubscription findOneById(Integer id);
-    List<CompanySubscription> findByCompanyAndEndDateBefor(Companie companie, Date endDate);
+    List<CompanySubscription> findByCompanieAndEndDateBefore(Companie companie, Date endDate);
 
 }
