@@ -3,12 +3,10 @@ package com.presence.testpresence.services;
 import com.google.gson.Gson;
 import com.presence.testpresence.model.entities.Conversation;
 import com.presence.testpresence.model.entities.Employee;
+import com.presence.testpresence.model.entities.RowConversation;
 import com.presence.testpresence.model.entities.User;
 import com.presence.testpresence.model.enums.Constant;
-import com.presence.testpresence.model.repositories.ConnexionRepository;
-import com.presence.testpresence.model.repositories.ConversationRepository;
-import com.presence.testpresence.model.repositories.EmployeeRepository;
-import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.*;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +30,8 @@ public class ConversationService {
     @Autowired
     ConversationRepository conversationRepository;
     @Autowired
+    RowConversationRepository rowConversationRepository;
+    @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
     UserRepository userRepository;
@@ -40,35 +40,45 @@ public class ConversationService {
     @Autowired
     FileService fileService;
 
-    public ReponseWs sender(ConversationWs ws){
+    public ReponseWs sender(ConversationRequestWs ws){
         String email = JwtUtil.extractEmail(ws.getToken());
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Employee sender = employeeRepository.findByUser(user);
-        Employee receiver = employeeRepository.findOneById(ws.getReceiverId());
+        Employee receiver = new Employee();
+        if (ws.getReceiverId() != null)
+            receiver = employeeRepository.findOneById(ws.getReceiverId());
         if(sender == null || receiver == null) return new ReponseWs(Constant.FAILED, "sender or receiver not found", 404, null);
+        RowConversation rowConversation = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(sender, receiver, receiver, sender);
+        if(rowConversation == null){
+            rowConversation = new RowConversation();
+            rowConversation.setCreateBy(sender);
+            rowConversation.setCreateTo(receiver);
+            rowConversation.setCreated(new Date());
+        }
         Conversation conversation = new Conversation();
         conversation.setContenu(ws.getContenu());
         conversation.setCreated(new Date());
         conversation.setSender(sender);
         conversation.setReceiver(receiver);
+        conversation.setRow(rowConversation);
         conversationRepository.save(conversation);
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
     }
 
-    public ReponseWs senderWithAdmin(ConversationWs ws){
+    public ReponseWs senderWithAdmin(ConversationRequestWs ws){
+        Gson gson = new Gson();
         String email = JwtUtil.extractEmail(ws.getToken());
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Employee sender = employeeRepository.findByUser(user);
         if(sender == null) return new ReponseWs(Constant.FAILED, "sender not found", 404, null);
-        List<Employee> receivers = employeeRepository.findByCompanieAndIsAdmin(sender.getCompanie(), true);
-
-        for (Employee admin: receivers){
-            ws.setReceiverId(admin.getId());
-            logger.debug(ws);
-            this.sender(ws);
-        }
+        Employee receiver = sender.getEmployeeAdmin();
+        if(sender.getAdmin())
+            receiver = sender;
+        ws.setReceiverId(receiver.getId());
+        logger.debug(ws);
+        this.sender(ws);
 
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
     }
@@ -84,10 +94,10 @@ public class ConversationService {
         return new ReponseWs(Constant.SUCCESS, "list conversation", 200, listConWs);
     }
     private Page<ConversationWs> getPageConversationWs(Employee employeeA, Employee employeeT, Pageable pageable){
-        Page<Conversation> conversations = conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeT, employeeA, employeeA, employeeT, pageable);
+        RowConversation rowConversation = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(employeeA, employeeT, employeeT, employeeA);
+        Page<Conversation> conversations = conversationRepository.findByRowOrderByCreatedDesc(rowConversation, pageable);
         List<ConversationWs> conversationWsList = conversations.getContent().stream().map(this::getConversationWs).collect(Collectors.toList());
-        PageImpl<ConversationWs> listConWs = new PageImpl<>(conversationWsList, pageable, conversations.getTotalPages());
-        return listConWs;
+        return new PageImpl<>(conversationWsList, pageable, conversations.getTotalPages());
     }
 
     public ReponseWs listReceive(String token, Integer page, Integer size){
@@ -106,7 +116,8 @@ public class ConversationService {
     private ListConversationWs getListConversationWs(Employee employeeAdmin, Employee employee){
         ListConversationWs listConversationWs = new ListConversationWs();
         listConversationWs.setEmployeeWs(this.getEmployeeWs(employee));
-        List<Conversation> conversations = conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeAdmin, employee, employee, employeeAdmin);
+        RowConversation row = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(employeeAdmin, employee, employee, employeeAdmin);
+        List<Conversation> conversations = conversationRepository.findByRowOrderByCreatedDesc(row);
         List<ConversationWs> conversationWsList = conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
         listConversationWs.setConversation(conversationWsList);
         return listConversationWs;
@@ -126,8 +137,8 @@ public class ConversationService {
     private ConversationWs getConversationWs(Conversation conversation){
         Gson gson = new Gson();
         ConversationWs conversationWs = gson.fromJson(gson.toJson(conversation), ConversationWs.class);
-        conversationWs.setReceiverId(conversation.getReceiver().getId());
-        conversationWs.setSenderId(conversation.getReceiver().getId());
+        conversationWs.setReceiver(gson.fromJson(gson.toJson(conversation.getReceiver()), EmployeeWs.class));
+        conversationWs.setSender(gson.fromJson(gson.toJson(conversation.getSender()), EmployeeWs.class));
         conversationWs.setDateTimestamp(conversation.getCreated().getTime());
         return conversationWs;
     }

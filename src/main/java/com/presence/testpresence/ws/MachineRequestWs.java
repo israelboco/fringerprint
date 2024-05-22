@@ -2,18 +2,16 @@ package com.presence.testpresence.ws;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-public class MachineWs {
+public class MachineRequestWs {
 
     private Integer id;
     private String serialNo;
-    private TypeMachineWs typeMachine;
+    private Integer typeMachineId;
     private String name;
     private String adressMac;
     private String adresseIp;
-    private CompanieWs companie;
+    private Integer companieId;
     private Boolean active;
     private long createdTimestamp;
 

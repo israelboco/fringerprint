@@ -1,16 +1,10 @@
 package com.presence.testpresence.services;
 
 import com.google.gson.Gson;
-import com.presence.testpresence.model.entities.Connexion;
-import com.presence.testpresence.model.entities.Employee;
-import com.presence.testpresence.model.entities.Presence;
-import com.presence.testpresence.model.entities.User;
+import com.presence.testpresence.model.entities.*;
 import com.presence.testpresence.model.enums.Constant;
 import com.presence.testpresence.model.enums.PresenceEnum;
-import com.presence.testpresence.model.repositories.ConnexionRepository;
-import com.presence.testpresence.model.repositories.EmployeeRepository;
-import com.presence.testpresence.model.repositories.PresenceRepository;
-import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
 import com.presence.testpresence.ws.*;
 import okhttp3.Response;
@@ -34,7 +28,7 @@ import java.util.stream.Collectors;
 public class PresenceService {
 
     private static Logger logger = LogManager.getLogger(UserService.class);
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
     @Autowired
     PresenceRepository presenceRepository;
@@ -44,6 +38,8 @@ public class PresenceService {
     UserRepository userRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+    @Autowired
+    EnrollInfoRepository enrollInfoRepository;
 
     public ReponseWs create(String token){
         Connexion connexion = this.connexionRepository.findByTokenAndActive(token, true);
@@ -55,11 +51,27 @@ public class PresenceService {
         return new ReponseWs("success", "create", 200, presence.getId());
     }
 
+    public ReponseWs create(Records records){
+        try {
+            List<EnrollInfo> enrollInfo = this.enrollInfoRepository.findByEnrollId(records.getEnrollId());
+            Employee employee = this.employeeRepository.findByEnrollInfo(enrollInfo.get(0));
+            Presence presence = new Presence();
+            presence.setCreated(dateFormat.parse(records.getRecordsTime()));
+            presence.setUser(employee.getUser());
+            presence.setRecord(records);
+            this.presenceRepository.save(presence);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ReponseWs("success", "create", 200, null);
+    }
+
     public ReponseWs list(String token){
         Gson gson = new Gson();
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
-        if(user == null) return new ReponseWs(Constant.FAILED, "user neot found", 404, null);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Connexion connexion = this.connexionRepository.findByUser(user);
         if(connexion == null) return new ReponseWs("failed", "user not found", 404, null);
         List<Presence> list = this.presenceRepository.findByUser(connexion.getUser());

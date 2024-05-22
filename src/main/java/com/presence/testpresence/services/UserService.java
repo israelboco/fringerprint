@@ -1,18 +1,10 @@
 package com.presence.testpresence.services;
 
-import com.presence.testpresence.model.entities.Companie;
-import com.presence.testpresence.model.entities.Connexion;
-import com.presence.testpresence.model.entities.Employee;
-import com.presence.testpresence.model.entities.User;
-import com.presence.testpresence.model.repositories.CompanieRepository;
-import com.presence.testpresence.model.repositories.ConnexionRepository;
-import com.presence.testpresence.model.repositories.EmployeeRepository;
-import com.presence.testpresence.model.repositories.UserRepository;
+import com.presence.testpresence.model.entities.*;
+import com.presence.testpresence.model.enums.Constant;
+import com.presence.testpresence.model.repositories.*;
 import com.presence.testpresence.util.JwtUtil;
-import com.presence.testpresence.ws.ConnexionWs;
-import com.presence.testpresence.ws.EmployeeWs;
-import com.presence.testpresence.ws.ReponseWs;
-import com.presence.testpresence.ws.UserWs;
+import com.presence.testpresence.ws.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
@@ -25,10 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,6 +27,8 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
     @Autowired
     ConnexionRepository connexionRepository;
     @Autowired
@@ -75,17 +66,24 @@ public class UserService {
         return new ReponseWs("success", "user login", 200, connexionWs);
     }
 
-    public ReponseWs update(UserWs ws){
+    public ReponseWs update(UserRequestWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user == null) return new ReponseWs("failed", "user not found", 404, null);
         Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
         if (companie == null) return new ReponseWs("failed", "L'entreprise n'existe pas, veillez corriger", 404, null);
         Gson gson= new Gson();
+        Set<Role> roles = new HashSet<>();
+        for(Integer id: ws.getIdRoles()){
+            Role role = this.roleRepository.findOneById(id);
+            if(role != null)
+                roles.add(role);
+        }
         user = gson.fromJson(gson.toJson(ws), User.class);
         user.setNom(ws.getNom());
         user.setPrenom(ws.getPrenom());
         user.setEmail(ws.getEmail());
+        user.setRoles(roles);
         if(!ws.getPassword().isEmpty()) {
             String password = this.passwordEncoder.encode(ws.getPassword());
             user.setPassword(password);
@@ -94,10 +92,9 @@ public class UserService {
         Connexion connexion = connexionRepository.findByUser(user);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "update user.", 200, connexionWs);
-
     }
 
-    public ReponseWs register(UserWs ws){
+    public ReponseWs register(UserRequestWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
@@ -106,10 +103,19 @@ public class UserService {
         String password = this.passwordEncoder.encode(ws.getPassword());
 //        String password = ws.getPassword();
         Gson gson= new Gson();
+        Set<Role> roles = new HashSet<>();
+        if(ws.getIdRoles() != null) {
+            for (Integer id : ws.getIdRoles()) {
+                Role role = this.roleRepository.findOneById(id);
+                if (role != null)
+                    roles.add(role);
+            }
+        }
         user = gson.fromJson(gson.toJson(ws), User.class);
         user.setNom(ws.getNom());
         user.setPrenom(ws.getPrenom());
         user.setEmail(ws.getEmail());
+        user.setRoles(roles);
         user.setPassword(password);
         this.userRepository.save(user);
         String generatedString = JwtUtil.generateToken(ws.getEmail());
@@ -172,11 +178,12 @@ public class UserService {
         Gson gson= new Gson();
         Connexion connexion = this.connexionRepository.findByUser(user);
         UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
-        userWs.setCompany(connexion.getCompany());
+        if (connexion != null)
+            userWs.setCompany(connexion.getCompany());
         return userWs;
     }
 
-    public ReponseWs userAdmin(UserWs ws){
+    public ReponseWs userAdmin(UserRequestWs ws){
         logger.debug("user {} ", ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs("failed", "user existe dèjà, connectez-vous", 408, null);
@@ -209,4 +216,13 @@ public class UserService {
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
     }
+
+    public ReponseWs find(Integer id){
+        Gson gson = new Gson();
+        User user = userRepository.findOneById(id);
+        if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
+        UserWs userWs = this.getUserWs(user);
+        return new ReponseWs("success", "find", 200, userWs);
+    }
+
 }

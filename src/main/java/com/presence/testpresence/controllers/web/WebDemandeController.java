@@ -1,4 +1,4 @@
-package com.presence.testpresence.controllers;
+package com.presence.testpresence.controllers.web;
 
 import com.presence.testpresence.services.DemandeService;
 import com.presence.testpresence.ws.DemandeWs;
@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1.0/demande")
-public class DemandeController {
-
+@RequestMapping("web/api/v1.0/demande")
+public class WebDemandeController {
     @Autowired
     DemandeService demandeService;
 
@@ -38,12 +37,6 @@ public class DemandeController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/list/employee")
-    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false) String date, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.demandeService.list(token, date, page, size);
-        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/list/resufer")
     public ResponseEntity<ReponseWs> listrefuser(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         ReponseWs reponseWs = this.demandeService.listRefuser(token, page, size);
@@ -53,6 +46,12 @@ public class DemandeController {
     @GetMapping("/list")
     public ResponseEntity<ReponseWs> listDemande(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         ReponseWs reponseWs = this.demandeService.listDemandeForCompanie(token, page, size);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ReponseWs> all(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.demandeService.listAll(token, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 

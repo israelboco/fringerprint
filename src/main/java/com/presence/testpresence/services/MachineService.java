@@ -3,8 +3,11 @@ package com.presence.testpresence.services;
 import com.google.gson.Gson;
 import com.presence.testpresence.model.entities.Companie;
 import com.presence.testpresence.model.entities.Machine;
+import com.presence.testpresence.model.entities.TypeMachine;
 import com.presence.testpresence.model.repositories.CompanieRepository;
 import com.presence.testpresence.model.repositories.MachineRepository;
+import com.presence.testpresence.model.repositories.TypeMachineRepository;
+import com.presence.testpresence.ws.MachineRequestWs;
 import com.presence.testpresence.ws.MachineWs;
 import com.presence.testpresence.ws.ReponseWs;
 import org.apache.logging.log4j.LogManager;
@@ -24,21 +27,35 @@ public class MachineService {
     MachineRepository machineRepository;
     @Autowired
     CompanieRepository companieRepository;
+    @Autowired
+    TypeMachineRepository typeMachineRepository;
 
-    public ReponseWs saveMachine(MachineWs ws){
+    public ReponseWs saveMachine(MachineRequestWs ws){
         Gson gson = new Gson();
         Machine machine = machineRepository.findOneBySerialNo(ws.getSerialNo());
         if(machine != null) return new ReponseWs("failed", "machine exist", 408, null);
         machine = gson.fromJson(gson.toJson(ws), Machine.class);
+        TypeMachine typeMachine = this.typeMachineRepository.findOneById(ws.getTypeMachineId());
+        if(typeMachine == null) return new ReponseWs("failed", "typeMachine not found", 404, null);
+        Companie companie = this.companieRepository.findOneById(ws.getCompanieId());
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
+        machine.setTypeMachine(typeMachine);
+        machine.setCompanie(companie);
         machineRepository.save(machine);
         return new ReponseWs("success", "create", 200, ws);
     }
 
-    public ReponseWs updateMachine(MachineWs ws){
+    public ReponseWs updateMachine(MachineRequestWs ws){
         Gson gson = new Gson();
         Machine machine = machineRepository.findOneBySerialNo(ws.getSerialNo());
         if(machine == null) return new ReponseWs("failed", "machine not found", 404, null);
         machine = gson.fromJson(gson.toJson(ws), Machine.class);
+        TypeMachine typeMachine = this.typeMachineRepository.findOneById(ws.getTypeMachineId());
+        if(typeMachine == null) return new ReponseWs("failed", "typeMachine not found", 404, null);
+        Companie companie = this.companieRepository.findOneById(ws.getCompanieId());
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
+        machine.setTypeMachine(typeMachine);
+        machine.setCompanie(companie);
         machineRepository.save(machine);
         return new ReponseWs("success", "update", 200, ws);
     }
@@ -56,8 +73,7 @@ public class MachineService {
         Gson gson = new Gson();
         Machine machine = machineRepository.findOneById(id);
         if (machine == null) return new ReponseWs("failed", "machine not found", 200, null);
-        MachineWs machineWs = gson.fromJson(gson.toJson(id), MachineWs.class);
-        machineRepository.save(machine);
+        MachineWs machineWs = gson.fromJson(gson.toJson(machine), MachineWs.class);
         return new ReponseWs("success", "find", 200, machineWs);
     }
 
@@ -80,6 +96,13 @@ public class MachineService {
         Companie companie = companieRepository.findOneById(idCompanie);
         if(companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
         List<Machine> machines = machineRepository.findAllByCompanie(companie);
+        List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
+        return new ReponseWs("success", "list", 200, machinesWs);
+    }
+
+    public ReponseWs list(){
+        Gson gson = new Gson();
+        List<Machine> machines = machineRepository.findAll();
         List<MachineWs> machinesWs = machines.stream().map(m -> gson.fromJson(gson.toJson(m), MachineWs.class)).collect(Collectors.toList());
         return new ReponseWs("success", "list", 200, machinesWs);
     }

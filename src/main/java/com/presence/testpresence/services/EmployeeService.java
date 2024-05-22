@@ -39,7 +39,7 @@ public class EmployeeService {
     @Autowired
     FileService fileService;
 
-    public ReponseWs saveEmployee(EmployeeWs ws){
+    public ReponseWs saveEmployee(EmployeeWs ws, Employee admin){
         Companie companie = companieRepository.findOneById(ws.getIdCompany());
         if (companie == null) return new ReponseWs(Constant.FAILED, "compagnie not found", 404, null);
         Gson gson = new Gson();
@@ -60,6 +60,7 @@ public class EmployeeService {
         employee.setEnrollInfo(enrollInfo);
         employee.setAdmin(ws.getIsAdmin());
         employee.setCreated(new Date());
+        employee.setEmployeeAdmin(admin);
         employeeRepository.save(employee);
         return new ReponseWs("success", "create", 200, ws);
     }

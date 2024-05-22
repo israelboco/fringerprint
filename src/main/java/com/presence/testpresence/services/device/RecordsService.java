@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.presence.testpresence.model.entities.Records;
 import com.presence.testpresence.model.repositories.RecordsRepository;
+import com.presence.testpresence.services.PresenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,8 @@ public class RecordsService {
 	
 	@Autowired
 	RecordsRepository recordsRepository;
+	@Autowired
+	PresenceService presenceService;
 
 	public int deleteByPrimaryKey(Integer id) {
 		// TODO Auto-generated method stub
@@ -22,7 +25,9 @@ public class RecordsService {
 
 	public int insert(Records record) {
 		// TODO Auto-generated method stub
-		return recordsRepository.save(record).getId();
+		Records recordSave = recordsRepository.save(record);
+		this.presenceService.create(recordSave);
+		return recordSave.getId();
 	}
 
 	public int insertSelective(Records record) {

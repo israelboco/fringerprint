@@ -4,12 +4,12 @@ import lombok.Data;
 
 
 @Data
-public class ConversationWs {
+public class ConversationRequestWs {
 
     private Integer id;
     private String contenu;
-    private EmployeeWs sender;
+    private Integer senderId;
     private String token;
-    private EmployeeWs receiver;
+    private Integer receiverId;
     private long dateTimestamp;
 }
