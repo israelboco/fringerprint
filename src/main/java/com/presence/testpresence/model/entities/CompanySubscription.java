@@ -15,7 +15,7 @@ public class CompanySubscription implements Serializable {
     @Column(name = "nom")
     @JoinColumn(name = "companie_id", referencedColumnName = "id")
     @ManyToOne
-    private Companie company;
+    private Companie companie;
     @JoinColumn(name = "subscription_id", referencedColumnName = "id")
     @ManyToOne
     private Subscription subscription;
@@ -59,11 +59,11 @@ public class CompanySubscription implements Serializable {
         this.endDate = endDate;
     }
 
-    public Companie getCompany() {
-        return company;
+    public Companie getCompanie() {
+        return companie;
     }
 
-    public void setCompany(Companie company) {
-        company = company;
+    public void setCompanie(Companie companie) {
+        this.companie = companie;
     }
 }
