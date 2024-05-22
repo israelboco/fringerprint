@@ -12,7 +12,6 @@ public class CompanySubscription implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "nom")
     @JoinColumn(name = "companie_id", referencedColumnName = "id")
     @ManyToOne
     private Companie companie;
