@@ -5,7 +5,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 public class Text {
 
-	public static void main(String[] args) throws InterruptedException{
+//	public static void main(String[] args) throws InterruptedException{
 	    /*  System.out.println("开始启动webSocket");
 	      WebSocketImpl.DEBUG = false;
 	      int port = 7788; // 端口随便设置，只要不跟现有端口重复就可以了
@@ -28,6 +28,6 @@ public class Text {
 	//
 		//System.out.println(new W);
 	      
-	 }
+//	 }
 
 }

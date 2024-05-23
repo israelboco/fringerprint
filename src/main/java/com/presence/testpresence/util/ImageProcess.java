@@ -96,7 +96,7 @@ public class  ImageProcess {
 	  }
 	  
 	  
-	  public static void main(String[] args) {
-	//	EnrollInfo enrollInfo=
-	}
+//	  public static void main(String[] args) {
+//	//	EnrollInfo enrollInfo=
+//	}
 }
