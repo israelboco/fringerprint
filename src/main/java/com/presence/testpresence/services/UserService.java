@@ -63,6 +63,7 @@ public class UserService {
         connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
         connexionWs.setEmployeeWs(employeeWs);
         connexionWs.setIsAdmin(employeeWs.getIsAdmin());
+        connexionWs.setUser(this.getUserWs(user, connexion));
         return new ReponseWs("success", "utilisateur connecté", 200, connexionWs);
     }
 
@@ -91,6 +92,7 @@ public class UserService {
         this.userRepository.save(user);
         Connexion connexion = connexionRepository.findByUser(user);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        connexionWs.setUser(this.getUserWs(user, connexion));
         return new ReponseWs("success", "update user.", 200, connexionWs);
     }
 
@@ -134,6 +136,7 @@ public class UserService {
         connexion.setDateExpireToken(cal.getTime());
         this.connexionRepository.save(connexion);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        connexionWs.setUser(this.getUserWs(user, connexion));
         return new ReponseWs("success", "Vous êtes en cours d'approbation, veillez patienter.", 200, connexionWs);
     }
 
@@ -223,6 +226,13 @@ public class UserService {
         if(user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         UserWs userWs = this.getUserWs(user);
         return new ReponseWs("success", "find", 200, userWs);
+    }
+
+    public UserWs getUserWs(User user, Connexion connexion){
+        Gson gson = new Gson();
+        UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);
+        userWs.setCompany(connexion.getCompany());
+        return userWs;
     }
 
 }
