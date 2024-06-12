@@ -214,6 +214,7 @@ public class DemandeService {
         Employee employee = employeeRepository.findByUser(connexion.getUser());
         if (employee != null)
             connexionWs.setEmployeeWs(this.getEmployeeWs(employee));
+        connexionWs.setUser(this.getUserWs(connexion));
         return connexionWs;
     }
 
@@ -228,6 +229,7 @@ public class DemandeService {
             JourWs jourWs = gson.fromJson(gson.toJson(reponseWs.getData()), JourWs.class);
             connexionWs.setJourWs(jourWs);
         }
+        connexionWs.setUser(this.getUserWs(connexion));
         return connexionWs;
     }
 
@@ -241,5 +243,12 @@ public class DemandeService {
         if(employee.getImageData() != null)
             employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
         return employeeWs;
+    }
+
+    public UserWs getUserWs(Connexion connexion){
+        Gson gson = new Gson();
+        UserWs userWs = gson.fromJson(gson.toJson(connexion.getUser()), UserWs.class);
+        userWs.setCompany(connexion.getCompany());
+        return userWs;
     }
 }
