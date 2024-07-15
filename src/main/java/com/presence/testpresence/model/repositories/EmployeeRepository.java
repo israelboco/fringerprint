@@ -20,6 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByEmployeeAdmin(Employee employeeAdmin);
     Page<Employee> findByCompanie(Companie companie, Pageable pageable);
     Employee findByUser(User user);
+    Employee findByEmail(String email);
     Employee findByEnrollInfo(EnrollInfo enrollInfo);
     Employee findByUserAndCompanie(User user, Companie companie);
 
