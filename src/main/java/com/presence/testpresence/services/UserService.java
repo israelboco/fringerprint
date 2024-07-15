@@ -228,6 +228,12 @@ public class UserService {
         return new ReponseWs("success", "find", 200, userWs);
     }
 
+    public ReponseWs delete(Integer id){
+        Gson gson = new Gson();
+        userRepository.deleteById(id);
+        return new ReponseWs("success", "delete", 200, null);
+    }
+
     public UserWs getUserWs(User user, Connexion connexion){
         Gson gson = new Gson();
         UserWs userWs = gson.fromJson(gson.toJson(user), UserWs.class);

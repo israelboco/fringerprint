@@ -47,6 +47,12 @@ public class EmployeeController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<ReponseWs> delete(@RequestParam Integer id){
+        ReponseWs reponseWs = this.employeeService.delete(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/list")
     public ReponseWs list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         return this.employeeService.listEmployee(page, size);

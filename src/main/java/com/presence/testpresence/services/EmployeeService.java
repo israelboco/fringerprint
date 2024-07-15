@@ -54,7 +54,11 @@ public class EmployeeService {
             enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
-        Employee employee = gson.fromJson(gson.toJson(ws), Employee.class);
+        Employee employee = this.employeeRepository.findByEmail(ws.getEmail());
+        if(employee != null)
+            employee = gson.fromJson(gson.toJson(employee), Employee.class);
+        else
+            employee = gson.fromJson(gson.toJson(ws), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
         employee.setEnrollInfo(enrollInfo);
@@ -143,5 +147,10 @@ public class EmployeeService {
         if(employee.getImageData() != null)
             employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
         return employeeWs;
+    }
+
+    public ReponseWs delete(Integer id){
+       this.employeeRepository.deleteById(id);
+        return new ReponseWs("success", "delete employ", 200, null);
     }
 }

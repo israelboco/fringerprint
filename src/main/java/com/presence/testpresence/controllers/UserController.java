@@ -52,4 +52,10 @@ public class UserController {
         ReponseWs reponseWs = this.userService.find(id);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
+
+    @DeleteMapping("/find")
+    public ResponseEntity<ReponseWs> delete(@RequestParam Integer id){
+        ReponseWs reponseWs = this.userService.delete(id);
+        return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
+    }
 }
