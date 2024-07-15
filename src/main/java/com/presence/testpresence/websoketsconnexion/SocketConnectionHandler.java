@@ -64,8 +64,10 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         super.afterConnectionEstablished(session);
         // Logging the connexion ID with sessionected Message
         //System.out.println(session.getId() + " sessionected");
+        logger.debug("Connexion");
         logger.debug(session.getId() + " connexion");
-
+        String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
+        session.sendMessage(new TextMessage(timeSystem));
         // Adding the session into the list
         webSocketSessions.add(session);
     }
