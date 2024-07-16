@@ -22,10 +22,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.TextMessage;
 
 
 @RestController
-@RequestMapping("v1/device")
+@RequestMapping("")
 public class AllController {
 
 	private static Logger logger = LogManager.getLogger(AllController.class);
@@ -80,6 +81,10 @@ public class AllController {
 	@GetMapping("/pub/chat")
 	public Msg getpubChat() {
 		logger.debug("connexion");
+//		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
+//		session.sendMessage(new TextMessage(timeSystem));
+		List<Device> deviceList = deviceService.findAllDevice();
+		logger.debug(deviceList);
 		return Msg.success().add("device", deviceList);
 	}
 

@@ -9,14 +9,14 @@ import java.util.Queue;
 public class DeviceStatus {
 
 	private String deviceSn;
-	private WebSocketSession webSocket;
+	private org.java_websocket.WebSocket webSocket;
 	private int status;
 
-	public WebSocketSession getWebSocket() {
+	public org.java_websocket.WebSocket getWebSocket() {
 		return webSocket;
 	}
 
-	public void setWebSocket(WebSocketSession webSocket) {
+	public void setWebSocket(org.java_websocket.WebSocket webSocket) {
 		this.webSocket = webSocket;
 	}
 
