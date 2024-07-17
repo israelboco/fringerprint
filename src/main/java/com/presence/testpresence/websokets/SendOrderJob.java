@@ -12,7 +12,6 @@ import com.presence.testpresence.model.repositories.MachineCommandRepository;
 import com.presence.testpresence.ws.DeviceStatus;
 import com.presence.testpresence.model.entities.MachineCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.socket.TextMessage;
 
 
 public class SendOrderJob extends Thread{
