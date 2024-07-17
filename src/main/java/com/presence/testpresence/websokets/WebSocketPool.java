@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 import com.presence.testpresence.ws.DeviceStatus;
 import org.java_websocket.WebSocket;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 
 public class WebSocketPool {
@@ -22,7 +20,7 @@ public class WebSocketPool {
 
 
   /*  带状态的socket*/
-    public static WebSocketSession getDeviceSocketBySn(String deviceSn) {
+    public static org.java_websocket.WebSocket getDeviceSocketBySn(String deviceSn) {
     	DeviceStatus deviceStatus=wsDevice.get(deviceSn);
     
 		return deviceStatus.getWebSocket();
@@ -41,9 +39,9 @@ public class WebSocketPool {
   /*  向带状态的用户单个用户发送数据*/
     public static void sendMessageToDeviceStatus(String sn,String message) throws IOException {
 		DeviceStatus deviceStatus=wsDevice.get(sn);
-		WebSocketSession conn=deviceStatus.getWebSocket();
+		org.java_websocket.WebSocket conn=deviceStatus.getWebSocket();
 			if(null!=conn){				
-				conn.sendMessage(new TextMessage(message));
+				conn.send(message);
 			}			
 	}
 
@@ -102,7 +100,7 @@ public class WebSocketPool {
 	   synchronized (deviceStatus) {
 		for (DeviceStatus deviceStatus2:deviceStatus) {
 			if (deviceStatus2.getWebSocket()!=null) {
-				deviceStatus2.getWebSocket().sendMessage(new TextMessage(message));
+				deviceStatus2.getWebSocket().send(message);
 			}
 		}
 	}

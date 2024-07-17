@@ -12,7 +12,6 @@ import com.presence.testpresence.ws.DeviceStatus;
 import com.presence.testpresence.ws.SendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
 
 @Component
 public class PersonService {
@@ -145,11 +144,11 @@ public class PersonService {
     	 System.out.println("socket连接"+WebSocketPool.getDeviceSocketBySn(deviceSn));
     //	 WebSocketPool.sendMessageToAll(message);
  		if(deviceStatus.getStatus()==1){
- 			//WebSocketPool.sendMessageToAll(message);
+// 			WebSocketPool.sendMessageToAllDeviceFree(message);
  			deviceStatus.setStatus(0);
 	 		updateDevice(deviceSn, deviceStatus);          
 	 		if (null!=deviceStatus.getWebSocket()) {
-				deviceStatus.getWebSocket().sendMessage(new TextMessage(message1));
+				deviceStatus.getWebSocket().send(message1);
 	 			
 			}
  		}else{

@@ -76,6 +76,17 @@ public class AllController {
 		return Msg.success().add("device", deviceList);
 	}
 
+	/*获取所有考勤机*/
+	@GetMapping("/pub/chat")
+	public Msg getpubChat() {
+		logger.debug("connexion");
+//		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
+//		session.sendMessage(new TextMessage(timeSystem));
+		List<Device> deviceList = deviceService.findAllDevice();
+		logger.debug(deviceList);
+		return Msg.success().add("device", deviceList);
+	}
+
 	@PostMapping("/device")
 	public Msg insertDevice(@RequestParam String serialNum, @RequestParam Integer status) {
 		Integer device = deviceService.insert(serialNum, status);

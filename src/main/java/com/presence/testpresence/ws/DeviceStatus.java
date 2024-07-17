@@ -1,7 +1,5 @@
 package com.presence.testpresence.ws;
 
-import org.springframework.web.socket.WebSocketSession;
-
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -9,14 +7,14 @@ import java.util.Queue;
 public class DeviceStatus {
 
 	private String deviceSn;
-	private WebSocketSession webSocket;
+	private org.java_websocket.WebSocket webSocket;
 	private int status;
 
-	public WebSocketSession getWebSocket() {
+	public org.java_websocket.WebSocket getWebSocket() {
 		return webSocket;
 	}
 
-	public void setWebSocket(WebSocketSession webSocket) {
+	public void setWebSocket(org.java_websocket.WebSocket webSocket) {
 		this.webSocket = webSocket;
 	}
 
