@@ -1,5 +1,6 @@
 package com.presence.testpresence;
 
+import com.presence.testpresence.websokets.WSServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -11,6 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static com.presence.testpresence.websokets.Text.getWsServer;
 
 @SpringBootApplication(scanBasePackages = {
 		"com.presence.testpresence.*"
@@ -25,12 +28,12 @@ exclude = SecurityAutoConfiguration.class)
 public class TestPresenceApplication {
 
 	public static void main(String[] args) throws URISyntaxException {
-
 		SpringApplication.run(TestPresenceApplication.class, args);
 
-		ExampleClient c = new ExampleClient(new URI(
-				"ws://192.168.137.1:7788")); // more about drafts here: http://github.com/TooTallNate/Java-WebSocket/wiki/Drafts
-		c.connect();
+		System.out.println("Démarrage de webSocket");
+		int port = 7788;
+
+		WSServer s = getWsServer(port);
 	}
 
 }

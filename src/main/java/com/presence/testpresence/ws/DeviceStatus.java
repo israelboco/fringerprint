@@ -1,7 +1,5 @@
 package com.presence.testpresence.ws;
 
-import org.springframework.web.socket.WebSocketSession;
-
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.Queue;

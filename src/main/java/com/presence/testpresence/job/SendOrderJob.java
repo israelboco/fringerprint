@@ -13,8 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 
 @Component
@@ -60,7 +58,7 @@ public class SendOrderJob extends Thread {
 			    	List<MachineCommand>pendingCommand=machineCommandRepository.findBySendStatusAndSerial(1, entry.getKey());
 			    	if (pendingCommand.size()<=0) {
 			    		
-//			    		entry.getValue().getWebSocket().sendMessage(new TextMessage(inSending.get(0).getContent()));
+			    		entry.getValue().getWebSocket().send(inSending.get(0).getContent());
 						MachineCommand machineCommand = new MachineCommand();
 						machineCommand.setStatus(0);
 						machineCommand.setSendStatus(1);
@@ -79,7 +77,7 @@ public class SendOrderJob extends Thread {
 							machineCommandRepository.save(machineCommand);
 					    	Device device=deviceRepository.findBySerialNum(pendingCommand.get(0).getSerial());
 							if (device.getStatus()!=0) {
-//								entry.getValue().getWebSocket().sendMessage(new TextMessage(pendingCommand.get(0).getContent()));
+								entry.getValue().getWebSocket().send(pendingCommand.get(0).getContent());
 								
 							}
 							}else {

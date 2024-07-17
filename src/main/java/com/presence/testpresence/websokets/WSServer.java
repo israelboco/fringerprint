@@ -1,5 +1,6 @@
 package com.presence.testpresence.websokets;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -24,11 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.springframework.beans.factory.annotation.Value;
 
 
 public class WSServer extends WebSocketServer{
-
 
 	@Autowired
 	DeviceService deviceService;
