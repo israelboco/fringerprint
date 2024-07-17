@@ -60,12 +60,12 @@ public class WSServer extends WebSocketServer{
 
 	  public WSServer(InetSocketAddress address) {
 	        super(address);
-	        logger.info("地址" + address);
+	        logger.info("address: " + address);
 	    }
 
 	    public WSServer(int port) throws UnknownHostException {
 	        super(new InetSocketAddress(port));
-	        logger.info("端口" + port);
+	        logger.info("port: " + port);
 	    }
 
 
@@ -74,11 +74,15 @@ public class WSServer extends WebSocketServer{
 			ClientHandshake handshake) {
 		// TODO Auto-generated method stub
 	//	deviceService=(DeviceService)ContextLoader.getCurrentWebApplicationContext().getBean(DeviceService.class);
-		  System.out.println("有人连接Socket conn:" + conn);
+		  System.out.println("Quelqu'un se connecte au socket conn: " + conn);
 	      //  l++;
-		 logger.info("有人连接Socket conn:" + conn.getRemoteSocketAddress());
+		 logger.info("Quelqu'un se connecte à la prise conn." + conn.getRemoteSocketAddress());
 		 l++;
-
+		logger.debug("Connexion");
+		logger.debug(conn.getRemoteSocketAddress() + " connexion");
+		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
+		conn.send(timeSystem);
+		System.out.println("nombre de connexions: " + l);
 	}
 
 
@@ -96,6 +100,8 @@ public class WSServer extends WebSocketServer{
 
 	@Override
 	public void onMessage(org.java_websocket.WebSocket conn, String message) {
+
+		System.out.println("message : " + message);
 
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        String ret;

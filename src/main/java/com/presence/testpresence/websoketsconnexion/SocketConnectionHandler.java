@@ -92,7 +92,7 @@
 //    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception
 //    {
 //
-//        System.out.println(message + " message ");
+//        System.out.println("message : " +message);
 //        super.handleMessage(session, message);
 //
 //        // Iterate through the list and pass the message to

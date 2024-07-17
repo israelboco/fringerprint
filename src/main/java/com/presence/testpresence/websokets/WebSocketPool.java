@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 import com.presence.testpresence.ws.DeviceStatus;
 import org.java_websocket.WebSocket;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 
 public class WebSocketPool {

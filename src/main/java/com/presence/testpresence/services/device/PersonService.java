@@ -149,7 +149,7 @@ public class PersonService {
  			deviceStatus.setStatus(0);
 	 		updateDevice(deviceSn, deviceStatus);          
 	 		if (null!=deviceStatus.getWebSocket()) {
-				deviceStatus.getWebSocket().sendMessage(new TextMessage(message1));
+//				deviceStatus.getWebSocket().sendMessage(new TextMessage(message1));
 	 			
 			}
  		}else{
