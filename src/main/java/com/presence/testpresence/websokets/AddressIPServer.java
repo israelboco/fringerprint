@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class AddressIPServer {
 
     @Value("${server.address}")
     private String addressServer;
-
-//    @Autowired
-//    private HttpServletRequest request;
 
 
     public static Logger logger = LoggerFactory.getLogger(AddressIPServer.class);
@@ -24,8 +22,13 @@ public class AddressIPServer {
         InetSocketAddress address = new InetSocketAddress(port);
         try{
             logger.info("addressServer: " + addressServer);
-//            System.out.println(request.getRemoteHost());
-
+            try {
+                InetAddress inetAddress = InetAddress.getLocalHost();
+                this.addressServer = inetAddress.getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            logger.info("addressServer: " + addressServer);
             address = new InetSocketAddress(InetAddress.getByName(addressServer), port);
         } catch (Exception e1) {
             System.out.println("Échec du démarrage de webSocket sur le server de production !");
