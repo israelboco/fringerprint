@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class WSServer extends WebSocketServer{
 
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	@Autowired
 	DeviceService deviceService;
 
@@ -73,14 +75,17 @@ public class WSServer extends WebSocketServer{
 	public void onOpen(org.java_websocket.WebSocket conn,
 			ClientHandshake handshake) {
 		// TODO Auto-generated method stub
-	//	deviceService=(DeviceService)ContextLoader.getCurrentWebApplicationContext().getBean(DeviceService.class);
+	//	this.deviceService=(this.DeviceService)ContextLoader.getCurrentWebApplicationContext().getBean(this.DeviceService.class);
 		  System.out.println("Quelqu'un se connecte au socket conn: " + conn);
 	      //  l++;
 		 logger.info("Quelqu'un se connecte à la prise conn." + conn.getRemoteSocketAddress());
 		 l++;
 		logger.debug("Connexion");
 		logger.debug(conn.getRemoteSocketAddress() + " connexion");
-		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
+		String date = dateFormat.format(new Date());
+		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\":" + "\"" + date + "\"" + "}";
+		logger.debug(timeSystem);
+//		timeSystem="{\"cmd\":\"settime\",\"cloudtime\":\"2020-12-23 13:49:30\"}";
 		conn.send(timeSystem);
 		System.out.println("nombre de connexions: " + l);
 	}
@@ -92,9 +97,9 @@ public class WSServer extends WebSocketServer{
 			String reason, boolean remote) {
 		// TODO Auto-generated method stub
 		    String sn=WebSocketPool.removeDeviceByWebsocket(conn);
-			//deviceService.updateStatusByPrimarykey(id, status)
-			Device d1=deviceService.selectDeviceBySerialNum(sn);
-			deviceService.updateStatusByPrimaryKey(d1.getId(), 0);
+			//this.deviceService.updateStatusByPrimarykey(id, status)
+			Device d1 = this.deviceService.selectDeviceBySerialNum(sn);
+			this.deviceService.updateStatusByPrimaryKey(d1.getId(), 0);
 		  logger.info("onClose:" + conn.getRemoteSocketAddress());
 	}
 
@@ -333,18 +338,18 @@ public class WSServer extends WebSocketServer{
 	   //获得连接设备信息
 	public void getDeviceInfo(JsonNode jsonNode,org.java_websocket.WebSocket args1){
 		String sn=jsonNode.get("sn").asText();
-		System.out.println("序列号"+sn);
-		DeviceStatus deviceStatus=new DeviceStatus();
+		System.out.println("序列号: " + sn);
+		DeviceStatus deviceStatus = new DeviceStatus();
 		if(sn!=null){
 
-			Device d1=deviceService.selectDeviceBySerialNum(sn);
+			Device d1 = this.deviceService.selectDeviceBySerialNum(sn);
 
 			if(d1==null){
-				int i=	deviceService.insert(sn, 1);
+				int i=	this.deviceService.insert(sn, 1);
 				System.out.println(i);
 			}else{
-				//deviceService.updateByPrimaryKey()
-				deviceService.updateStatusByPrimaryKey(d1.getId(), 1);
+				//this.deviceService.updateByPrimaryKey()
+				this.deviceService.updateStatusByPrimaryKey(d1.getId(), 1);
 			}
 
 
