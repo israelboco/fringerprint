@@ -338,12 +338,17 @@ public class WSServer extends WebSocketServer{
 	   //获得连接设备信息
 	public void getDeviceInfo(JsonNode jsonNode,org.java_websocket.WebSocket args1){
 		String sn=jsonNode.get("sn").asText();
-		System.out.println("序列号: " + sn);
+		System.out.println("clé de produit (logiciel): " + sn);
 		DeviceStatus deviceStatus = new DeviceStatus();
-		if(sn!=null){
-
-			Device d1 = this.deviceService.selectDeviceBySerialNum(sn);
-
+		if(sn != null){
+			Device d1 = new Device();
+			try{
+				d1 = this.deviceService.selectDeviceBySerialNum(sn);
+				logger.debug(String.valueOf(d1));
+			}catch (Exception e){
+				e.printStackTrace();
+				d1 = null;
+			}
 			if(d1==null){
 				int i=	this.deviceService.insert(sn, 1);
 				System.out.println(i);
