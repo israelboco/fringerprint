@@ -1,8 +1,8 @@
 package com.kadod.fingerprint.controllers;
 
+import com.kadod.commons.ws.PermissionRequestWs;
+import com.kadod.commons.ws.ReponseWs;
 import com.kadod.fingerprint.services.PermissionService;
-import com.kadod.fingerprint.ws.PermissionRequestWs;
-import com.kadod.fingerprint.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class PermissionController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
     @PutMapping("/update")
-    public ResponseEntity<ReponseWs> update(@RequestParam String token, @RequestBody  PermissionRequestWs ws){
+    public ResponseEntity<ReponseWs> update(@RequestParam String token, @RequestBody PermissionRequestWs ws){
         ReponseWs reponseWs = this.permissionService.updatePermission(token, ws);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }

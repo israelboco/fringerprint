@@ -1,8 +1,8 @@
 package com.kadod.fingerprint.controllers;
 
-import com.kadod.fingerprint.ws.MachineRequestWs;
+import com.kadod.commons.ws.MachineRequestWs;
+import com.kadod.commons.ws.ReponseWs;
 import com.kadod.fingerprint.services.MachineService;
-import com.kadod.fingerprint.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

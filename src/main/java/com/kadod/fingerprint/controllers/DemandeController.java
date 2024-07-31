@@ -1,8 +1,8 @@
 package com.kadod.fingerprint.controllers;
 
+import com.kadod.commons.ws.DemandeWs;
+import com.kadod.commons.ws.ReponseWs;
 import com.kadod.fingerprint.services.DemandeService;
-import com.kadod.fingerprint.ws.DemandeWs;
-import com.kadod.fingerprint.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.kadod.fingerprint.controllers;
 
+import com.kadod.commons.ws.ReponseWs;
 import com.kadod.fingerprint.services.PresenceService;
-import com.kadod.fingerprint.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

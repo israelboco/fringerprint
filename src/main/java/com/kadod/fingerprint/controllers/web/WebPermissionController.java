@@ -1,8 +1,8 @@
 package com.kadod.fingerprint.controllers.web;
 
+import com.kadod.commons.ws.PermissionRequestWs;
+import com.kadod.commons.ws.ReponseWs;
 import com.kadod.fingerprint.services.PermissionService;
-import com.kadod.fingerprint.ws.PermissionRequestWs;
-import com.kadod.fingerprint.ws.ReponseWs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

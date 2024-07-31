@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.Date;
 
-import com.kadod.fingerprint.model.repositories.EnrollInfoRepository;
+import com.kadod.database.model.repositories.EnrollInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class  ImageProcess {
 
 	@Autowired
-    EnrollInfoRepository enrollInfoRepository;
+	EnrollInfoRepository enrollInfoRepository;
 
 	 public static boolean base64toImage(String base64String, String picName) {
 	     //   String savePath = InitializationCfg.getCfg("attachment.path");

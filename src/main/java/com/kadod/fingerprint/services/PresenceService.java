@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 public class PresenceService {
 
-    private static Logger logger = LogManager.getLogger(UserService.class);
+    private static Logger logger = LogManager.getLogger(PresenceService.class);
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
     @Autowired
