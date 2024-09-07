@@ -176,7 +176,6 @@ public class AllController {
 	    	enrollInfoService.insertSelective(enrollInfoTemp3);
 	    }
 
-
 	    if(newName!=null&&!newName.equals("")) {
 	    	EnrollInfo enrollInfoTemp=new EnrollInfo();
 	    	enrollInfoTemp.setBackupnum(50);
@@ -274,7 +273,7 @@ public class AllController {
 		Person person=new Person();
 		person=personService.selectByPrimaryKey(enrollId);
 		EnrollInfo enrollInfo=new EnrollInfo();
-		System.out.println("ba"+backupNum);
+		System.out.println("ba:"+backupNum);
 		enrollInfo=enrollInfoService.selectByBackupnum(enrollId, backupNum);
 		if(enrollInfo!=null){
 			personService.setUserToDevice(enrollId, person.getName(), backupNum, person.getRollId(), enrollInfo.getSignatures(),deviceSn);

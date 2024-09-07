@@ -3,14 +3,8 @@ package com.kadod.fingerprint.services;
 import com.google.gson.Gson;
 import com.kadod.commons.enums.Constant;
 import com.kadod.commons.ws.*;
-import com.kadod.database.model.entities.Connexion;
-import com.kadod.database.model.entities.Employee;
-import com.kadod.database.model.entities.Machine;
-import com.kadod.database.model.entities.User;
-import com.kadod.database.model.repositories.ConnexionRepository;
-import com.kadod.database.model.repositories.EmployeeRepository;
-import com.kadod.database.model.repositories.MachineRepository;
-import com.kadod.database.model.repositories.UserRepository;
+import com.kadod.database.model.entities.*;
+import com.kadod.database.model.repositories.*;
 import com.kadod.fingerprint.util.JwtUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -43,6 +39,8 @@ public class DemandeService {
     FileService fileService;
     @Autowired
     PresenceService presenceService;
+    @Autowired
+    RoleRepository roleRepository;
 
 
     public ReponseWs accept(String token, DemandeWs ws){
@@ -75,12 +73,15 @@ public class DemandeService {
     }
 
     public ReponseWs acceptAdmin(DemandeWs ws){
-//        String emailAdmin = JwtUtil.extractEmail(token);
-//        User userAdmin = userRepository.findOneByEmail(emailAdmin);
-//        if(userAdmin == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
-//        Employee employeeAdmin = this.employeeRepository.findByUser(userAdmin);
         User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs(Constant.FAILED, "L'utilisateur n'existe pas", 404, null);
+        Set<Role> roles = new HashSet<>();
+        Role role = this.roleRepository.findOneById(2);
+        if (role != null){
+            roles.add(role);
+            user.setRoles(roles);
+            this.userRepository.save(user);
+        }
         Connexion connexion = connexionRepository.findByUser(user);
         connexion.setActive(true);
         connexion.setConfirmDemande(true);

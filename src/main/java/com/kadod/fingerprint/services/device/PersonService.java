@@ -68,8 +68,6 @@ public class PersonService {
 	}
 
       public void setUserToDevice(int enrollId,String name,int backupnum,int admin,String records,String deviceSn) {
-    	
-    	  
 
 			MachineCommand machineCommand=new MachineCommand();
 			
@@ -88,7 +86,7 @@ public class PersonService {
   			machineCommand.setContent("{\"cmd\":\"setuserinfo\",\"enrollid\":"+enrollId+ ",\"name\":\"" + name +"\",\"backupnum\":" + backupnum
 						+ ",\"admin\":" + admin + ",\"record\":" + records + "}"); 
 			}
-  		
+
     	 		
   		machineCommandRepository.save(machineCommand);
 	  }
@@ -152,7 +150,6 @@ public class PersonService {
 	 		updateDevice(deviceSn, deviceStatus);          
 	 		if (null!=deviceStatus.getWebSocket()) {
 				deviceStatus.getWebSocket().send(message1);
-	 			
 			}
  		}else{
  			try {

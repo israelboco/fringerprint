@@ -30,6 +30,11 @@ public class UserController {
         return this.userService.register(ws);
     }
 
+    @PostMapping("manager/register")
+    public ReponseWs registerManager(@RequestBody UserRequestWs ws){
+        return this.userService.managerRegister(ws);
+    }
+
     @GetMapping("/")
     public ReponseWs getUser(@RequestParam() String token){
 
@@ -52,7 +57,7 @@ public class UserController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/find")
+    @DeleteMapping("/delete")
     public ResponseEntity<ReponseWs> delete(@RequestParam Integer id){
         ReponseWs reponseWs = this.userService.delete(id);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);

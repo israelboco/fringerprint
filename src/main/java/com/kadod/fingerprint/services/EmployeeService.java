@@ -3,9 +3,11 @@ package com.kadod.fingerprint.services;
 import com.google.gson.Gson;
 import com.kadod.commons.enums.Constant;
 import com.kadod.commons.ws.EmployeeWs;
+import com.kadod.commons.ws.Msg;
 import com.kadod.commons.ws.ReponseWs;
 import com.kadod.database.model.entities.*;
 import com.kadod.database.model.repositories.*;
+import com.kadod.fingerprint.services.device.PersonService;
 import com.kadod.fingerprint.util.ImageUtils;
 import com.kadod.fingerprint.util.JwtUtil;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,6 +41,10 @@ public class EmployeeService {
     EnrollInfoRepository enrollInfoRepository;
     @Autowired
     FileService fileService;
+    @Autowired
+    PersonService personService;
+    @Autowired
+    PersonRepository personRepository;
 
     public ReponseWs saveEmployee(EmployeeWs ws, Employee admin){
         Companie companie = companieRepository.findOneById(ws.getIdCompany());
@@ -47,18 +54,26 @@ public class EmployeeService {
         if (user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Machine machine = machineRepository.findOneBySerialNo(ws.getDeviceSerial());
         if (machine == null) return new ReponseWs(Constant.FAILED, "device Serial not found", 404, null);
+        //create personnale id
+        Person person = new Person();
+        if(ws.getEnrollId() == null){
+            person.setName(ws.getNom() + " " + ws.getPrenom());
+            person.setRollId(0);
+            if(Objects.equals(ws.getEmail(), admin.getEmail())){
+                person.setRollId(1);
+            }
+            person = this.personRepository.save(person);
+        }
+        personService.setUserToDevice(person.getId(), person.getName(), 3, person.getRollId(), "", ws.getDeviceSerial());
         EnrollInfo enrollInfo = this.enrollInfoRepository.findOneByIdAndMachine(ws.getEnrollId(), machine);
         if (enrollInfo == null) {
             enrollInfo = new EnrollInfo();
-            enrollInfo.setEnrollId(ws.getEnrollId());
+            enrollInfo.setEnrollId(person.getId());
             enrollInfo.setMachine(machine);
             enrollInfoRepository.save(enrollInfo);
         }
         Employee employee = this.employeeRepository.findByEmail(ws.getEmail());
-        if(employee != null)
-            employee = gson.fromJson(gson.toJson(employee), Employee.class);
-        else
-            employee = gson.fromJson(gson.toJson(ws), Employee.class);
+        employee = gson.fromJson(gson.toJson(Objects.requireNonNullElse(employee, ws)), Employee.class);
         employee.setCompanie(companie);
         employee.setUser(user);
         employee.setEnrollInfo(enrollInfo);
