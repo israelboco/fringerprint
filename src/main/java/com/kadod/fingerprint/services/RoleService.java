@@ -61,7 +61,7 @@ public class RoleService {
     private RoleWs getroleWs(Role role){
         Gson gson = new Gson();
         RoleWs roleWs = gson.fromJson(gson.toJson(role), RoleWs.class);
-        roleWs.setLabel(role.getName());
+        roleWs.setName(role.getName());
         return roleWs;
     }
 

@@ -44,7 +44,10 @@ public class UserController {
     public ReponseWs listUser(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
         return this.userService.listUser(page, size);
     }
-
+    @GetMapping("/change/password")
+    public ReponseWs changePasswordUser(@RequestParam String token, @RequestParam String password, @RequestParam String newPassword){
+        return this.userService.changePasswordUser(token, password, newPassword);
+    }
 
     @GetMapping("/token/refresh")
     public ReponseWs refeshToken(@RequestParam() String token){

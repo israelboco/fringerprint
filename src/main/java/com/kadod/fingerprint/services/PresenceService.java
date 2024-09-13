@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class PresenceService {
 
     private static Logger logger = LogManager.getLogger(PresenceService.class);
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     PresenceRepository presenceRepository;
@@ -87,29 +87,34 @@ public class PresenceService {
     }
 
     public ReponseWs find(String token, String date, Integer userID)  {
-        logger.debug(date);
+        System.out.println(date);
         Date dataNow = new Date();
         try{
-            dataNow = dateFormat.parse(date);
+            if(date != null){
+                dataNow = dateFormat.parse(date);
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
-        logger.debug(dataNow);
+        System.out.println(dataNow);
         Calendar car = Calendar.getInstance();
         car.setTime(dataNow);
         Instant instantFromCalendar = car.toInstant();
         ZonedDateTime zonedDateTimeFromCalendar = instantFromCalendar.atZone(ZoneId.systemDefault());
         LocalDate localDateFromCalendar = zonedDateTimeFromCalendar.toLocalDate();
-        logger.debug(localDateFromCalendar);
+        System.out.println(localDateFromCalendar);
         LocalDate localNow = LocalDate.of(localDateFromCalendar.getYear(), localDateFromCalendar.getMonthValue(), localDateFromCalendar.getDayOfMonth());
         LocalDate debutJournee = localNow.atStartOfDay().toLocalDate();
         LocalDateTime finJournee = localNow.atTime(23, 59, 59, 999999999);
         User user = new User();
+        System.out.println(userID);
         if(userID != null){
             user = userRepository.findOneById(userID);
+            System.out.println(user.getEmail());
         }else {
             String email = JwtUtil.extractEmail(token);
             user = userRepository.findOneByEmail(email);
+            System.out.println(user.getEmail());
         }
         if(user == null) return new ReponseWs("failed", "user not found", 404, null);
         Connexion connexion = connexionRepository.findByUser(user);
@@ -119,7 +124,7 @@ public class PresenceService {
         Presence presence = this.presenceRepository.findByUserAndCreatedBetween(user, dateDEBUT, dateFIN);
         String hours = null;
         LocalTime hourLimit = LocalTime.of(8, 5);
-        logger.debug(hourLimit.toString());
+        System.out.println(hourLimit.toString());
         if(presence != null) {
             Calendar carHour = Calendar.getInstance();
             carHour.setTime(presence.getCreated());
@@ -178,7 +183,9 @@ public class PresenceService {
         Gson gson = new Gson();
         Date dataNow = new Date();
         try{
-            dataNow = dateFormat.parse(date);
+            if(date != null){
+                dataNow = dateFormat.parse(date);
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }

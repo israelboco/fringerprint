@@ -82,11 +82,11 @@ public class AllController {
 	/*获取所有考勤机*/
 	@GetMapping("/pub/chat")
 	public Msg getpubChat() {
-		logger.debug("connexion");
+		System.out.println("connexion");
 //		String  timeSystem="{\"cmd\":\"settime\",\"cloudtime\": " + new Date() + "}";
 //		session.sendMessage(new TextMessage(timeSystem));
 		List<Device> deviceList = deviceService.findAllDevice();
-		logger.debug(deviceList);
+		System.out.println(deviceList);
 		return Msg.success().add("device", deviceList);
 	}
 
@@ -110,7 +110,7 @@ public class AllController {
     public Msg sendWs(@RequestParam("deviceSn")String deviceSn) throws IOException {
 		String  message="{\"cmd\":\"getuserlist\",\"stn\":true}";
 
-		logger.debug("sss : " + deviceSn);
+		System.out.println("sss : " + deviceSn);
 
 //		WebSocketPool.sendMessageToDeviceStatus(deviceSn, message);
 		List<Device>deviceList=deviceService.findAllDevice();
@@ -136,8 +136,8 @@ public class AllController {
 	@PostMapping("addPerson")
 	public Msg addPerson(PersonTemp personTemp, MultipartFile pic, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 		String path="C:/dynamicface/picture/";
-	    logger.debug("图片真实路径 : "+path);
-	    logger.debug("密码是 : "+personTemp.getPassword());
+	    System.out.println("图片真实路径 : "+path);
+	    System.out.println("密码是 : "+personTemp.getPassword());
 	    String photoName="";
 	    String newName="";
 	 //   EnrollInfo enrollInfo=new EnrollInfo();
@@ -183,7 +183,7 @@ public class AllController {
 	    	String base64Str= ImageProcess.imageToBase64Str("C:/dynamicface/picture/"+newName);
 	    	enrollInfoTemp.setImagePath(newName);
 	    	enrollInfoTemp.setSignatures(base64Str);
-	    	logger.debug("图片数据长度"+base64Str.length());
+	    	System.out.println("图片数据长度"+base64Str.length());
 	    	enrollInfoService.insertSelective(enrollInfoTemp);
 	    }
 
@@ -195,7 +195,7 @@ public class AllController {
 
 	@GetMapping("getUserInfo")
 	public Msg getUserInfo(@RequestParam("deviceSn")String deviceSn) {
-		logger.debug("进入controller");
+		System.out.println("进入controller");
 		List<Person>person=personService.selectAll();
 		List<EnrollInfo>enrollsPrepared=new ArrayList<EnrollInfo>();
         for (int i = 0; i < person.size(); i++) {
@@ -207,7 +207,7 @@ public class AllController {
 			}
 			}
 		}
-        logger.debug("采集用户数据"+enrollsPrepared);
+        System.out.println("采集用户数据"+enrollsPrepared);
         personService.getSignature2(enrollsPrepared, deviceSn);
 
 		return  Msg.success();
@@ -219,7 +219,7 @@ public class AllController {
     public Msg sendGetUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("backupNum")int backupNum,@RequestParam("deviceSn")String deviceSn) {
 
 		List<Device>deviceList=deviceService.findAllDevice();
-		logger.debug("设备信息"+deviceList);
+		System.out.println("设备信息"+deviceList);
 
 		String message="{\"cmd\":\"getuserinfo\",\"enrollid\":"+enrollId+",\"backupnum\":"+ backupNum+"}";
 
@@ -288,7 +288,7 @@ public class AllController {
 	@GetMapping(value="/deletePersonFromDevice")
 	public Msg deleteDeviceUserInfo(@RequestParam("enrollId")int enrollId,@RequestParam("deviceSn")String deviceSn){
 
-		logger.debug("删除用户devicesn==================="+deviceSn);
+		System.out.println("删除用户devicesn==================="+deviceSn);
 		personService.deleteUserInfoFromDevice(enrollId, deviceSn);
 	//	personService.deleteByPrimaryKey(enrollId);
 		return Msg.success();

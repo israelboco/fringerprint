@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.DataFormatException;
@@ -18,15 +19,9 @@ public class FileService {
 
     private static final String FILE_DIRECTORY = "src/main/resources/images/";
 
-//    public String uploadImage(MultipartFile imageFile) throws IOException {
-//        var imageToSave = Image.builder()
-//                .name(imageFile.getOriginalFilename())
-//                .type(imageFile.getContentType())
-//                .imageData(ImageUtils.compressImage(imageFile.getBytes()))
-//                .build();
-//        imageRepository.save(imageToSave);
-//        return "file uploaded successfully : " + imageFile.getOriginalFilename();
-//    }
+    // Define the directory where the uploaded files will be stored
+    private static final String UPLOAD_DIR = "/app/uploads/";
+
 
     public String uploadFile(MultipartFile file){
         if (file.isEmpty()) {
@@ -69,6 +64,38 @@ public class FileService {
                 throw new ContextedRuntimeException("Error downloading an image", exception);
             }
     }
+
+    public String imageUpload(MultipartFile file) {
+
+        try {
+            // Create the upload directory if it doesn't exist
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Get the file's original filename and create a new file path
+            String fileName = file.getOriginalFilename();
+            assert fileName != null;
+            Path filePath = uploadPath.resolve(fileName);
+            // Save the file locally on the server
+            Files.write(filePath, file.getBytes());
+            System.out.print(filePath);
+            return  fileName;
+//            return new ResponseEntity<>("File uploaded successfully: " + fileName, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+//            return new ResponseEntity<>("Could not upload the file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+//        @PostMapping("/upload")
+//        public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+//            if (file.isEmpty()) {
+//                return new ResponseEntity<>("Please select a file to upload!", HttpStatus.BAD_REQUEST);
+//            }
+//        }
+    }
+
 
 }
 

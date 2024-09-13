@@ -73,6 +73,7 @@ public class DemandeService {
     }
 
     public ReponseWs acceptAdmin(DemandeWs ws){
+        Gson gson = new Gson();
         User user = userRepository.findOneById(ws.getUserId());
         if(user == null) return new ReponseWs(Constant.FAILED, "L'utilisateur n'existe pas", 404, null);
         Set<Role> roles = new HashSet<>();
@@ -95,7 +96,7 @@ public class DemandeService {
         employeeWs.setDeviceSerial(ws.getDeviceSerial());
         employeeWs.setIsAdmin(true);
         employeeWs.setUser_id(user.getId());
-        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs, null);
+        ReponseWs reponseWs = this.employeeService.saveEmployee(employeeWs, gson.fromJson(gson.toJson(employeeWs), Employee.class));
         if (reponseWs.getStatus().equals(Constant.FAILED)) return reponseWs;
         return new ReponseWs(Constant.SUCCESS, "employee accepter avec SUCCESS", 200, null);
     }
@@ -183,7 +184,7 @@ public class DemandeService {
         List<ConnexionWs> connexionWsList = connexionPage.stream()
                 .map(this::getConnexionWs).collect(Collectors.toList());
         PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
-        logger.debug(connexionWsList);
+        System.out.println(connexionWsList);
         return new ReponseWs(Constant.SUCCESS, "Listes demandes employees", 200, connexionWsPage);
     }
 
@@ -206,7 +207,7 @@ public class DemandeService {
         List<ConnexionWs> connexionWsList = connexionPage.stream()
                 .map(this::getConnexionWs).collect(Collectors.toList());
         PageImpl<ConnexionWs> connexionWsPage = new PageImpl<>(connexionWsList, pageable, connexionPage.getTotalPages());
-        logger.debug(connexionWsList);
+        System.out.println(connexionWsList);
         return new ReponseWs(Constant.SUCCESS, "Listes demandes employees", 200, connexionWsPage);
     }
 

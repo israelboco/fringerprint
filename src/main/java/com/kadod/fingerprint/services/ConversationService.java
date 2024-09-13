@@ -77,7 +77,7 @@ public class ConversationService {
         if(sender.getAdmin())
             receiver = sender;
         ws.setReceiverId(receiver.getId());
-        logger.debug(ws);
+        System.out.println(ws);
         this.sender(ws);
 
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);

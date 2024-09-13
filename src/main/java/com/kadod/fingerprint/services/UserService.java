@@ -52,6 +52,7 @@ public class UserService {
         String generatedString = JwtUtil.generateToken(email);
         connexion = this.connexionRepository.findByUser(user);
         ConnexionWs connexionWs = gson.fromJson(gson.toJson(connexion), ConnexionWs.class);
+        if(connexion.getConfirmDemande() != null && !connexion.getConfirmDemande()) return new ReponseWs(Constant.SUCCESS, "Votre demande d'inscription est rejetée.", 415, connexionWs);
         if(!connexion.getActive()) return new ReponseWs(Constant.SUCCESS, "Vous êtes en cours d'approbation, veillez patienter.", 415, connexionWs);
         Employee employee = this.employeeRepository.findByUser(user);
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
@@ -67,7 +68,7 @@ public class UserService {
     }
 
     public ReponseWs update(UserRequestWs ws){
-        logger.debug("user {} ", ws);
+        System.out.println("user: " + ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user == null) return new ReponseWs(Constant.FAILED, "user not found", 404, null);
         Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
@@ -96,7 +97,7 @@ public class UserService {
     }
 
     public ReponseWs managerRegister(UserRequestWs ws){
-        logger.debug("user {} ", ws);
+        System.out.println("user : " + ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs(Constant.FAILED, "user existe dèjà, connectez-vous", 408, null);
         Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
@@ -133,7 +134,7 @@ public class UserService {
     }
 
     public ReponseWs register(UserRequestWs ws){
-        logger.debug("user {} ", ws);
+        System.out.println("user: " + ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs(Constant.FAILED, "user existe dèjà, connectez-vous", 408, null);
         Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());
@@ -200,6 +201,22 @@ public class UserService {
         return new ReponseWs(Constant.SUCCESS, "user", 200, userws);
     }
 
+    public ReponseWs changePasswordUser(String token, String password, String newPassword){
+        Gson gson= new Gson();
+        String email = JwtUtil.extractEmail(token);
+        User user = this.userRepository.findOneByEmail(email);
+        if (user == null) return  new ReponseWs(Constant.FAILED, "token not found or expired", 401, null);
+        boolean isPssw = this.passwordEncoder.matches(password, user.getPassword());
+        if(!isPssw) return new ReponseWs(Constant.FAILED, "Mot de passe invalide", 401, null);
+        String encodePassword = this.passwordEncoder.encode(newPassword);
+        user.setPassword(encodePassword);
+        this.userRepository.save(user);
+        Connexion connexion = this.connexionRepository.findByUser(user);
+        UserWs userws = gson.fromJson(gson.toJson(user), UserWs.class);
+        userws.setCompany(connexion.getCompany());
+        return new ReponseWs(Constant.SUCCESS, "Mot de Password modifié avec succés.", 200, userws);
+    }
+
     public ReponseWs listUser(Integer page, Integer size){
         Gson gson= new Gson();
         Pageable pageable = PageRequest.of(page, size);
@@ -219,7 +236,7 @@ public class UserService {
     }
 
     public ReponseWs userAdmin(UserRequestWs ws){
-        logger.debug("user {} ", ws);
+        System.out.println("user" + ws);
         User user = this.userRepository.findOneByEmail(ws.getEmail());
         if (user != null) return new ReponseWs(Constant.FAILED, "user existe dèjà, connectez-vous", 408, null);
         Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getCompany(), ws.getCompany());

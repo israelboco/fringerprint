@@ -23,7 +23,7 @@ public class EmployeeController {
         return this.employeeService.saveEmployee(ws, null);
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ReponseWs update(@RequestParam String token, @RequestBody EmployeeWs ws){
         return this.employeeService.updateEmployee(token, ws);
     }

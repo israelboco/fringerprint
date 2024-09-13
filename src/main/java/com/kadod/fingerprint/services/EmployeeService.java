@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -55,14 +56,21 @@ public class EmployeeService {
         Machine machine = machineRepository.findOneBySerialNo(ws.getDeviceSerial());
         if (machine == null) return new ReponseWs(Constant.FAILED, "device Serial not found", 404, null);
         //create personnale id
-        Person person = new Person();
-        if(ws.getEnrollId() == null){
-            person.setName(ws.getNom() + " " + ws.getPrenom());
-            person.setRollId(0);
-            if(Objects.equals(ws.getEmail(), admin.getEmail())){
-                person.setRollId(1);
+        Person person = this.personRepository.findOneById(ws.getEnrollId());
+        if(person == null){
+            person = this.personRepository.findOneByNameIgnoreCase(ws.getNom() + " " + ws.getPrenom());
+            if(person == null) {
+                person = new Person();
+                person.setName(ws.getNom() + " " + ws.getPrenom());
+                person.setId(1);
+                person.setRollId(0);
+                if (Objects.equals(ws.getEmail(), admin.getEmail())) {
+                    person.setRollId(1);
+                }
+                person = this.personRepository.save(person);
             }
-            person = this.personRepository.save(person);
+        }else {
+            person = this.personRepository.findOneById(ws.getEnrollId());
         }
         personService.setUserToDevice(person.getId(), person.getName(), 3, person.getRollId(), "", ws.getDeviceSerial());
         EnrollInfo enrollInfo = this.enrollInfoRepository.findOneByIdAndMachine(ws.getEnrollId(), machine);
@@ -80,6 +88,9 @@ public class EmployeeService {
         employee.setAdmin(ws.getIsAdmin());
         employee.setCreated(new Date());
         employee.setEmployeeAdmin(admin);
+        employee.setEmployeeAdmin(null);
+        employeeRepository.save(employee);
+        employee.setEmployeeAdmin(employee);
         employeeRepository.save(employee);
         return new ReponseWs("success", "create", 200, ws);
     }
@@ -94,12 +105,12 @@ public class EmployeeService {
         employee.setNom(ws.getNom());
         employee.setPrenom(ws.getPrenom());
         employee.setTelephone(ws.getTelephone());
-        employee.setEmail(ws.getEmail());
+        employee.setFonction(ws.getFonction());
         employee.setCompanie(companie);
         employeeRepository.save(employee);
         user.setNom(ws.getNom());
         user.setPrenom(ws.getPrenom());
-        user.setEmail(ws.getEmail());
+//        user.setEmail(ws.getEmail());
         userRepository.save(user);
         return new ReponseWs("success", "update", 200, ws);
     }
@@ -109,11 +120,12 @@ public class EmployeeService {
         User user = userRepository.findOneByEmail(email);
         Employee employee = employeeRepository.findByUser(user);
         if (employee == null) return new ReponseWs(Constant.FAILED, "employer not found", 404, null);
-        byte[] profile =  ImageUtils.compressImage(file.getBytes());
+//        byte[] profile =  ImageUtils.compressImage(file.getBytes());
+        String filename = this.fileService.imageUpload(file);
         employee.setImageData(null);
-//        employee.setImageData(profile);
+        employee.setProfile(filename);
         employeeRepository.save(employee);
-        return new ReponseWs("success", "profile", 200, null);
+        return new ReponseWs("success", "profile", 200, filename);
     }
 
     public ReponseWs listEmployeeOfCompany(Integer idCompanie, Integer page, Integer size){
