@@ -33,8 +33,8 @@ public class WebPermissionController {
     }
 
     @GetMapping("/employee/list")
-    public ResponseEntity<ReponseWs> listEmployee(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.permissionService.listEmployeePermissions(token, page, size);
+    public ResponseEntity<ReponseWs> listEmployee(@RequestParam String token, @RequestParam(required = false) Boolean accept, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.permissionService.listEmployeePermissions(token, accept, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
@@ -45,8 +45,8 @@ public class WebPermissionController {
     }
 
     @GetMapping("/admin/list/employee")
-    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.permissionService.listPermisssions(token, page, size);
+    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false) Boolean accept, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.permissionService.listPermisssions(token, accept, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
@@ -56,7 +56,7 @@ public class WebPermissionController {
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/accepted")
+    @GetMapping("/accepted")
     public ResponseEntity<ReponseWs> listDemande(@RequestParam String token, @RequestParam() Integer permissionId, @RequestParam(required = false, defaultValue = "true") Boolean accepted){
         ReponseWs reponseWs = this.permissionService.acceptedPermission(token, permissionId, accepted);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);

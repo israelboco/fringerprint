@@ -52,16 +52,19 @@ public class PermissionService {
         Employee employee = this.employeeRepository.findByUser(user);
         Permission permission = new Permission();
         permission.setAccepted(null);
+        permission.setObjet(ws.getObjet());
         permission.setDescription(ws.getDescription());
         permission.setEmployee(employee);
         if(ws.getStartDateTimestamp() != null)
             permission.setStartDate(new Date(ws.getStartDateTimestamp()));
         if(ws.getEndDateTimestamp() != null)
             permission.setEndDate(new Date(ws.getEndDateTimestamp()));
-        permission.setType(gson.fromJson(gson.toJson(ws.getType()), TypePermissionEnum.class));
-        permissionRepository.save(permission);
-        return new ReponseWs(Constant.SUCCESS, "permission create avec SUCCESS", 200, ws);
-
+//        permission.setType(gson.fromJson(gson.toJson(ws.getType()), TypePermissionEnum.class));
+        String filename = this.fileService.imageUpload(ws.getPath());
+        permission.setPath(filename);
+        permission = permissionRepository.save(permission);
+        PermissionWs permissionWs = gson.fromJson(gson.toJson(permission), PermissionWs.class);
+        return new ReponseWs(Constant.SUCCESS, "permission create avec succés", 200, permissionWs);
     }
 
     public ReponseWs updatePermission(String token, PermissionRequestWs ws){
@@ -114,20 +117,20 @@ public class PermissionService {
         return new ReponseWs(Constant.SUCCESS, "permission accepter avec SUCCESS", 200, accepted);
     }
 
-    public ReponseWs listEmployeePermissions(String token, Integer page, Integer size){
+    public ReponseWs listEmployeePermissions(String token, Boolean accept, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         if(user == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employee = employeeRepository.findByUser(user);
         if(employee == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
-        Page<Permission> pagePermissions = this.permissionRepository.findByEmployee(employee, pageable);
+        Page<Permission> pagePermissions = this.permissionRepository.findByEmployeeAndAccepted(employee, accept, pageable);
         List<PermissionWs> permissionWsList = pagePermissions.stream().map(this::getPermissionWs).collect(Collectors.toList());
         PageImpl<PermissionWs> permissionWsPage = new PageImpl<>(permissionWsList, pageable, pagePermissions.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes de permissions de l'employees", 200, permissionWsPage);
     }
 
-    public ReponseWs listPermisssions(String token, Integer page, Integer size){
+    public ReponseWs listPermisssions(String token, Boolean accept, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size);
         String emailAdmin = JwtUtil.extractEmail(token);
         User userAdmin = userRepository.findOneByEmail(emailAdmin);
@@ -135,7 +138,7 @@ public class PermissionService {
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         List<Employee> employees = this.employeeRepository.findByEmployeeAdmin(employeeAdmin);
-        Page<Permission> permissionPage = this.permissionRepository.findByEmployeeIn(employees, pageable);
+        Page<Permission> permissionPage = this.permissionRepository.findByEmployeeInAndAccepted(employees, accept, pageable);
         List<PermissionWs> permissionWsList = permissionPage.stream().map(this::getPermissionWs).collect(Collectors.toList());
         PageImpl<PermissionWs> permissionWsPage = new PageImpl<>(permissionWsList, pageable, permissionPage.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes des permissions des employees de l'admin", 200, permissionWsPage);

@@ -33,8 +33,8 @@ public class PermissionController {
     }
 
     @GetMapping("/employee/list")
-    public ResponseEntity<ReponseWs> listEmployee(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.permissionService.listEmployeePermissions(token, page, size);
+    public ResponseEntity<ReponseWs> listEmployee(@RequestParam String token, @RequestParam(required = false) Boolean accept, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.permissionService.listEmployeePermissions(token, accept, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
@@ -45,8 +45,8 @@ public class PermissionController {
     }
 
     @GetMapping("/admin/list/employee")
-    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
-        ReponseWs reponseWs = this.permissionService.listPermisssions(token, page, size);
+    public ResponseEntity<ReponseWs> list(@RequestParam String token, @RequestParam(required = false) Boolean accept, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "25") Integer size){
+        ReponseWs reponseWs = this.permissionService.listPermisssions(token, accept, page, size);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
 
