@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("web/api/v1.0/premission")
@@ -16,8 +17,9 @@ public class WebPermissionController {
     PermissionService permissionService;
 
     @PostMapping("/create")
-    public ResponseEntity<ReponseWs> create(@RequestParam String token, @RequestBody PermissionRequestWs ws){
-        ReponseWs reponseWs = this.permissionService.createPermission(token, ws);
+    public ResponseEntity<ReponseWs> create(@RequestParam String token,
+            @RequestPart("ws") PermissionRequestWs ws, @RequestPart(value = "path", required = false) MultipartFile file){
+        ReponseWs reponseWs = this.permissionService.createPermission(token, ws, file);
         return new ResponseEntity<>(reponseWs, HttpStatus.ACCEPTED);
     }
     @PutMapping("/update")

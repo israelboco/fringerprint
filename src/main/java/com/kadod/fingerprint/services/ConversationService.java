@@ -49,12 +49,13 @@ public class ConversationService {
         if (ws.getReceiverId() != null)
             receiver = employeeRepository.findOneById(ws.getReceiverId());
         if(sender == null || receiver == null) return new ReponseWs(Constant.FAILED, "sender or receiver not found", 404, null);
-        RowConversation rowConversation = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(sender, receiver, receiver, sender);
+        RowConversation rowConversation = this.rowConversationRepository.findConversationBetween(sender, receiver);
         if(rowConversation == null){
             rowConversation = new RowConversation();
             rowConversation.setCreateBy(sender);
             rowConversation.setCreateTo(receiver);
             rowConversation.setCreated(new Date());
+            rowConversation = this.rowConversationRepository.save(rowConversation);
         }
         Conversation conversation = new Conversation();
         conversation.setContenu(ws.getContenu());
@@ -62,6 +63,7 @@ public class ConversationService {
         conversation.setSender(sender);
         conversation.setReceiver(receiver);
         conversation.setRow(rowConversation);
+        conversation.setRead(false);
         conversationRepository.save(conversation);
         return new ReponseWs(Constant.SUCCESS, "message enregister", 200, ws);
     }
@@ -90,14 +92,19 @@ public class ConversationService {
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
         Employee employeeT = employeeRepository.findByUser(user);
-        Page<ConversationWs> listConWs = this.getPageConversationWs(employeeA, employeeT, pageable);
+        List<ConversationWs> listConWs = this.getListRowConversationWs(employeeA, employeeT);
+        System.out.print("nombre de messages" + listConWs.size());
         return new ReponseWs(Constant.SUCCESS, "list conversation", 200, listConWs);
     }
-    private Page<ConversationWs> getPageConversationWs(Employee employeeA, Employee employeeT, Pageable pageable){
-        RowConversation rowConversation = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(employeeA, employeeT, employeeT, employeeA);
-        Page<Conversation> conversations = conversationRepository.findByRowOrderByCreatedDesc(rowConversation, pageable);
-        List<ConversationWs> conversationWsList = conversations.getContent().stream().map(this::getConversationWs).collect(Collectors.toList());
-        return new PageImpl<>(conversationWsList, pageable, conversations.getTotalPages());
+    private List<ConversationWs> getListRowConversationWs(Employee employeeA, Employee employeeT){
+        RowConversation rowConversation = this.rowConversationRepository.findConversationBetween(employeeA, employeeT);
+        List<Conversation> conversations = conversationRepository.findByRowAndReceiverAndReadIsFalseOrderByCreatedAsc(rowConversation, employeeT);
+        for(Conversation conversation: conversations){
+            conversation.setRead(true);
+            this.conversationRepository.save(conversation);
+        }
+        //        return new PageImpl<>(conversationWsList, pageable, conversations.getTotalPages());
+        return conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
     }
 
     public ReponseWs listReceive(String token, Integer page, Integer size){
@@ -109,15 +116,15 @@ public class ConversationService {
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         Page<Employee> employees = employeeRepository.findByCompanie(employeeAdmin.getCompanie(), pageable);
         List<ListConversationWs> list = employees.stream().filter(d -> d.getUser() != employeeAdmin.getUser())
-                .filter(v -> !conversationRepository.findBySenderBetweenAndReceiverBetweenOrderByCreatedDesc(employeeAdmin, v, v, employeeAdmin).isEmpty()).map(v -> this.getListConversationWs(employeeAdmin, v)).collect(Collectors.toList());
+                .filter(v -> !conversationRepository.findUnreadConversationsBetween(employeeAdmin, v).isEmpty()).map(v -> this.getListConversationWs(employeeAdmin, v)).collect(Collectors.toList());
         return new ReponseWs(Constant.SUCCESS, "list des employees pour la conversation", 200, list);
     }
 
     private ListConversationWs getListConversationWs(Employee employeeAdmin, Employee employee){
         ListConversationWs listConversationWs = new ListConversationWs();
         listConversationWs.setEmployeeWs(this.getEmployeeWs(employee));
-        RowConversation row = this.rowConversationRepository.findByCreateByBetweenAndCreateToBetween(employeeAdmin, employee, employee, employeeAdmin);
-        List<Conversation> conversations = conversationRepository.findByRowOrderByCreatedDesc(row);
+        RowConversation row = this.rowConversationRepository.findConversationBetween(employeeAdmin, employee);
+        List<Conversation> conversations = conversationRepository.findByRowAndReceiverAndReadIsFalseOrderByCreatedAsc(row, employeeAdmin);
         List<ConversationWs> conversationWsList = conversations.stream().map(this::getConversationWs).collect(Collectors.toList());
         listConversationWs.setConversation(conversationWsList);
         return listConversationWs;

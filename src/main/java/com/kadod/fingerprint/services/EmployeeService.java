@@ -167,10 +167,12 @@ public class EmployeeService {
     private EmployeeWs getEmployeeWs(Employee employee){
         Gson gson = new Gson();
         EmployeeWs employeeWs = gson.fromJson(gson.toJson(employee), EmployeeWs.class);
+        EmployeeWs employeeAdminWs = gson.fromJson(gson.toJson(employee.getEmployeeAdmin()), EmployeeWs.class);
         employeeWs.setCompany(employee.getCompanie().getNom());
         employeeWs.setIdCompany(employee.getCompanie().getId());
         employeeWs.setEnrollId(employee.getEnrollInfo().getEnrollId());
         employeeWs.setUser_id(employee.getUser().getId());
+        employeeWs.setEmployeeAdmin(employeeAdminWs);
         if(employee.getImageData() != null)
             employeeWs.setImageProfile(this.fileService.downloadImage(employee.getImageData()));
         return employeeWs;

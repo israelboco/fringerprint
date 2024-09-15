@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -44,7 +45,8 @@ public class PermissionService {
     FileService fileService;
 
 
-    public ReponseWs createPermission(String token, PermissionRequestWs ws){
+    public ReponseWs createPermission(String token, PermissionRequestWs ws, MultipartFile file){
+        System.out.print(ws);
         Gson gson = new Gson();
         String email = JwtUtil.extractEmail(token);
         User user = userRepository.findOneByEmail(email);
@@ -55,13 +57,16 @@ public class PermissionService {
         permission.setObjet(ws.getObjet());
         permission.setDescription(ws.getDescription());
         permission.setEmployee(employee);
+        permission.setStartDate(new Date());
         if(ws.getStartDateTimestamp() != null)
             permission.setStartDate(new Date(ws.getStartDateTimestamp()));
         if(ws.getEndDateTimestamp() != null)
             permission.setEndDate(new Date(ws.getEndDateTimestamp()));
 //        permission.setType(gson.fromJson(gson.toJson(ws.getType()), TypePermissionEnum.class));
-        String filename = this.fileService.imageUpload(ws.getPath());
-        permission.setPath(filename);
+        if(file != null){
+            String filename = this.fileService.imageUpload(file);
+            permission.setPath(filename);
+        }
         permission = permissionRepository.save(permission);
         PermissionWs permissionWs = gson.fromJson(gson.toJson(permission), PermissionWs.class);
         return new ReponseWs(Constant.SUCCESS, "permission create avec succés", 200, permissionWs);
@@ -124,7 +129,13 @@ public class PermissionService {
         if(user == null) return new ReponseWs(Constant.FAILED, "token invalide", 404, null);
         Employee employee = employeeRepository.findByUser(user);
         if(employee == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
-        Page<Permission> pagePermissions = this.permissionRepository.findByEmployeeAndAccepted(employee, accept, pageable);
+        Page<Permission> pagePermissions = null;
+        if(accept == null) {
+            pagePermissions = this.permissionRepository.findByEmployeeAndAcceptedIsNullOrderByIdDesc(employee, pageable);
+        }else {
+            pagePermissions = this.permissionRepository.findByEmployeeAndAcceptedOrderByIdDesc(employee, accept, pageable);
+        }
+        System.out.print("Listes des permission:====> " + pagePermissions.getContent().size());
         List<PermissionWs> permissionWsList = pagePermissions.stream().map(this::getPermissionWs).collect(Collectors.toList());
         PageImpl<PermissionWs> permissionWsPage = new PageImpl<>(permissionWsList, pageable, pagePermissions.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes de permissions de l'employees", 200, permissionWsPage);
@@ -138,7 +149,14 @@ public class PermissionService {
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         List<Employee> employees = this.employeeRepository.findByEmployeeAdmin(employeeAdmin);
-        Page<Permission> permissionPage = this.permissionRepository.findByEmployeeInAndAccepted(employees, accept, pageable);
+        System.out.print("Listes des employees:====> " + employees.size());
+        Page<Permission> permissionPage =  null;
+        if(accept == null){
+            permissionPage = this.permissionRepository.findByEmployeeInAndAcceptedIsNullOrderByIdDesc(employees, pageable);
+        }else {
+            permissionPage = this.permissionRepository.findByEmployeeInAndAcceptedOrderByIdDesc(employees, accept, pageable);
+        }
+        System.out.print("Listes des permission:====> " + permissionPage.getContent().size());
         List<PermissionWs> permissionWsList = permissionPage.stream().map(this::getPermissionWs).collect(Collectors.toList());
         PageImpl<PermissionWs> permissionWsPage = new PageImpl<>(permissionWsList, pageable, permissionPage.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes des permissions des employees de l'admin", 200, permissionWsPage);
@@ -152,7 +170,7 @@ public class PermissionService {
         Employee employeeAdmin = employeeRepository.findByUser(userAdmin);
         if(employeeAdmin == null) return new ReponseWs(Constant.FAILED, "employer invalide", 404, null);
         List<Employee> employees = this.employeeRepository.findByEmployeeAdmin(employeeAdmin);
-        Page<Permission> permissionPage = this.permissionRepository.findByEmployeeInAndAccepted(employees, accepted, pageable);
+        Page<Permission> permissionPage = this.permissionRepository.findByEmployeeInAndAcceptedOrderByIdDesc(employees, accepted, pageable);
         List<PermissionWs> permissionWsList = permissionPage.stream().map(this::getPermissionWs).collect(Collectors.toList());
         PageImpl<PermissionWs> permissionWsPage = new PageImpl<>(permissionWsList, pageable, permissionPage.getTotalPages());
         return new ReponseWs(Constant.SUCCESS, "Listes des permissions des employees de l'admin filtrer selon accepted", 200, permissionWsPage);
