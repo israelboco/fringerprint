@@ -1,0 +1,79 @@
+package com.kadod.fingerprint.services;
+
+import com.google.gson.Gson;
+import com.kadod.commons.ws.CompanieWs;
+import com.kadod.commons.ws.ReponseWs;
+import com.kadod.database.model.entities.Companie;
+import com.kadod.database.model.entities.CompanieType;
+import com.kadod.database.model.repositories.CompanieRepository;
+import com.kadod.database.model.repositories.CompanieTypeRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class SubscriptionService {
+
+    private static Logger logger = LogManager.getLogger(SubscriptionService.class);
+
+    @Autowired
+    CompanieRepository companieRepository;
+    @Autowired
+    CompanieTypeRepository companieTypeRepository;
+
+    public ReponseWs save(CompanieWs ws){
+        CompanieType companieType = companieTypeRepository.findOneById(ws.getIdType());
+        if (companieType == null) return new ReponseWs("failed", "type compagnie not found", 404, null);
+        Gson gson = new Gson();
+        Companie companie = this.companieRepository.findOneByNomIgnoreCaseOrCodeIgnoreCase(ws.getNom(), ws.getCode());
+        if (companie != null) return new ReponseWs("failed", "Compagnie existe déja", 407, null);
+        companie = gson.fromJson(gson.toJson(ws), Companie.class);
+        companie.setType(companieType);
+        companieRepository.save(companie);
+        return new ReponseWs("success", "create", 200, ws);
+    }
+
+    public ReponseWs update(CompanieWs ws){
+        Companie companie = companieRepository.findOneById(ws.getId());
+        if (companie == null) return new ReponseWs("failed", "compagnie not found", 404, null);
+        Gson gson = new Gson();
+        CompanieType companieType = companieTypeRepository.findOneById(ws.getIdType());
+        if(companieType == null) return new ReponseWs("failed", "companie type not found", 404, null);
+        companie = gson.fromJson(gson.toJson(ws), Companie.class);
+        companie.setType(companieType);
+        companieRepository.save(companie);
+        return new ReponseWs("success", "update", 200, ws);
+    }
+
+    public ReponseWs listCompany(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size);
+        Gson gson = new Gson();
+        List<Companie> companies = companieRepository.findAll();
+        List<CompanieWs> companiesWs = companies.stream().map(this::getCompanieWs).collect(Collectors.toList());
+        return new ReponseWs("success", "list", 200, companiesWs);
+    }
+
+    public ReponseWs findCompany(Integer idCompagnie){
+        Gson gson = new Gson();
+        Companie companie = companieRepository.findOneById(idCompagnie);
+        if(companie == null) return new ReponseWs("failed", "companie not found", 404, null);
+        CompanieWs companieWs = this.getCompanieWs(companie);
+        return new ReponseWs("success", "find", 200, companieWs);
+    }
+
+
+    private CompanieWs getCompanieWs(Companie companie){
+        Gson gson = new Gson();
+        CompanieWs companieWs = gson.fromJson(gson.toJson(companie), CompanieWs.class);
+        companieWs.setIdType(companie.getType().getId());
+        return companieWs;
+    }
+
+
+}
