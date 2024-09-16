@@ -9,7 +9,7 @@ RUN mvn clean package -Pdev -DskipTests
 # Package stage
 #
 FROM openjdk:11-jdk-slim
-COPY --from=build /target/*.jar fingerprint.jar
+COPY --from=build /target/*.jar app_fingerprint.jar
 # ENV PORT=8080
 # EXPOSE 8080
-ENTRYPOINT ["java","-jar","fingerprint.jar"]
+ENTRYPOINT ["java","-jar","app_fingerprint.jar"]
