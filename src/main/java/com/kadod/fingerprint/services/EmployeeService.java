@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -78,8 +79,11 @@ public class EmployeeService {
             enrollInfo = new EnrollInfo();
             enrollInfo.setEnrollId(person.getId());
             enrollInfo.setMachine(machine);
-            enrollInfoRepository.save(enrollInfo);
+            enrollInfo = enrollInfoRepository.save(enrollInfo);
         }
+        List<EnrollInfo> enrollInfos = new ArrayList<>();
+        enrollInfos.add(enrollInfo);
+        this.personService.getSignature2(enrollInfos, ws.getDeviceSerial());
         Employee employee = this.employeeRepository.findByEmail(ws.getEmail());
         employee = gson.fromJson(gson.toJson(Objects.requireNonNullElse(employee, ws)), Employee.class);
         employee.setCompanie(companie);
